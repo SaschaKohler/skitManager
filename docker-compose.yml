@@ -16,7 +16,7 @@ services:
             - ./:/var/www
         networks:
             - code-network
-  ## PHP-FPM ##############################################
+    ## PHP-FPM ##############################################
     #  laravel:
     #    build:
     #      context: ./
@@ -33,68 +33,58 @@ services:
     #      - code-network
 
     #  ### MAILHOG Server #########################################
-#  mailhog:
-#    image: mailhog/mailhog:latest
-#    restart: always
-#    ports:
-#      - "8025:8025"
-#    networks:
-#      - code-network
-#
-#  ### NGINX Server #########################################
+    #  mailhog:
+    #    image: mailhog/mailhog:latest
+    #    restart: always
+    #    ports:
+    #      - "8025:8025"
+    #    networks:
+    #      - code-network
+    #
+    #  ### NGINX Server #########################################
     nginx:
         image: nginx:1.17-alpine
         container_name: skitmanager-nginx
-        restart: unless-stopped
+        restart: always
         ports:
-         - 80:80
+            - 80:80
+            - 443:443
         volumes:
-         - ./:/var/www
-         - ./docker/nginx:/etc/nginx/conf.d
-        networks:
-        - code-network
-#  nginx:
-#    build:
-#      context: ./docker/nginx
-#    ports:
-#      - "${NGINX_HTTP_PORT}:80"
-#      - "443:443"
-#    volumes:
-#      - ./:/srv/api
-#      - ./admin/dist:/srv/api/admin
-#      #      - ./docker/nginx/conf.d/site.conf:/etc/nginx/conf.d/site.conf
-#      - ./certbot/www:/var/www/certbot/
-#      - ./certbot/conf/:/etc/letsencrypt/ssl/
+            - ./:/var/www
+            - ./docker/nginx:/etc/nginx/conf.d
+            - ./certbot/www:/var/www/certbot/
+            - ./certbot/conf/:/etc/letsencrypt/ssl/
 #    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
-#    restart: unless-stopped
-#    depends_on:
-#      - laravel
-#    networks:
-#      - code-network
-#
-#  ### CERT_BOT #######################################################
-#  certbot:
-#    image: certbot/certbot:latest
-#    volumes:
-#      - ./certbot/www:/var/www/certbot/
-#      - ./certbot/conf/:/etc/letsencrypt/
-#    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-#  #    command: certonly --webroot --webroot-path=/var/www/certbot/ --email sascha.cloud01@gmail.com  --agree-tos --no-eff-email --staging -d skit-software.at  -d www.skit-software.at
-#
+        depends_on:
+            - app
+        networks:
+            - code-network
 
-  #### PG_SQL ################################################
+
+
+    #  ### CERT_BOT #######################################################
+    certbot:
+        image: certbot/certbot:latest
+        volumes:
+            - ./certbot/www:/var/www/certbot/
+            - ./certbot/conf/:/etc/letsencrypt/
+        entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    #    command: certonly --webroot --webroot-path=/var/www/certbot/ --email sascha.cloud01@gmail.com  --agree-tos --no-eff-email --staging -d skit-software.at  -d www.skit-software.at
+
+
+    #### PG_SQL ################################################
     pgsql:
         image: "postgres" # use latest official postgres version
         ports:
-        - 5432:5432
+            - 5432:5432
         environment:
             POSTGRES_USER: "${DB_USERNAME}"
             POSTGRES_PASSWORD: "${DB_PASSWORD}"
             POSTGRES_DB: "${DB_DATABASE}"
         volumes:
-         - pgsql-admin-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+            - pgsql-admin-data:/var/lib/postgresql/data/ # persist data even if container shuts down
         networks:
-         - code-network
+            - code-network
 
 #  ### PG_ADMIN #########################################################
 #  pgadmin:
@@ -110,10 +100,10 @@ services:
 
 ### Volumes & Network #########################################################
 volumes:
-  pgsql-admin-data: # named volumes can be managed easier using docker-compose
+    pgsql-admin-data: # named volumes can be managed easier using docker-compose
 
 networks:
-  code-network:
-    driver: bridge
+    code-network:
+        driver: bridge
 
 

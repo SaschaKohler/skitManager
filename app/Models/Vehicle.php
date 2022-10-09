@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\InsuranceTypeEnum;
 use App\Enum\VehicleTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,8 @@ class Vehicle extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'type' => VehicleTypeEnum::class
+        'type' => VehicleTypeEnum::class,
+        'insurance_type' => InsuranceTypeEnum::class,
     ];
 
     public function events(): BelongsToMany

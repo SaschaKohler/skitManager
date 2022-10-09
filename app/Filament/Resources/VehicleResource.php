@@ -25,9 +25,11 @@ class VehicleResource extends Resource
             ->schema([
                 Forms\Components\FileUpload::make('image')
                     ->avatar()
-            ->columnSpan('full'),
+                    ->columnSpan('full'),
                 Forms\Components\TextInput::make('owner')
-                    ->maxLength(255),
+                    ->required()
+                    ->string()
+                    ->maxLength(25),
                 Forms\Components\Select::make('type')
                     ->options([
                         1 => 'PKW',
@@ -40,17 +42,21 @@ class VehicleResource extends Resource
                     ->required(),
 
                 Forms\Components\TextInput::make('branding')
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('permit'),
-                Forms\Components\Textarea::make('license_plate'),
-                Forms\Components\TextInput::make('insurance_type')
-                    ->required()
-                    ->maxLength(255),
+                    ->required(),
+                Forms\Components\DatePicker::make('permit')
+                    ->required(),
+                Forms\Components\TextInput::make('license_plate')
+                    ->required(),
+                Forms\Components\Select::make('insurance_type')
+                    ->options([
+                        1 => 'keine',
+                        2 => 'Teilkasko',
+                        3 => 'Vollkasko',
+                    ])
+                    ->required(),
                 Forms\Components\DatePicker::make('inspection'),
-                Forms\Components\TextInput::make('insurance_company')
-                    ->maxLength(255),
+                Forms\Components\TextInput::make('insurance_company'),
                 Forms\Components\TextInput::make('insurance_manager')
-                    ->maxLength(255),
             ]);
     }
 
@@ -58,24 +64,15 @@ class VehicleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('owner'),
-                Tables\Columns\TextColumn::make('type'),
-                Tables\Columns\TextColumn::make('branding'),
                 Tables\Columns\TextColumn::make('image'),
+                Tables\Columns\TextColumn::make('branding'),
                 Tables\Columns\TextColumn::make('permit')
                     ->date(),
                 Tables\Columns\TextColumn::make('license_plate'),
-                Tables\Columns\TextColumn::make('insurance_type'),
                 Tables\Columns\TextColumn::make('inspection')
-                    ->date(),
-                Tables\Columns\TextColumn::make('insurance_company'),
-                Tables\Columns\TextColumn::make('insurance_manager'),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
+                    ->date()
+                    ->sortable()
+
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

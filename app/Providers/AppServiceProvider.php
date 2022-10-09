@@ -6,8 +6,11 @@ use App\Filament\Resources\CalendarResource;
 use App\Filament\Resources\UserResource;
 use Filament\Facades\Filament;
 use Filament\Navigation\UserMenuItem;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\Vite;
+use Illuminate\Validation\ValidationException;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -52,5 +55,12 @@ class AppServiceProvider extends ServiceProvider
 
             ]);
         });
+
+        Page::$reportValidationErrorUsing = function (ValidationException $exception) {
+            Notification::make()
+                ->title($exception->getMessage())
+                ->danger()
+                ->send();
+        };
     }
 }

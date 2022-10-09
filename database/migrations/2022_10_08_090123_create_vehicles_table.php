@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('image')->nullable();
             $table->date('permit')->nullable();
             $table->text('license_plate')->nullable();
-            $table->enum('insurance_type',['Teilkasko','Vollkasko','-'])->default('-');
+            $table->integer('insurance_type')->default(1);
             $table->date('inspection')->nullable();
             $table->string('insurance_company')->nullable();
             $table->string('insurance_manager')->nullable();

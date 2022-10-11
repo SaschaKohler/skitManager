@@ -51,12 +51,10 @@ services:
             - 443:443
         volumes:
             - ./:/var/www
-            - ./docker/nginx:/etc/nginx/conf.d
-            - ./certbot/www:/var/www/certbot/
-            - ./certbot/conf/:/etc/letsencrypt/ssl/
+            - ./docker/nginx:/etc/nginx/conf.d/:ro
+            - ./certbot/www:/var/www/certbot/:ro
+            - ./certbot/conf/:/etc/nginx/ssl/:ro
 #    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
-        depends_on:
-            - app
         networks:
             - code-network
 
@@ -66,9 +64,10 @@ services:
     certbot:
         image: certbot/certbot:latest
         volumes:
-            - ./certbot/www:/var/www/certbot/
-            - ./certbot/conf/:/etc/letsencrypt/
-        entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+            - ./certbot/www:/var/www/certbot/:rw
+            - ./certbot/conf/:/etc/letsencrypt/:rw
+        entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h; done;'"
+
     #    command: certonly --webroot --webroot-path=/var/www/certbot/ --email sascha.cloud01@gmail.com  --agree-tos --no-eff-email --staging -d skit-software.at  -d www.skit-software.at
 
 

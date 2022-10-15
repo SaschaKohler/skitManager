@@ -270,6 +270,12 @@ class CalendarWidget extends FullCalendarWidget
                         ->columnSpan(1),
                     Forms\Components\Select::make('extendedProps.calendar_id')
                         ->disableLabel(true)
+                        ->options(function () {
+                            $calendars = Calendar::all();
+                            return $calendars->mapWithKeys(function ($calendars) {
+                                return [$calendars->getKey() => static::getCleanOptionString($calendars)];
+                            })->toArray();
+                        })
                         ->required()
                         ->allowHtml()
                         ->searchable()

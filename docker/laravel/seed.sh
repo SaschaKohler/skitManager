@@ -1,5 +1,5 @@
 #!/bin/sh
 
-cd /srv/api || exit
+cd /var/www || exit
 
 php artisan db:seed

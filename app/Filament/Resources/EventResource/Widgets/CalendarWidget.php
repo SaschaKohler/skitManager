@@ -5,6 +5,7 @@ namespace App\Filament\Resources\EventResource\Widgets;
 use App\Filament\Resources\EventResource;
 use App\Models\Calendar;
 use App\Models\Event;
+use App\Models\User;
 use Closure;
 use DateInterval;
 use DateTime;
@@ -21,6 +22,7 @@ class CalendarWidget extends FullCalendarWidget
 {
     protected static string $view = 'filament.resources.event-resource.widgets.calendar-widget';
 
+    protected string $modalWidth = 'lg';
 
 //    public function getViewData(): array
 //    {
@@ -68,10 +70,10 @@ class CalendarWidget extends FullCalendarWidget
     {
         parent::onEventClick($event);
 
-
         // your code
         //   $this->editEventForm->model($this->event);
-        $event = Event::find($event['id']);
+        //  $event = Event::find($event['id']);
+        //  return $event;
 
 
     }
@@ -118,8 +120,8 @@ class CalendarWidget extends FullCalendarWidget
         $data['user_id'] = $event['extendedProps']['user_id'];
         $data['allDay'] = $event['extendedProps']['allDay'];
         $data['calendar_id'] = $event['extendedProps']['calendar_id'];
-       // $data['backgroundColor'] = $event['extendedProps']['backgroundColor'];
-       // $data['borderColor'] = $event['extendedProps']['backgroundColor'];
+        // $data['backgroundColor'] = $event['extendedProps']['backgroundColor'];
+        // $data['borderColor'] = $event['extendedProps']['backgroundColor'];
         $data['recurrence'] = $data['extendedProps']['recurrence'];
 
 
@@ -162,10 +164,10 @@ class CalendarWidget extends FullCalendarWidget
         // model instance is resolved by user defined resolveEventRecord() funtion. See example below
         $dat = $data;
         $dat['allDay'] = $data['extendedProps']['allDay'];
-        $dat['calendar_id'] = (int) $data['extendedProps']['calendar_id'];
+        $dat['calendar_id'] = (int)$data['extendedProps']['calendar_id'];
         $dat['recurrence'] = $data['extendedProps']['recurrence'];
 
-      //  $this->event->
+        //  $this->event->
         $this->event->update($dat);
         $this->event->backgroundColor = $this->event->calendar()->pluck('color')[0];
         $this->event->borderColor = $this->event->calendar()->pluck('color')[0];
@@ -184,87 +186,181 @@ class CalendarWidget extends FullCalendarWidget
     protected static function getCreateEventFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('title')
-                ->required(),
-            Forms\Components\DateTimePicker::make('start')
-                ->withoutSeconds()
-                ->required(),
-            Forms\Components\DateTimePicker::make('end')
-                ->withoutSeconds()
-                ->required(),
-            Forms\Components\Toggle::make('extendedProps.allDay'),
-            Forms\Components\Select::make('extendedProps.recurrence')
-                ->options([
-                    '10' => 'keine',
-                    '1' => 'täglich',
-                    '2' => 'wöchentlich',
-                    '3' => 'alle 14 Tage',
-                    '4' => 'alle 3 Wochen',
-                    '5' => 'monatlich',
-                    '6' => 'alle 3 Monate',
-                    '7' => 'halbjährlich',
-                    '8' => 'jährlich',
-                ])
-                ->required()
-                ->allowHtml()
-                ->view('filament.select'),
-            Forms\Components\Select::make('extendedProps.calendar_id')
-                ->relationship('calendar', 'type',)
-                ->model(Event::class)
-                ->required(),
+            Forms\Components\Grid::make()
+                ->schema([
+                    Forms\Components\Toggle::make('extendedProps.allDay')
+                        ->label('All day')
+                        ->columnSpan(1),
+                    Forms\Components\Select::make('extendedProps.calendar_id')
+                        ->disableLabel(true)
+                        ->preload()
+                        ->options(function () {
+                            $calendars = Calendar::all();
+                            return $calendars->mapWithKeys(function ($calendars) {
+                                return [$calendars->getKey() => static::getCleanOptionString($calendars)];
+                            })->toArray();
+                        })
+                        ->required()
+                        ->allowHtml()
+                        ->searchable()
+                        ->columnSpan(3)
+                        ->getSearchResultsUsing(function (string $query) {
+                            $calendar = Calendar::where('type', 'like', "%{$query}%")
+                                ->limit(50)
+                                ->get();
+                            return $calendar->mapWithKeys(function ($calendar) {
+                                return [$calendar->getKey() => static::getCleanOptionString($calendar)];
+                            })->toArray();
+                        })
+                        ->getOptionLabelUsing(function ($value): string {
+                            $calendar = Calendar::find($value);
+                            return static::getCleanOptionString($calendar);
+                        }),])->columns(4),
 
-            Forms\Components\Select::make('extendedProps.user_id')
-                ->relationship('client', 'search')
-                ->model(Event::class)
-                ->required()
+            Forms\Components\Card::make()
+                ->schema([Forms\Components\TextInput::make('title')
+                    ->required()
+                    ->columnSpan(4),
+                    Forms\Components\DateTimePicker::make('start')
+                        ->withoutSeconds()
+                        ->required()
+                        ->columnSpan(2),
+                    Forms\Components\DateTimePicker::make('end')
+                        ->withoutSeconds()
+                        ->required()
+                        ->columnSpan(2),])->columns('4'),
 
-        ];
+            Forms\Components\Card::make()
+                ->schema([Forms\Components\Select::make('extendedProps.recurrence')
+                    ->options(['10' => 'keine',
+                        '1' => 'täglich',
+                        '2' => 'wöchentlich',
+                        '3' => 'alle 14 Tage',
+                        '4' => 'alle 3 Wochen',
+                        '5' => 'monatlich',
+                        '6' => 'alle 3 Monate',
+                        '7' => 'halbjährlich',
+                        '8' => 'jährlich',])
+                    ->required()
+                    ->allowHtml()
+                    ->view('filament.select'),
+
+                    Forms\Components\Select::make('extendedProps.user_id')
+                        ->required()
+                        ->preload()
+                        ->options(function () {
+                            return User::where('role_id', 3)->pluck('name1', 'id');
+                        })
+                        ->searchable()
+                        ->getSearchResultsUsing(function (string $query) {
+                            return User::where('name1', 'like', "%{$query}%")->
+                            where('role_id', 3)->pluck('name1', 'id');
+                        })])];
     }
 
-    protected static function getEditEventFormSchema(): array
+    protected
+    static function getEditEventFormSchema(): array
     {
 
         return [
-            Forms\Components\TextInput::make('title')
-                ->required(),
-            Forms\Components\DateTimePicker::make('start')
-                ->required()->withoutSeconds(),
-            Forms\Components\DateTimePicker::make('end')
-                ->required()->withoutSeconds(),
-            Forms\Components\Toggle::make('extendedProps.allDay'),
-            Forms\Components\Select::make('extendedProps.recurrence')
-                ->options([
-                    '10' => 'keine',
-                    '1' => 'täglich',
-                    '2' => 'wöchentlich',
-                    '3' => 'alle 14 Tage',
-                    '4' => 'alle 3 Wochen',
-                    '5' => 'monatlich',
-                    '6' => 'alle 3 Monate',
-                    '7' => 'halbjährlich',
-                    '8' => 'jährlich',
+            Forms\Components\Grid::make()
+                ->schema([
+                    Forms\Components\Toggle::make('extendedProps.allDay')
+                        ->label('All day')
+                        ->columnSpan(1),
+                    Forms\Components\Select::make('extendedProps.calendar_id')
+                        ->disableLabel(true)
+                        ->required()
+                        ->allowHtml()
+                        ->searchable()
+                        ->getSearchResultsUsing(function (string $query) {
+                            $calendar = Calendar::where('type', 'like', "%{$query}%")
+                                ->limit(50)
+                                ->get();
+                            return $calendar->mapWithKeys(function ($calendar) {
+                                return [$calendar->getKey() => static::getCleanOptionString($calendar)];
+                            })->toArray();
+                        })
+                        ->getOptionLabelUsing(function ($value): string {
+                            $calendar = Calendar::find($value);
+                            return static::getCleanOptionString($calendar);
+                        })
+                        ->columnSpan(3),
+
+                ])->columns(4),
+
+            Forms\Components\Card::make()
+                ->schema([
+                    Forms\Components\TextInput::make('title')
+                        ->required()
+                        ->columnSpan(4),
+                    Forms\Components\DateTimePicker::make('start')
+                        ->withoutSeconds()
+                        ->required()
+                        ->columnSpan(2),
+                    Forms\Components\DateTimePicker::make('end')
+                        ->withoutSeconds()
+                        ->required()
+                        ->columnSpan(2),
+
+                ])->columns('4'),
+
+            Forms\Components\Card::make()
+                ->schema([
+                    Forms\Components\Select::make('extendedProps.recurrence')
+                        ->options([
+                            '10' => 'keine',
+                            '1' => 'täglich',
+                            '2' => 'wöchentlich',
+                            '3' => 'alle 14 Tage',
+                            '4' => 'alle 3 Wochen',
+                            '5' => 'monatlich',
+                            '6' => 'alle 3 Monate',
+                            '7' => 'halbjährlich',
+                            '8' => 'jährlich',
+                        ])
+                        ->required()
+                        ->allowHtml()
+                        ->view('filament.select'),
+
+                    Forms\Components\Select::make('extendedProps.user_id')
+                        ->required()
+                        ->searchable()
+                        ->preload()
+                        ->options(function () {
+                            return User::where('role_id', 3)->pluck('name1', 'id');
+                        })
+                        ->getSearchResultsUsing(function ($query): string {
+                            return User::where('search', 'like', "%{$query}%")->
+                            andWhere('role_id', 3)->pluck('name1', 'id');
+                        })
+
                 ])
-                ->required(),
-
-            Forms\Components\Select::make('extendedProps.calendar_id')
-                ->model(Event::class)
-                ->relationship('calendar','type'),
-
-            Forms\Components\Select::make('extendedProps.user_id')
-                ->relationship('client', 'name1')
-                ->model(Event::class),
-
 
         ];
     }
 
-    public static function canCreate(): bool
+    public
+    static function canCreate(): bool
     {
         return true;
     }
 
-    public static function canEdit(?array $event = null): bool
+    public
+    static function canEdit(?array $event = null): bool
     {
         return true;
+    }
+
+    public
+    static function getCleanOptionString(Model $model): string
+    {
+        return //Purify::clean(
+            view('filament.components.select-calendar-result')
+                ->with('type', $model?->type)
+                ->with('description', $model?->description)
+                ->with('color', $model?->color)
+                ->render();
+
     }
 }

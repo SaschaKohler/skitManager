@@ -48,12 +48,9 @@ services:
         restart: always
         ports:
             - 80:80
-            - 443:443
         volumes:
             - ./:/var/www
-            - ./docker/nginx:/etc/nginx/conf.d/:ro
-            - ./certbot/www:/var/www/certbot/:ro
-            - ./certbot/conf/:/etc/nginx/ssl/:ro
+            - ./docker/nginx/local:/etc/nginx/conf.d/
 #    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
         networks:
             - code-network

@@ -9,7 +9,11 @@
 return [
     'timeZone' => config('app.timezone'),
 
-   // 'plugins' => ['timeGridPlugin'],
+//    'plugins' => ['google-calendar'],
+    'googleCalendarApiKey' => 'AIzaSyB1XI1v4UR56-YAuaf4hnTwJgum6_hAUZU',
+    'events' => [
+        'googleCalendarId' => 'sascha.cloud.01@gmail.com',
+    ],
     'locale' => config('app.locale'),
     'headerToolbar' => [
         'left' => 'prev,next today',

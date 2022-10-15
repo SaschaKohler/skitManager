@@ -54,7 +54,7 @@ RUN addgroup -S -g "$PGID" sebi0815 && adduser -S -u "$PUID" $user -G sebi0815
 #USER user
 #
 #
-#WORKDIR /srv/api
+WORKDIR /var/www/
 #
 #CMD ["php-fpm"]
 #

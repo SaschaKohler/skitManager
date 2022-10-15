@@ -18,6 +18,9 @@ class CalendarFactory extends Factory
     {
         return [
             //
+            'type' => $this->faker->text(10),
+            'description' => $this->faker->text(20),
+            'color' => $this->faker->hexColor()
         ];
     }
 }

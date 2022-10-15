@@ -33,12 +33,12 @@ class DatabaseSeeder extends Seeder
 //       \App\Models\Info::factory(10)->create();
 
 
-        \App\Models\User::factory(9)
+        \App\Models\User::factory(120)
 //            ->has(Info::factory())
             ->create();
 
 
-        $user =User::factory()->create([
+        User::factory()->create([
             'search' => 'DEMO USER',
             'phone1' => '12-345-67',
             'name1' => 'Demo User',
@@ -46,21 +46,8 @@ class DatabaseSeeder extends Seeder
             'role_id' => 1,
             'password' => Hash::make('password')
         ]);
-        Calendar::factory()->create([
-            'type' => 'Böschungsmähen',
-            'description' => 'mit traktor Böschungen mähen',
-            'color' => '#ffee77'
-        ]);
-        Calendar::factory()->create([
-            'type' => 'Baumpflege',
-            'description' => 'klettern ohne Ende',
-            'color' => '#ff7765'
-        ]);
-        Calendar::factory()->create([
-            'type' => 'pers. Termin',
-            'description' => 'ab zum Kunden',
-            'color' => '#445567'
-        ]) ;
+        Calendar::factory(15)->create();
+
         $calendars = Calendar::all();
         $clients = User::query()->where('role_id','=',3)->get();
         $employees = User::query()->where('role_id','=',2)->get();
@@ -74,7 +61,7 @@ class DatabaseSeeder extends Seeder
             $event->borderColor = $event->calendar->color;
             $event->recurrence = 10;
             $event->save();
-           // $event->employees()->sync($employees->random(random_int(1,3)));
+            $event->employees()->sync($employees->random());
     });
 
         Vehicle::factory(16)->create()->each(function (Vehicle $vehicle) use ($events){

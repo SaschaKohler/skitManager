@@ -189,11 +189,10 @@ class CalendarWidget extends FullCalendarWidget
             Forms\Components\Grid::make()
                 ->schema([
                     Forms\Components\Toggle::make('extendedProps.allDay')
-                        ->label('All day')
-                        ->columnSpan(1),
+                        ->label(__('filament::widgets/calendar-widget.allday'))
+                        ->columnSpan(2),
                     Forms\Components\Select::make('extendedProps.calendar_id')
-                        ->disableLabel(true)
-                        ->preload()
+                        ->disableLabel()
                         ->options(function () {
                             $calendars = Calendar::all();
                             return $calendars->mapWithKeys(function ($calendars) {
@@ -203,7 +202,6 @@ class CalendarWidget extends FullCalendarWidget
                         ->required()
                         ->allowHtml()
                         ->searchable()
-                        ->columnSpan(3)
                         ->getSearchResultsUsing(function (string $query) {
                             $calendar = Calendar::where('type', 'like', "%{$query}%")
                                 ->limit(50)
@@ -215,47 +213,65 @@ class CalendarWidget extends FullCalendarWidget
                         ->getOptionLabelUsing(function ($value): string {
                             $calendar = Calendar::find($value);
                             return static::getCleanOptionString($calendar);
-                        }),])->columns(4),
+                        })
+                        ->columnSpan(2),
+
+                ])->columns(4),
 
             Forms\Components\Card::make()
-                ->schema([Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->columnSpan(4),
+                ->schema([
+                    Forms\Components\TextInput::make('title')
+                        ->label(__('filament::widgets/calendar-widget.title'))
+                        ->required()
+                        ->columnSpan(4),
                     Forms\Components\DateTimePicker::make('start')
+                        ->label(__('filament::widgets/calendar-widget.start'))
                         ->withoutSeconds()
                         ->required()
                         ->columnSpan(2),
                     Forms\Components\DateTimePicker::make('end')
+                        ->label(__('filament::widgets/calendar-widget.end'))
                         ->withoutSeconds()
                         ->required()
-                        ->columnSpan(2),])->columns('4'),
+                        ->columnSpan(2),
+
+                ])->columns('4'),
 
             Forms\Components\Card::make()
-                ->schema([Forms\Components\Select::make('extendedProps.recurrence')
-                    ->options(['10' => 'keine',
-                        '1' => 'täglich',
-                        '2' => 'wöchentlich',
-                        '3' => 'alle 14 Tage',
-                        '4' => 'alle 3 Wochen',
-                        '5' => 'monatlich',
-                        '6' => 'alle 3 Monate',
-                        '7' => 'halbjährlich',
-                        '8' => 'jährlich',])
-                    ->required()
-                    ->allowHtml()
-                    ->view('filament.select'),
+                ->schema([
+                    Forms\Components\Select::make('extendedProps.recurrence')
+                        ->label(__('filament::widgets/calendar-widget.recurrence.header'))
+                        ->options([
+                            '10' =>__('filament::widgets/calendar-widget.recurrence.none'),
+                            '1' => __('filament::widgets/calendar-widget.recurrence.daily'),
+                            '2' => __('filament::widgets/calendar-widget.recurrence.weekly'),
+                            '3' => __('filament::widgets/calendar-widget.recurrence.14day'),
+                            '4' => __('filament::widgets/calendar-widget.recurrence.3week'),
+                            '5' => __('filament::widgets/calendar-widget.recurrence.monthly'),
+                            '6' => __('filament::widgets/calendar-widget.recurrence.3month'),
+                            '7' => __('filament::widgets/calendar-widget.recurrence.halfyear'),
+                            '8' => __('filament::widgets/calendar-widget.recurrence.yearly'),
+                        ])
+                        ->required()
+                        ->allowHtml(),
 
                     Forms\Components\Select::make('extendedProps.user_id')
+                        ->label(__('filament::widgets/calendar-widget.user_id'))
                         ->required()
+                        ->searchable()
                         ->preload()
                         ->options(function () {
                             return User::where('role_id', 3)->pluck('name1', 'id');
                         })
-                        ->searchable()
-                        ->getSearchResultsUsing(function (string $query) {
+                        ->getSearchResultsUsing(function ($query){
                             return User::where('name1', 'like', "%{$query}%")->
                             where('role_id', 3)->pluck('name1', 'id');
-                        })])];
+                        })
+
+                ])
+
+        ];
+
     }
 
     protected
@@ -266,10 +282,10 @@ class CalendarWidget extends FullCalendarWidget
             Forms\Components\Grid::make()
                 ->schema([
                     Forms\Components\Toggle::make('extendedProps.allDay')
-                        ->label('All day')
-                        ->columnSpan(1),
+                        ->label(__('filament::widgets/calendar-widget.allday'))
+                        ->columnSpan(2),
                     Forms\Components\Select::make('extendedProps.calendar_id')
-                        ->disableLabel(true)
+                        ->disableLabel()
                         ->options(function () {
                             $calendars = Calendar::all();
                             return $calendars->mapWithKeys(function ($calendars) {
@@ -291,20 +307,23 @@ class CalendarWidget extends FullCalendarWidget
                             $calendar = Calendar::find($value);
                             return static::getCleanOptionString($calendar);
                         })
-                        ->columnSpan(3),
+                        ->columnSpan(2),
 
                 ])->columns(4),
 
             Forms\Components\Card::make()
                 ->schema([
                     Forms\Components\TextInput::make('title')
+                        ->label(__('filament::widgets/calendar-widget.title'))
                         ->required()
                         ->columnSpan(4),
                     Forms\Components\DateTimePicker::make('start')
+                        ->label(__('filament::widgets/calendar-widget.start'))
                         ->withoutSeconds()
                         ->required()
                         ->columnSpan(2),
                     Forms\Components\DateTimePicker::make('end')
+                        ->label(__('filament::widgets/calendar-widget.end'))
                         ->withoutSeconds()
                         ->required()
                         ->columnSpan(2),
@@ -314,31 +333,32 @@ class CalendarWidget extends FullCalendarWidget
             Forms\Components\Card::make()
                 ->schema([
                     Forms\Components\Select::make('extendedProps.recurrence')
+                        ->label(__('filament::widgets/calendar-widget.recurrence.header'))
                         ->options([
-                            '10' => 'keine',
-                            '1' => 'täglich',
-                            '2' => 'wöchentlich',
-                            '3' => 'alle 14 Tage',
-                            '4' => 'alle 3 Wochen',
-                            '5' => 'monatlich',
-                            '6' => 'alle 3 Monate',
-                            '7' => 'halbjährlich',
-                            '8' => 'jährlich',
+                            '10' =>__('filament::widgets/calendar-widget.recurrence.none'),
+                            '1' => __('filament::widgets/calendar-widget.recurrence.daily'),
+                            '2' => __('filament::widgets/calendar-widget.recurrence.weekly'),
+                            '3' => __('filament::widgets/calendar-widget.recurrence.14day'),
+                            '4' => __('filament::widgets/calendar-widget.recurrence.3week'),
+                            '5' => __('filament::widgets/calendar-widget.recurrence.monthly'),
+                            '6' => __('filament::widgets/calendar-widget.recurrence.3month'),
+                            '7' => __('filament::widgets/calendar-widget.recurrence.halfyear'),
+                            '8' => __('filament::widgets/calendar-widget.recurrence.yearly'),
                         ])
                         ->required()
-                        ->allowHtml()
-                        ->view('filament.select'),
+                        ->allowHtml(),
 
                     Forms\Components\Select::make('extendedProps.user_id')
+                        ->label(__('filament::widgets/calendar-widget.user_id'))
                         ->required()
                         ->searchable()
                         ->preload()
                         ->options(function () {
                             return User::where('role_id', 3)->pluck('name1', 'id');
                         })
-                        ->getSearchResultsUsing(function ($query): string {
-                            return User::where('search', 'like', "%{$query}%")->
-                            andWhere('role_id', 3)->pluck('name1', 'id');
+                        ->getSearchResultsUsing(function ($query) {
+                            return User::where('name1', 'like', "%{$query}%")->
+                            where('role_id', 3)->pluck('name1', 'id');
                         })
 
                 ])

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\Pages\CreateEvent;
 use App\Filament\Resources\EventResource\RelationManagers;
+use App\Models\Calendar;
 use App\Models\Event;
 use App\Models\User;
 use Filament\Forms;
@@ -112,7 +113,7 @@ class EventResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->sortable()
                     ->searchable(isIndividual: true, isGlobal: false),
-                Tables\Columns\TextColumn::make('client.search')
+                Tables\Columns\TextColumn::make('client.name1')
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->url(fn(Event $record) => UserResource::getUrl('edit', ['record' => $record->client])),
                 Tables\Columns\TextColumn::make('employees.name1')
@@ -139,17 +140,17 @@ class EventResource extends Resource
                             ->when($data['end_at'],
                                 fn($query) => $query->whereDate('end', '<=', $data['end_at']));
                     }),
-//                Tables\Filters\Filter::make('calendar')
-//                    ->form([
-//                        Forms\Components\Select::make('calendar_id')
-//                            ->relationship('calendar', 'type')
-//                    ])
-//                    ->query(function (Builder $query, array $data): Builder {
-//                        return $query
-//                            ->when(
-//                                $data['calendar_id'],
-//                                fn(Builder $query, $status): Builder => $query->whereHas('calendar'));
-//                    }),
+                Tables\Filters\Filter::make('calendar_id')
+                    ->form([
+                        Forms\Components\Select::make('calendar_id')
+                        ->options(fn() => Calendar::pluck('type','id'))
+
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when($data['calendar_id'],
+                                fn(Builder $query, $status): Builder => $query->where('calendar_id',$data['calendar_id']));
+                    }),
 
                 Tables\Filters\TrashedFilter::make(),
             ])
@@ -183,13 +184,13 @@ class EventResource extends Resource
         ];
     }
 
-    public
-    static function getWidgets(): array
-    {
-        return [
-            EventResource\Widgets\CalendarWidget::class,
-        ];
-    }
+//    public
+//    static function getWidgets(): array
+//    {
+//        return [
+//    //        EventResource\Widgets\CalendarWidget::class,
+//        ];
+//    }
 
     protected
     static function getNavigationBadge(): ?string

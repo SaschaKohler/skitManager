@@ -184,6 +184,7 @@ class CalendarWidget extends FullCalendarWidget
     protected static function getCreateEventFormSchema(): array
     {
         return [
+<<<<<<< HEAD
             Forms\Components\TextInput::make('title')
                 ->required(),
             Forms\Components\DateTimePicker::make('start')
@@ -204,6 +205,183 @@ class CalendarWidget extends FullCalendarWidget
                     '6' => 'alle 3 Monate',
                     '7' => 'halbjährlich',
                     '8' => 'jährlich',
+=======
+            Forms\Components\Grid::make()
+                ->schema([
+                    Forms\Components\Toggle::make('extendedProps.allDay')
+                        ->label(__('filament::widgets/calendar-widget.allday'))
+                        ->columnSpan(2),
+                    Forms\Components\Select::make('extendedProps.calendar_id')
+                        ->disableLabel()
+                        ->options(function () {
+                            $calendars = Calendar::all();
+                            return $calendars->mapWithKeys(function ($calendars) {
+                                return [$calendars->getKey() => static::getCleanOptionString($calendars)];
+                            })->toArray();
+                        })
+                        ->required()
+                        ->allowHtml()
+                        ->searchable()
+                        ->getSearchResultsUsing(function (string $query) {
+                            $calendar = Calendar::where('type', 'like', "%{$query}%")
+                                ->limit(50)
+                                ->get();
+                            return $calendar->mapWithKeys(function ($calendar) {
+                                return [$calendar->getKey() => static::getCleanOptionString($calendar)];
+                            })->toArray();
+                        })
+                        ->getOptionLabelUsing(function ($value): string {
+                            $calendar = Calendar::find($value);
+                            return static::getCleanOptionString($calendar);
+                        })
+                        ->columnSpan(2),
+
+                ])->columns(4),
+
+            Forms\Components\Card::make()
+                ->schema([
+                    Forms\Components\TextInput::make('title')
+                        ->label(__('filament::widgets/calendar-widget.title'))
+                        ->required()
+                        ->columnSpan(4),
+                    Forms\Components\DateTimePicker::make('start')
+                        ->label(__('filament::widgets/calendar-widget.start'))
+                        ->withoutSeconds()
+                        ->required()
+                        ->columnSpan(2),
+                    Forms\Components\DateTimePicker::make('end')
+                        ->label(__('filament::widgets/calendar-widget.end'))
+                        ->withoutSeconds()
+                        ->required()
+                        ->columnSpan(2),
+
+                ])->columns('4'),
+
+            Forms\Components\Card::make()
+                ->schema([
+                    Forms\Components\Select::make('extendedProps.recurrence')
+                        ->label(__('filament::widgets/calendar-widget.recurrence.header'))
+                        ->options([
+                            '10' =>__('filament::widgets/calendar-widget.recurrence.none'),
+                            '1' => __('filament::widgets/calendar-widget.recurrence.daily'),
+                            '2' => __('filament::widgets/calendar-widget.recurrence.weekly'),
+                            '3' => __('filament::widgets/calendar-widget.recurrence.14day'),
+                            '4' => __('filament::widgets/calendar-widget.recurrence.3week'),
+                            '5' => __('filament::widgets/calendar-widget.recurrence.monthly'),
+                            '6' => __('filament::widgets/calendar-widget.recurrence.3month'),
+                            '7' => __('filament::widgets/calendar-widget.recurrence.halfyear'),
+                            '8' => __('filament::widgets/calendar-widget.recurrence.yearly'),
+                        ])
+                        ->required()
+                        ->allowHtml(),
+
+                    Forms\Components\Select::make('extendedProps.user_id')
+                        ->label(__('filament::widgets/calendar-widget.user_id'))
+                        ->required()
+                        ->searchable()
+                        ->preload()
+                        ->options(function () {
+                            return User::where('role_id', 3)->pluck('name1', 'id');
+                        })
+                        ->getSearchResultsUsing(function ($query){
+                            return User::where('name1', 'like', "%{$query}%")->
+                            where('role_id', 3)->pluck('name1', 'id');
+                        })
+
+                ])
+
+        ];
+
+    }
+
+    protected
+    static function getEditEventFormSchema(): array
+    {
+
+        return [
+            Forms\Components\Grid::make()
+                ->schema([
+                    Forms\Components\Toggle::make('extendedProps.allDay')
+                        ->label(__('filament::widgets/calendar-widget.allday'))
+                        ->columnSpan(2),
+                    Forms\Components\Select::make('extendedProps.calendar_id')
+                        ->disableLabel()
+                        ->options(function () {
+                            $calendars = Calendar::all();
+                            return $calendars->mapWithKeys(function ($calendars) {
+                                return [$calendars->getKey() => static::getCleanOptionString($calendars)];
+                            })->toArray();
+                        })
+                        ->required()
+                        ->allowHtml()
+                        ->searchable()
+                        ->getSearchResultsUsing(function (string $query) {
+                            $calendar = Calendar::where('type', 'like', "%{$query}%")
+                                ->limit(50)
+                                ->get();
+                            return $calendar->mapWithKeys(function ($calendar) {
+                                return [$calendar->getKey() => static::getCleanOptionString($calendar)];
+                            })->toArray();
+                        })
+                        ->getOptionLabelUsing(function ($value): string {
+                            $calendar = Calendar::find($value);
+                            return static::getCleanOptionString($calendar);
+                        })
+                        ->columnSpan(2),
+
+                ])->columns(4),
+
+            Forms\Components\Card::make()
+                ->schema([
+                    Forms\Components\TextInput::make('title')
+                        ->label(__('filament::widgets/calendar-widget.title'))
+                        ->required()
+                        ->columnSpan(4),
+                    Forms\Components\DateTimePicker::make('start')
+                        ->label(__('filament::widgets/calendar-widget.start'))
+                        ->withoutSeconds()
+                        ->required()
+                        ->columnSpan(2),
+                    Forms\Components\DateTimePicker::make('end')
+                        ->label(__('filament::widgets/calendar-widget.end'))
+                        ->withoutSeconds()
+                        ->required()
+                        ->columnSpan(2),
+
+                ])->columns('4'),
+
+            Forms\Components\Card::make()
+                ->schema([
+                    Forms\Components\Select::make('extendedProps.recurrence')
+                        ->label(__('filament::widgets/calendar-widget.recurrence.header'))
+                        ->options([
+                            '10' =>__('filament::widgets/calendar-widget.recurrence.none'),
+                            '1' => __('filament::widgets/calendar-widget.recurrence.daily'),
+                            '2' => __('filament::widgets/calendar-widget.recurrence.weekly'),
+                            '3' => __('filament::widgets/calendar-widget.recurrence.14day'),
+                            '4' => __('filament::widgets/calendar-widget.recurrence.3week'),
+                            '5' => __('filament::widgets/calendar-widget.recurrence.monthly'),
+                            '6' => __('filament::widgets/calendar-widget.recurrence.3month'),
+                            '7' => __('filament::widgets/calendar-widget.recurrence.halfyear'),
+                            '8' => __('filament::widgets/calendar-widget.recurrence.yearly'),
+                        ])
+                        ->required()
+                        ->allowHtml(),
+
+                    Forms\Components\Select::make('extendedProps.user_id')
+                        ->label(__('filament::widgets/calendar-widget.user_id'))
+                        ->required()
+                        ->searchable()
+                        ->preload()
+                        ->options(function () {
+                            return User::where('role_id', 3)->pluck('name1', 'id');
+                        })
+                        ->getSearchResultsUsing(function ($query) {
+                            return User::where('name1', 'like', "%{$query}%")->
+                            where('role_id', 3)->pluck('name1', 'id');
+                        })
+
+>>>>>>> b0bf549 (start translations)
                 ])
                 ->required()
                 ->allowHtml()

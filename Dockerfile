@@ -1,11 +1,10 @@
 FROM php:8.1-fpm-alpine
 
-ARG user
-ARG uid
 ARG PUID=1000
-#ENV PUID ${PUID}
+ENV PUID ${PUID}
 ARG PGID=1000
-#ENV PGID ${PGID}
+ENV PGID ${PGID}
+
 
 # persistent / runtime deps
 RUN apk add --no-cache \
@@ -48,17 +47,21 @@ RUN chmod +x /usr/local/bin/init
 COPY docker/laravel/seed.sh /usr/local/bin/seed
 RUN chmod +x /usr/local/bin/seed
 #
-RUN addgroup -S -g "$PGID" sebi0815 && adduser -S -u "$PUID" $user -G sebi0815
+RUN addgroup -S -g "$PGID" sebi0815 && adduser -S -u "$PUID" user -G sebi0815
 
 #
-#USER user
+USER user
 #
 #
+<<<<<<< HEAD
 #WORKDIR /srv/api
+=======
+WORKDIR /var/www
+>>>>>>> b0bf549 (start translations)
 #
-#CMD ["php-fpm"]
+CMD ["php-fpm"]
 #
-#EXPOSE 9000
+EXPOSE 9000
 
 # Install system dependencies
 #RUN apt-get update && apt-get install -y \
@@ -85,6 +88,6 @@ RUN addgroup -S -g "$PGID" sebi0815 && adduser -S -u "$PUID" $user -G sebi0815
 #    chown -R $user:$user /home/$user
 
 # Set working directory
-WORKDIR /var/www
-
-USER $user
+#WORKDIR /var/www
+#
+#USER $user

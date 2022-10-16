@@ -3,20 +3,16 @@ version: '3.7'
 services:
     app:
         build:
-            args:
-                user: sebi0815
-                uid: 1000
             context: ./
-            dockerfile: Dockerfile
-        image: skitmanager-l
-        container_name: skitmanager-app
+        environment:
+            - PUID=${DOCKER_PUID}
+            - PGID=${DOCKER_PGID}
         restart: unless-stopped
-        working_dir: /var/www/
         volumes:
             - ./:/var/www
         networks:
             - code-network
-    ## PHP-FPM ##############################################
+            ## PHP-FPM ##############################################
     #  laravel:
     #    build:
     #      context: ./
@@ -54,7 +50,7 @@ services:
             - ./docker/nginx/prod:/etc/nginx/conf.d/
             - ./certbot/www:/var/www/certbot/:ro
             - ./certbot/conf/:/etc/nginx/ssl/:ro
-#    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+        #    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
         networks:
             - code-network
 

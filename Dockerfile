@@ -55,9 +55,9 @@ USER user
 #
 WORKDIR /var/www
 #
-CMD ["php-fpm"]
-#
-EXPOSE 9000
+#CMD ["php-fpm"]
+##
+#EXPOSE 9000
 
 # Install system dependencies
 #RUN apt-get update && apt-get install -y \

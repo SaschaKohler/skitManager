@@ -62,7 +62,7 @@ class MyProfile extends Page
         return [
             Forms\Components\Card::make()
                 ->schema([
-                    Forms\Components\FieldSet::make(__('filament-breezy::default.profile.account_info.heading'))
+                    Forms\Components\Fieldset::make(__('filament-breezy::default.profile.account_info.heading'))
                         ->schema([
                             Forms\Components\TextInput::make("name1")
                                 ->label(__('filament-breezy::default.fields.name'))

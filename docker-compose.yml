@@ -12,6 +12,8 @@ services:
             - ./:/var/www
         networks:
             - code-network
+        depends_on:
+            - pgsql
             ## PHP-FPM ##############################################
     #  laravel:
     #    build:

@@ -5,7 +5,6 @@ ENV PUID ${PUID}
 ARG PGID=1000
 ENV PGID ${PGID}
 
-
 # persistent / runtime deps
 RUN apk add --no-cache \
 		acl \
@@ -33,9 +32,11 @@ RUN docker-php-ext-enable opcache
 #RUN pecl install xdebug
 #RUN docker-php-ext-enable xdebug
 
+
+
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-COPY docker/laravel/php.ini /usr/local/etc/php/php.ini
-#COPY docker/laravel/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+COPY docker/laravel/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY docker/laravel/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
@@ -49,11 +50,18 @@ RUN chmod +x /usr/local/bin/seed
 #
 RUN addgroup -S -g "$PGID" sebi0815 && adduser -S -u "$PUID" user -G sebi0815
 
-#
-USER user
-#
-#
 WORKDIR /var/www
+
+USER user
+# Expose port 9000 and start php-fpm server (for FastCGI Process Manager)
+
+EXPOSE 9000
+
+CMD ["php-fpm"]
+#
+#
+#
+#WORKDIR /var/www
 #
 #CMD ["php-fpm"]
 ##

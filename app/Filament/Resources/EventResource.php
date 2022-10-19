@@ -63,6 +63,7 @@ class EventResource extends Resource
                                     Forms\Components\FileUpload::make('images')
                                         ->multiple()
                                         ->disk('public')
+                                        ->visibility('private')
                                         ->enableOpen()
                                 ])->columns(1)
 

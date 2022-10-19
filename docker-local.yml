@@ -8,6 +8,8 @@ services:
       - PUID=${DOCKER_PUID}
       - PGID=${DOCKER_PGID}
     restart: unless-stopped
+    depends_on:
+      - pgsql
     volumes:
       - ./:/var/www
     networks:
@@ -46,6 +48,8 @@ services:
       - 80:80
     volumes:
       - ./:/var/www
+      - ./public:/var/www/public:ro
+      - ./storage/app:/var/www/storage/app:ro
       - ./docker/nginx/local:/etc/nginx/conf.d/
     #    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     networks:
@@ -69,6 +73,7 @@ services:
     image: "postgres" # use latest official postgres version
     ports:
       - 5432:5432
+    restart: always
     environment:
       POSTGRES_USER: "${DB_USERNAME}"
       POSTGRES_PASSWORD: "${DB_PASSWORD}"

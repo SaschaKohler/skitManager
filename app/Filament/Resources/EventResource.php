@@ -63,13 +63,9 @@ class EventResource extends Resource
                                     Forms\Components\FileUpload::make('images')
                                         ->multiple()
                                         ->disk('public')
-                                        ->visibility('private')
                                         ->enableOpen()
                                 ])->columns(1)
-
                     ])->columnSpan(['lg' => 2]),
-
-                //
 
                 Forms\Components\Fieldset::make('Client')->label('Client')
                     ->schema([
@@ -80,7 +76,6 @@ class EventResource extends Resource
                             ->searchable()
                             ->preload(),
                         Forms\Components\Card::make()->schema([
-
                             Forms\Components\Placeholder::make('Name')
                                 ->content(fn(Event $record): string => $record->client->name1),
                             Forms\Components\Placeholder::make('email')
@@ -93,18 +88,11 @@ class EventResource extends Resource
                                 ->content(fn(Event $record): string => $record->created_at->diffForHumans()),
                             Forms\Components\Placeholder::make('updated_at')
                                 ->content(fn(Event $record): string => $record->updated_at->diffForHumans()),
-
-
                         ])
                             ->hidden(fn(?Event $record) => $record === null)
                             ->columns(1)
-
                     ])->columns(1)->columnSpan(['lg' => 1]),
-
-
-
             ])->columns(3);
-
     }
 
     public static function table(Table $table): Table

@@ -25,6 +25,7 @@ class VehicleResource extends Resource
             ->schema([
                 Forms\Components\FileUpload::make('image')
                     ->avatar()
+                    ->disk('public')
                     ->columnSpan('full'),
                 Forms\Components\TextInput::make('owner')
                     ->required()

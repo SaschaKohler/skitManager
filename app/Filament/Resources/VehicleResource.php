@@ -65,7 +65,9 @@ class VehicleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image'),
+                Tables\Columns\ImageColumn::make('image')
+                ->disk('public')
+                ->rounded(),
                 Tables\Columns\TextColumn::make('branding'),
                 Tables\Columns\TextColumn::make('permit')
                     ->date(),

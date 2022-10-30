@@ -19,8 +19,11 @@ class CalendarFactory extends Factory
         return [
             //
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
             'type' => $this->faker->text(10) . '_' . $this->faker->randomDigitNotZero(),
+=======
+>>>>>>> fb1882d (refactoring)
             'description' => $this->faker->text(20),
             'color' => $this->faker->hexColor()
 >>>>>>> 5849466 (updated a lot)

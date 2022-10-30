@@ -76,6 +76,33 @@ class DatabaseSeeder extends Seeder
 ////            ->has(Info::factory())
 //            ->create();
 
+        Calendar::factory()->create([
+            'type' => 'Zaunmontage'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'Gartenpflege'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'Baumpflege'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'Rasen anlegen'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'Transport'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'Winterdienst'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'Böschungsmähen'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'keine Kategorie'
+        ]);
+
+
+
 
         User::factory()->create([
             'phone1' => '0650 903 3 72',
@@ -85,7 +112,24 @@ class DatabaseSeeder extends Seeder
             'role_id' => 1,
             'password' => Hash::make('password')
         ]);
-        Calendar::factory(15)->create();
+
+        User::factory()->create([
+            'phone1' => '0664 2819670',
+            'name1' => 'Karl Dirneder',
+            'email' => 'dirneder@skit.at',
+            'role_id' => 1,
+            'password' => Hash::make('password')
+        ]);
+
+        User::factory()->create([
+            'phone1' => '0664 2819670',
+            'name1' => 'Renate Bauernfeind',
+            'email' => 'bauernfeind@skit.at',
+            'role_id' => 1,
+            'password' => Hash::make('password')
+        ]);
+
+        //     Calendar::factory(15)->create();
 
 //        $calendars = Calendar::all();
 //        $clients = User::query()->where('role_id', '=', 3)->get();

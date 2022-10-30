@@ -99,26 +99,37 @@ class ListUsers extends ListRecords
 
                         $j++;
                         try {
-                            DB::beginTransaction();
-                            User::create([
-                                'uuid' => $uuid,
-                                'street' => $street,
-                                'zip' => $zip,
-                                'city' => $city,
-                                'phone1' => $phone1,
-                                'phone2' => $phone2,
-                                'phone3' => $phone3,
-                                'title1' => $title1,
-                                'email' => $email,
-                                'email1' => $email1,
-                                'role_id' => $role_id,
-                                'uident' => $uident,
-                                'manager' => $manager,
-                                'title2' => $title2,
-                                'name1' => $name1,
-                                'name2' => $name2
-                            ]);
-                            DB::commit();
+                            $user_exist = User::query()
+                                ->where('uuid','=', $uuid)
+                                ->count();
+                            if(!$user_exist)
+                            {
+                                DB::beginTransaction();
+                                User::create([
+                                    'uuid' => $uuid,
+                                    'street' => $street,
+                                    'zip' => $zip,
+                                    'city' => $city,
+                                    'phone1' => $phone1,
+                                    'phone2' => $phone2,
+                                    'phone3' => $phone3,
+                                    'title1' => $title1,
+                                    'email' => $email,
+                                    'email1' => $email1,
+                                    'role_id' => $role_id,
+                                    'uident' => $uident,
+                                    'manager' => $manager,
+                                    'title2' => $title2,
+                                    'name1' => $name1,
+                                    'name2' => $name2,
+                                    'color' => 'rgb(' . random_int(0,255) . ','
+                                        . random_int(0,255) . ','
+                                        . random_int(0,255) . ')'
+
+                                ]);
+                                DB::commit();
+                            }
+
                         } catch (\Exception $e) {
                             DB::rollBack();
                         }

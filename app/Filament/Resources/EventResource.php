@@ -31,10 +31,10 @@ class EventResource extends Resource
                     ->label(__('filament::resources/event-resource.event_data'))
                     ->schema([
                         Forms\Components\TextInput::make('title')
-                            ->label(__('filament::resources/event-resource.title'))
+                            ->label(__('filament::resources/event-resource.table.title'))
                             ->required(),
                         Forms\Components\Select::make('calendar_id')
-                            ->label(__('filament::resources/event-resource.calendar_type'))
+                            ->label(__('filament::resources/event-resource.table.calendar_type'))
                             ->options(function () {
                                 $calendars = Calendar::all();
                                 return $calendars->mapWithKeys(function ($calendars) {
@@ -59,7 +59,7 @@ class EventResource extends Resource
 
 
                         Forms\Components\DateTimePicker::make('start')
-                            ->label(__('filament::resources/event-resource.start'))
+                            ->label(__('filament::resources/event-resource.table.start'))
                             ->firstDayOfWeek(1)
                             ->withoutSeconds()
                             ->required(),
@@ -100,7 +100,7 @@ class EventResource extends Resource
                     ->label(__('filament::resources/event-resource.client_detail'))
                     ->schema([
                         Forms\Components\Select::make('user_id')
-                            ->label(__('filament::resources/event-resource.client'))
+                            ->label(__('filament::resources/event-resource.table.client'))
                             ->relationship('client', 'name1',
                                 fn(Builder $query) => $query->where('role_id', '=', 3))
                             ->required()
@@ -132,28 +132,43 @@ class EventResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('filament::resources/event-resource.table.title'))
+
                     ->sortable()
                     ->searchable(isIndividual: true, isGlobal: false),
                 Tables\Columns\TextColumn::make('client.name1')
+                    ->label(__('filament::resources/event-resource.table.client'))
+
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->url(fn(Event $record) => UserResource::getUrl('edit', ['record' => $record->client])),
                 Tables\Columns\TextColumn::make('employees.name1')
+                    ->label(__('filament::resources/event-resource.table.employees'))
+
                     ->toggleable()
                     ->wrap(),
                 Tables\Columns\TextColumn::make('vehicles.branding')
+                    ->label(__('filament::resources/event-resource.table.vehicles'))
+
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('start')
+                    ->label(__('filament::resources/event-resource.table.start'))
+
                     ->date('d.M.y'),
-                Tables\Columns\TextColumn::make('calendar.type'),
+                Tables\Columns\TextColumn::make('calendar.type')
+                    ->label(__('filament::resources/event-resource.table.calendar_type'))
+
 
             ])
             ->filters([
                 //
                 Tables\Filters\Filter::make('start')
                     ->form([
-                        Forms\Components\DatePicker::make('start_at'),
+                        Forms\Components\DatePicker::make('start_at')
+                            ->label(__('filament::resources/event-resource.table.filters.start_at')),
                         Forms\Components\DatePicker::make('end_at')
+                            ->label(__('filament::resources/event-resource.table.filters.end_at'))
+
                     ])
                     ->query(function ($query, array $data) {
                         return $query->when($data['start_at'],
@@ -164,6 +179,8 @@ class EventResource extends Resource
                 Tables\Filters\Filter::make('calendar_id')
                     ->form([
                         Forms\Components\Select::make('calendar_id')
+                            ->label(__('filament::resources/event-resource.table.calendar_type'))
+
                             ->options(fn() => Calendar::pluck('type', 'id'))
 
                     ])
@@ -205,13 +222,13 @@ class EventResource extends Resource
         ];
     }
 
-//    public
-//    static function getWidgets(): array
-//    {
-//        return [
-//    //        EventResource\Widgets\CalendarWidget::class,
-//        ];
-//    }
+    public
+    static function getWidgets(): array
+    {
+        return [
+    //        EventResource\Widgets\CalendarWidget::class,
+        ];
+    }
 
     protected
     static function getNavigationBadge(): ?string

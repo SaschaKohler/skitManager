@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class EventResource extends Resource
@@ -27,28 +28,50 @@ class EventResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Fieldset::make('EventData')
-                    ->label(__('filament::resources/user-resource.event_data'))
+                    ->label(__('filament::resources/event-resource.event_data'))
                     ->schema([
                         Forms\Components\TextInput::make('title')
-                            ->label(__('filament::resources/user-resource.title'))
+                            ->label(__('filament::resources/event-resource.title'))
                             ->required(),
                         Forms\Components\Select::make('calendar_id')
-                            ->label(__('filament::resources/user-resource.calendar_type'))
-                            ->relationship('calendar', 'type'),
+                            ->label(__('filament::resources/event-resource.calendar_type'))
+                            ->options(function () {
+                                $calendars = Calendar::all();
+                                return $calendars->mapWithKeys(function ($calendars) {
+                                    return [$calendars->getKey() => static::getCleanOptionString($calendars)];
+                                })->toArray();
+                            })
+                            ->required()
+                            ->allowHtml()
+                            ->searchable()
+                            ->getSearchResultsUsing(function (string $query) {
+                                $calendar = Calendar::where('type', 'like', "%{$query}%")
+                                    ->limit(50)
+                                    ->get();
+                                return $calendar->mapWithKeys(function ($calendar) {
+                                    return [$calendar->getKey() => static::getCleanOptionString($calendar)];
+                                })->toArray();
+                            })
+                            ->getOptionLabelUsing(function ($value): string {
+                                $calendar = Calendar::find($value);
+                                return static::getCleanOptionString($calendar);
+                            }),
+
+
                         Forms\Components\DateTimePicker::make('start')
-                            ->label(__('filament::resources/user-resource.start'))
+                            ->label(__('filament::resources/event-resource.start'))
                             ->firstDayOfWeek(1)
                             ->withoutSeconds()
                             ->required(),
                         Forms\Components\DateTimePicker::make('end')
-                            ->label(__('filament::resources/user-resource.end'))
+                            ->label(__('filament::resources/event-resource.end'))
                             ->firstDayOfWeek(1)
                             ->withoutSeconds()
                             ->required(),
                         Forms\Components\Toggle::make('allDay')->label('allDay')
-                            ->label(__('filament::resources/user-resource.all_day')),
+                            ->label(__('filament::resources/event-resource.all_day')),
                         Forms\Components\Select::make('recurrence')
-                            ->label(__('filament::resources/user-resource.recurrence'))
+                            ->label(__('filament::resources/event-resource.recurrence'))
                             ->options([
                                 '10' => 'keine',
                                 '1' => 'täglich',
@@ -63,10 +86,10 @@ class EventResource extends Resource
                             ->required(),
 
                         Forms\Components\Card::make()
-                            ->label(__('filament::resources/user-resource.attachments'))
+                            ->label(__('filament::resources/event-resource.attachments'))
                             ->schema([
                                 Forms\Components\FileUpload::make('images')
-                                    ->label(__('filament::resources/user-resource.images'))
+                                    ->label(__('filament::resources/event-resource.images'))
                                     ->multiple()
                                     ->disk('public')
                                     ->enableOpen()
@@ -74,10 +97,10 @@ class EventResource extends Resource
                     ])->columnSpan(['lg' => 2]),
 
                 Forms\Components\Fieldset::make('Client')
-                    ->label(__('filament::resources/user-resource.client_detail'))
+                    ->label(__('filament::resources/event-resource.client_detail'))
                     ->schema([
                         Forms\Components\Select::make('user_id')
-                            ->label(__('filament::resources/user-resource.client'))
+                            ->label(__('filament::resources/event-resource.client'))
                             ->relationship('client', 'name1',
                                 fn(Builder $query) => $query->where('role_id', '=', 3))
                             ->required()
@@ -220,4 +243,15 @@ class EventResource extends Resource
         })->withoutGlobalScope(SoftDeletingScope::class);
     }
 
+    public
+    static function getCleanOptionString(Model $model): string
+    {
+        return //Purify::clean(
+            view('filament.components.select-calendar-result')
+                ->with('type', $model?->type)
+                ->with('description', $model?->description)
+                ->with('color', $model?->color)
+                ->render();
+
+    }
 }

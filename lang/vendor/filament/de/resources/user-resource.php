@@ -1,17 +1,17 @@
 <?php
 
-
 return [
 
-    "event_data" => "Baustellen-Details",
-    "title" => "Baustelle",
-    "calendar_type" => "Kategorie",
-    "start" => "Beginn",
-    "end" => "Ende",
-    "all_day" => "ganztägig",
-    "recurrence" => "Wiederholung",
-    "attachments" => "Anhang",
-    "images" => "Bilder",
-    "client_detail" => "Kunden-Details",
-    "client" => "Kunde"
+    "required" => "Pflichtfelder",
+    "name1" => "Name (Person / Firma etc.)",
+    "phone1" => 'Mobil / Festnetz',
+    "extended" => "Erweitert",
+    'bank_account' => 'Bankverbindung',
+    'title2' => 'Anrede',
+    "manager" => "Ansprechpartner",
+    'manager_name' => 'Name',
+    'table' => [
+        'events' => "Baustelle"
+    ]
+
 ];

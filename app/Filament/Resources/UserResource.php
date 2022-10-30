@@ -35,46 +35,62 @@ class UserResource extends Resource
         return $form
             ->schema([
 
-                Forms\Components\Tabs::make('Required Fields')->label('required')
+                Forms\Components\Tabs::make('required')
                     ->tabs([
                         Forms\Components\Tabs\Tab::make('required')
+                            ->label(__('filament::resources/user-resource.required'))
                             ->schema([
                                 Forms\Components\TextInput::make('name1')
+                                    ->label(__('filament::resources/user-resource.name1'))
                                     ->required()
                                     ->lazy(),
 //                                    ->afterStateUpdated(fn(string $context, $state, callable $set) => $set('search', Str::upper($state)) ),
-                                    //->afterStateUpdated(fn(string $context, $state, callable $set) => $context === 'create' ? $set('search', Str::upper($state)) : null),
+                                //->afterStateUpdated(fn(string $context, $state, callable $set) => $context === 'create' ? $set('search', Str::upper($state)) : null),
 
                                 Forms\Components\TextInput::make('email')
                                     ->email()
                                     ->unique(User::class, 'email', ignoreRecord: true)
                                     ->required(),
                                 Forms\Components\TextInput::make('phone1')
+                                    ->label(__('filament::resources/user-resource.phone1'))
                                     ->required(),
-                                Forms\Components\TextInput::make('password')
-                                    ->password()
-                                    ->minLength(8)
-                                    ->dehydrateStateUsing(static fn(null|string $state): null|string => filled($state) ? Hash::make($state) : null)
-                                    ->required(static fn(Page $livewire): bool => $livewire instanceof CreateUser)
-                                    ->dehydrated(static fn(null|string $state): bool => filled($state))
-                                    ->label(static fn(Page $livewire): string => $livewire instanceof EditUser ? 'New Password' : 'Password')
+//                                Forms\Components\TextInput::make('password')
+//                                    ->password()
+//                                    ->minLength(8)
+//                                    ->dehydrateStateUsing(static fn(null|string $state): null|string => filled($state) ? Hash::make($state) : null)
+//                                    ->required(static fn(Page $livewire): bool => $livewire instanceof CreateUser)
+//                                    ->dehydrated(static fn(null|string $state): bool => filled($state))
+//                                    ->label(static fn(Page $livewire): string => $livewire instanceof EditUser ? 'New Password' : 'Password')
                             ]),
                         Forms\Components\Tabs\Tab::make('extended')
+                            ->label(__('filament::resources/user-resource.extended'))
                             ->schema([
-                                Forms\Components\TextInput::make('street'),
-                                Forms\Components\TextInput::make('city'),
+                                Forms\Components\TextInput::make('street')
+                                    ->label(__('filament::common.street')),
+
+                                Forms\Components\TextInput::make('zip')
+                                    ->label(__('filament::common.zip')),
+                                Forms\Components\TextInput::make('city')
+                                    ->label(__('filament::common.city')),
                                 Forms\Components\TextInput::make('phone2')
+                                    ->label(__('filament::common.phone2'))
                                     ->tel(),
-                                Forms\Components\TextInput::make('phone3'),
-                                Forms\Components\TextInput::make('phone4'),
-                                Forms\Components\TextInput::make('email1'),
-                                Forms\Components\DatePicker::make('dob'),
+                                Forms\Components\TextInput::make('phone3')
+                                    ->label(__('filament::common.phone3')),
+                                Forms\Components\TextInput::make('phone4')
+                                    ->label(__('filament::common.phone4')),
+                                Forms\Components\TextInput::make('email1')
+                                    ->label(__('filament::common.email1')),
+                                Forms\Components\DatePicker::make('dob')
+                                    ->label(__('filament::common.dob')),
                                 Forms\Components\ColorPicker::make('color')
-                                ->rgb(),
+                                    ->label(__('filament::common.color'))
+                                    ->rgb(),
 
 
                             ]),
                         Forms\Components\Tabs\Tab::make('bank account')
+                            ->label(__('filament::resources/user-resource.bank_account'))
                             ->schema([
                                 Forms\Components\TextInput::make('iban'),
                                 Forms\Components\TextInput::make('bic'),
@@ -83,32 +99,34 @@ class UserResource extends Resource
                             ]),
 
                         Forms\Components\Tabs\Tab::make('manager')
+                            ->label(__('filament::resources/user-resource.manager'))
                             ->schema([
                                 Forms\Components\Select::make('title2')
+                                    ->label(__('filament::resources/user-resource.title2'))
                                     ->options([
                                         'Herr' => 'Herr',
                                         'Frau' => 'Frau'
                                     ]),
                                 Forms\Components\TextInput::make('manager')
-                                    ->label('Account'),
-
+                                    ->label(__('filament::resources/user-resource.manager_name'))
                             ]),
                     ])->columnSpan(['lg' => 2]),
 
                 //
                 Forms\Components\Card::make()
                     ->schema([
-                     //   Forms\Components\TextInput::make('search')->columnSpan(['lg' => 1]),
+                        //   Forms\Components\TextInput::make('search')->columnSpan(['lg' => 1]),
                         Forms\Components\Select::make('role_id')
+                            ->label(__('filament::common.role_id'))
                             ->options([
-                                '1' => 'admin',
-                                '2' => 'Employee',
-                                '3' => 'Client',
-                                '4' => 'Supplier',
-                                '5' => 'Dealer',
-                                '6' => 'Guest',
+                                '1' => __('filament::common.role.admin'),
+                                '2' => __('filament::common.role.employee'),
+                                '3' => __('filament::common.role.client'),
+                                '4' => __('filament::common.role.supplier'),
+                                '5' => __('filament::common.role.dealer'),
+                                '6' => __('filament::common.role.guest'),
                             ])
-                        ->default(3)
+                            ->default(3)
                     ])->columnSpan(['lg' => 1]),
 
 
@@ -123,35 +141,42 @@ class UserResource extends Resource
                 //
                 Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('name1')
+                    ->label(__('filament::resources/user-resource.name1'))
                     ->searchable()
                     ->searchable(isIndividual: true, isGlobal: false),
 
                 Tables\Columns\TextColumn::make('email')
                     ->toggleable(),
                 Tables\Columns\BadgeColumn::make('role_id')
+                    ->label(__('filament::common.role_id'))
                     ->colors([
                         'primary',
                         'success' => '1',
                         'danger' => '2'
                     ])
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('events.id'),
+                Tables\Columns\TextColumn::make('events.title')
+                    ->label(__('filament::resources/user-resource.table.events')),
+
+
                 Tables\Columns\ColorColumn::make('color')
+                    ->label(__('filament::common.color')),
 
 
             ])
             ->filters([
                 //
-                Tables\Filters\Filter::make('role_id')->label('role')
+                Tables\Filters\Filter::make('role_id')
                     ->form([
                         Forms\Components\Select::make('role_id')
+                            ->label(__('filament::common.role_id'))
                             ->options([
-                                '1' => 'admin',
-                                '2' => 'Employee',
-                                '3' => 'Client',
-                                '4' => 'Supplier',
-                                '5' => 'Dealer',
-                                '6' => 'Guest',
+                                '1' => __('filament::common.role.admin'),
+                                '2' => __('filament::common.role.employee'),
+                                '3' => __('filament::common.role.client'),
+                                '4' => __('filament::common.role.supplier'),
+                                '5' => __('filament::common.role.dealer'),
+                                '6' => __('filament::common.role.guest'),
                             ])
                     ])->query(function ($query, array $data) {
                         return $query->when($data['role_id'],
@@ -185,7 +210,7 @@ class UserResource extends Resource
         }
 
         return parent::getEloquentQuery()
-            ->where('role_id','=',2)
+            ->where('role_id', '=', 2)
             ->withoutGlobalScope(SoftDeletingScope::class);
     }
 

@@ -36,7 +36,7 @@ RUN docker-php-ext-enable opcache
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY docker/laravel/php.ini /usr/local/etc/php/conf.d/php.ini
-COPY docker/laravel/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+#COPY docker/laravel/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
@@ -54,10 +54,10 @@ WORKDIR /var/www
 
 USER user
 # Expose port 9000 and start php-fpm server (for FastCGI Process Manager)
+CMD ["php-fpm"]
 
 EXPOSE 9000
 
-CMD ["php-fpm"]
 #
 #
 #

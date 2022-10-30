@@ -8,10 +8,12 @@ services:
       - PUID=${DOCKER_PUID}
       - PGID=${DOCKER_PGID}
     restart: unless-stopped
+    extra_hosts:
+          - "host.docker.internal:host-gateway"
     depends_on:
       - pgsql
     volumes:
-      - ./:/var/www
+      - ./:/var/www:cached
     networks:
       - code-network
   ## PHP-FPM ##############################################
@@ -47,8 +49,8 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./:/var/www
-      - ./public:/var/www/public:ro
+      - ./:/var/www:cached
+#      - ./public:/var/www/public:ro
       - ./storage/app:/var/www/storage/app:ro
       - ./docker/nginx/local:/etc/nginx/conf.d/
     #    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"

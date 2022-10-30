@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\EventResource\RelationManagers\AddressesRelationManager;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\Pages\EditUser;
@@ -10,6 +11,7 @@ use App\Models\User;
 use Filament\Forms;
 use Filament\Pages\Page;
 use Filament\Resources\Form;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -39,8 +41,8 @@ class UserResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('name1')
                                     ->required()
-                                    ->lazy()
-                                    ->afterStateUpdated(fn(string $context, $state, callable $set) => $set('search', Str::upper($state)) ),
+                                    ->lazy(),
+//                                    ->afterStateUpdated(fn(string $context, $state, callable $set) => $set('search', Str::upper($state)) ),
                                     //->afterStateUpdated(fn(string $context, $state, callable $set) => $context === 'create' ? $set('search', Str::upper($state)) : null),
 
                                 Forms\Components\TextInput::make('email')
@@ -67,6 +69,8 @@ class UserResource extends Resource
                                 Forms\Components\TextInput::make('phone4'),
                                 Forms\Components\TextInput::make('email1'),
                                 Forms\Components\DatePicker::make('dob'),
+                                Forms\Components\ColorPicker::make('color')
+                                ->rgb(),
 
 
                             ]),
@@ -94,7 +98,7 @@ class UserResource extends Resource
                 //
                 Forms\Components\Card::make()
                     ->schema([
-                        Forms\Components\TextInput::make('search')->columnSpan(['lg' => 1]),
+                     //   Forms\Components\TextInput::make('search')->columnSpan(['lg' => 1]),
                         Forms\Components\Select::make('role_id')
                             ->options([
                                 '1' => 'admin',
@@ -117,9 +121,7 @@ class UserResource extends Resource
         return $table
             ->columns([
                 //
-                Tables\Columns\TextColumn::make('search')
-                    ->searchable()
-                    ->searchable(isIndividual: true, isGlobal: false),
+                Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('name1')
                     ->searchable()
                     ->searchable(isIndividual: true, isGlobal: false),
@@ -132,7 +134,9 @@ class UserResource extends Resource
                         'success' => '1',
                         'danger' => '2'
                     ])
-                    ->toggleable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('events.id'),
+                Tables\Columns\ColorColumn::make('color')
 
 
             ])
@@ -156,6 +160,7 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
             ])
             ->bulkActions([
                 //     Tables\Actions\DeleteBulkAction::make(),
@@ -166,6 +171,7 @@ class UserResource extends Resource
     {
         return [
             //
+            RelationManagers\AddressesRelationManager::class
         ];
     }
 

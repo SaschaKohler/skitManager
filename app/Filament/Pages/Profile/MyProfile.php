@@ -62,6 +62,13 @@ class MyProfile extends Page
         return [
             Forms\Components\Card::make()
                 ->schema([
+                    Forms\Components\Grid::make()
+                        ->schema([
+                            Forms\Components\FileUpload::make('avatar')
+                                ->disk('public')
+                                ->visibility('public')
+                                ->avatar()
+                        ])->columnSpan(4),
                     Forms\Components\Fieldset::make(__('filament-breezy::default.profile.account_info.heading'))
                         ->schema([
                             Forms\Components\TextInput::make("name1")
@@ -88,7 +95,10 @@ class MyProfile extends Page
                                 ->label(__('filament-breezy::default.profile.personal_info.phone')),
 
                             Forms\Components\DatePicker::make("dob")
-                                ->label(__('filament-breezy::default.profile.personal_info.dob'))
+                                ->label(__('filament-breezy::default.profile.personal_info.dob')),
+                            Forms\Components\ColorPicker::make("color")
+                                ->label(__('filament-breezy::default.profile.personal_info.color')),
+
                         ])->columns(4)
                 ])->columns(4)
         ];

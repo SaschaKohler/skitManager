@@ -2,18 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Filament\Resources\EventResource;
 use App\Models\Calendar;
 use App\Models\Event;
-use App\Models\Info;
 use App\Models\Todo;
 use App\Models\User;
 use App\Models\Vehicle;
-use Database\Factories\InfoFactory;
-use Database\Factories\VehicleFactory;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -33,46 +27,75 @@ class DatabaseSeeder extends Seeder
 //       \App\Models\Info::factory(10)->create();
 
 
-        \App\Models\User::factory(120)
-//            ->has(Info::factory())
-            ->create();
+//        \App\Models\User::factory(5)
+////            ->has(Info::factory())
+//            ->create();
 
 
         User::factory()->create([
-            'search' => 'DEMO USER',
-            'phone1' => '12-345-67',
-            'name1' => 'Demo User',
-            'email' => 'admin@filamentphp.com',
+            'phone1' => '0650 903 3 72',
+            'name1' => 'Sascha Kohler',
+            'email' => 'admin@skit.at',
+            'color' => 'rgb(54, 162, 235)',
             'role_id' => 1,
             'password' => Hash::make('password')
         ]);
         Calendar::factory(15)->create();
 
-        $calendars = Calendar::all();
-        $clients = User::query()->where('role_id','=',3)->get();
-        $employees = User::query()->where('role_id','=',2)->get();
+//        $calendars = Calendar::all();
+//        $clients = User::query()->where('role_id', '=', 3)->get();
+//        $employees = User::query()->where('role_id', '=', 2)->get();
 
 
-      //  \App\Models\Event::factory(10)->create();
-        $events = \App\Models\Event::factory(15)->create()->each(function (Event $event) use ($clients,$employees,$calendars) {
-            $event->client()->associate($clients->random());
-            $event->calendar()->associate($calendars->random());
-            $event->backgroundColor = $event->calendar->color;
-            $event->borderColor = $event->calendar->color;
-            $event->recurrence = 10;
-            $event->save();
-            $event->employees()->sync($employees->random());
-    });
+//        $events = Event::factory()->count(20)
+//            ->sequence(fn($sequence) => [
+//                'user_id' => $clients->random(1)->first()->id,
+//                'calendar_id' => $calendars->random(1)->first()->id
+//                ])
+//            ->employees()->sync($employees->random(rand(1,4)))
+//            ->hasAttached($employees->random(3),
+//
+//                [
+//                    'start_at' => Carbon::parse('07:00')->format('H:i'),
+//                    'end_at' => Carbon::createFromFormat('H:i', '07:00')
+//                        ->addMinutes(720)
+//                        ->toDate()
+//                        ->format('H:i'),
+//                    'sum' => Carbon::parse()
+//                ],'employees')
+//
+//                $employees->random(rand(1,3)),
+//                [
+//                    'start_at' => Carbon::parse('07:00')->format('H:i'),
+//                    'end_at' => Carbon::createFromFormat('H:i', '07:00')
+//                        ->addMinutes(rand(180, 690))
+//                        ->toDate()
+//                        ->format('H:i')
+//                ],'employees'
+//            )
+//            ->create();
+        //  \App\Models\Event::factory(10)->create();
+//        $events = Event::factory(15)->create()->each(function (Event $event) use ($clients, $employees, $calendars) {
+//            $event->client()->associate($clients->random());
+//            $event->calendar()->associate($calendars->random());
+//            $event->backgroundColor = $event->calendar->color;
+//            $event->borderColor = $event->calendar->color;
+//            $event->recurrence = 10;
+//            $event->save();
+//            $event->employees()->sync($employees->random(rand(2,4))
+//
+//            );
+//    });
 
-        Vehicle::factory(16)->create()->each(function (Vehicle $vehicle) use ($events){
-            $vehicle->events()->sync($events->random(random_int(1,2)));
-        });
+        Vehicle::factory(16)->create();//->each(function (Vehicle $vehicle) use ($events) {
+     //       $vehicle->events()->sync($events->random(random_int(1, 2)));
+       // });
 
-        Todo::factory(20)->make()->each(function (Todo $todo) use ($employees) {
-            $todo->assignee()->associate($employees->random());
-
-            $todo->save();
-        });
+//        Todo::factory(20)->make()->each(function (Todo $todo) use ($employees) {
+//            $todo->assignee()->associate($employees->random());
+//
+//            $todo->save();
+//        });
 
 
     }

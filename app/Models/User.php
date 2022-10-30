@@ -6,6 +6,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -30,6 +31,8 @@ class User extends Authenticatable implements FilamentUser, HasName
     protected $guarded = [
         'id'
     ];
+
+
 
 
     /**
@@ -83,6 +86,10 @@ class User extends Authenticatable implements FilamentUser, HasName
             ->withPivot(['id','start_at','end_at','sum']);
     }
 
+    public function addresses() : MorphToMany
+    {
+        return $this->morphToMany(Address::class,'addressable');
+    }
 
     public function canAccessFilament(): bool
     {

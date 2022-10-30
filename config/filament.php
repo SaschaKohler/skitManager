@@ -141,8 +141,9 @@ return [
         'namespace' => 'App\\Filament\\Widgets',
         'path' => app_path('Filament/Widgets'),
         'register' => [
+            \App\Filament\Resources\EventResource\Widgets\CalendarWidget::class,
             Widgets\AccountWidget::class,
-            Widgets\FilamentInfoWidget::class,
+         //   Widgets\FilamentInfoWidget::class,
         ],
     ],
 

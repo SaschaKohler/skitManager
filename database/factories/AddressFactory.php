@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Calendar>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\address>
  */
-class CalendarFactory extends Factory
+class AddressFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,8 +18,6 @@ class CalendarFactory extends Factory
     {
         return [
             //
-            'description' => $this->faker->text(20),
-            'color' => $this->faker->hexColor()
         ];
     }
 }

@@ -3,19 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EventResource\Pages;
-use App\Filament\Resources\EventResource\Pages\CreateEvent;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Models\Calendar;
 use App\Models\Event;
-use App\Models\User;
 use Filament\Forms;
 use Filament\Resources\Form;
-use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class EventResource extends Resource
@@ -30,21 +26,29 @@ class EventResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Fieldset::make('EventData')->label(__('event_data'))
+                Forms\Components\Fieldset::make('EventData')
+                    ->label(__('filament::resources/user-resource.event_data'))
                     ->schema([
-                        Forms\Components\TextInput::make('title')->required(),
+                        Forms\Components\TextInput::make('title')
+                            ->label(__('filament::resources/user-resource.title'))
+                            ->required(),
                         Forms\Components\Select::make('calendar_id')
+                            ->label(__('filament::resources/user-resource.calendar_type'))
                             ->relationship('calendar', 'type'),
                         Forms\Components\DateTimePicker::make('start')
+                            ->label(__('filament::resources/user-resource.start'))
                             ->firstDayOfWeek(1)
                             ->withoutSeconds()
                             ->required(),
                         Forms\Components\DateTimePicker::make('end')
+                            ->label(__('filament::resources/user-resource.end'))
                             ->firstDayOfWeek(1)
                             ->withoutSeconds()
                             ->required(),
-                        Forms\Components\Toggle::make('allDay')->label('allDay'),
+                        Forms\Components\Toggle::make('allDay')->label('allDay')
+                            ->label(__('filament::resources/user-resource.all_day')),
                         Forms\Components\Select::make('recurrence')
+                            ->label(__('filament::resources/user-resource.recurrence'))
                             ->options([
                                 '10' => 'keine',
                                 '1' => 'täglich',
@@ -58,19 +62,23 @@ class EventResource extends Resource
                             ])
                             ->required(),
 
-                            Forms\Components\Card::make()->label('Attachment')
-                                ->schema([
-                                    Forms\Components\FileUpload::make('images')
-                                        ->multiple()
-                                        ->disk('public')
-                                        ->enableOpen()
-                                ])->columns(1)
+                        Forms\Components\Card::make()
+                            ->label(__('filament::resources/user-resource.attachments'))
+                            ->schema([
+                                Forms\Components\FileUpload::make('images')
+                                    ->label(__('filament::resources/user-resource.images'))
+                                    ->multiple()
+                                    ->disk('public')
+                                    ->enableOpen()
+                            ])->columns(1)
                     ])->columnSpan(['lg' => 2]),
 
-                Forms\Components\Fieldset::make('Client')->label('Client')
+                Forms\Components\Fieldset::make('Client')
+                    ->label(__('filament::resources/user-resource.client_detail'))
                     ->schema([
                         Forms\Components\Select::make('user_id')
-                            ->relationship('client', 'search',
+                            ->label(__('filament::resources/user-resource.client'))
+                            ->relationship('client', 'name1',
                                 fn(Builder $query) => $query->where('role_id', '=', 3))
                             ->required()
                             ->searchable()
@@ -133,13 +141,13 @@ class EventResource extends Resource
                 Tables\Filters\Filter::make('calendar_id')
                     ->form([
                         Forms\Components\Select::make('calendar_id')
-                        ->options(fn() => Calendar::pluck('type','id'))
+                            ->options(fn() => Calendar::pluck('type', 'id'))
 
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when($data['calendar_id'],
-                                fn(Builder $query, $status): Builder => $query->where('calendar_id',$data['calendar_id']));
+                                fn(Builder $query, $status): Builder => $query->where('calendar_id', $data['calendar_id']));
                     }),
 
                 Tables\Filters\TrashedFilter::make(),
@@ -159,8 +167,8 @@ class EventResource extends Resource
     {
         return [
             RelationManagers\EmployeesRelationManager::class,
-            RelationManagers\VehiclesRelationManager::class
-            //      RelationManagers\ClientRelationManager::class
+            RelationManagers\VehiclesRelationManager::class,
+            RelationManagers\AddressesRelationManager::class
         ];
     }
 

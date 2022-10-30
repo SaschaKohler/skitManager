@@ -20,8 +20,8 @@ class UserFactory extends Factory
     {
         $name = $this->faker->firstName() . ' ' . $this->faker->lastName();
         return [
-            'search' => Str::upper($name),
             'name1' => $name,
+            'color' => 'rgb('.$this->faker->rgbColor().')',
             'email' => Str::lower(Str::remove(' ', $name)) . '' . $this->faker->randomDigit(). '@'. $this->faker->domainName(),
             'phone1' => $this->faker->phoneNumber(),
             'role_id' => $this->faker->randomElement([1,2,3]),

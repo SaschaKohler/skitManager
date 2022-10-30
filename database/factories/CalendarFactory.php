@@ -18,6 +18,12 @@ class CalendarFactory extends Factory
     {
         return [
             //
+<<<<<<< HEAD
+=======
+            'type' => $this->faker->text(10) . '_' . $this->faker->randomDigitNotZero(),
+            'description' => $this->faker->text(20),
+            'color' => $this->faker->hexColor()
+>>>>>>> 5849466 (updated a lot)
         ];
     }
 }

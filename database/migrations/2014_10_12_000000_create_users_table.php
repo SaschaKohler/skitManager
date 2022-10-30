@@ -15,38 +15,15 @@ return new class extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-//            $table->string('fullName')->nullable()->default('Max Mustermann');
-//            $table->string('username')->unique();
-//            $table->string('password')->nullable();
-//            $table->string('email')->unique();
-//            $table->timestamp('email_verified_at')->nullable();
-//            $table->text('role')->default('guest');
-//            $table->text('status')->default('pending');
-
-//            $table->json('ability')->nullable()->default(
-//                json_encode([
-//                        [ 'action' => 'read' , 'subject' => 'Auth'  ],
-//                        [ 'action' => 'read' , 'subject' => 'ACL'  ],
-//                    ]
-//                ));
-//            $table->json('permissionsData')->nullable()->default(
-//                json_encode([
-//                        [ 'module' => 'Admin'  , 'read' => 'true' , 'write' => 'false' , 'create' => 'false' ,'delete' => 'true' ],
-//                        [ 'module' => 'Client'  , 'read' => 'true' , 'write' => 'false' , 'create' => 'false' ,'delete' => 'true' ],
-//                        [ 'module' => 'Worker'  , 'read' => 'true' , 'write' => 'false' , 'create' => 'false' ,'delete' => 'true' ],
-//                    ]
-//                ));
-//
-//            $table->json('extras')->nullable();
-
-
-            $table->text('search')->nullable();
+            $table->string('uuid')->nullable();
+            $table->string('avatar')->nullable();
+            $table->text('color')->nullable()->default('rgb(255, 159, 64)');
             $table->text('title1')->nullable();
             $table->text('name1')->nullable();
             $table->text('name2')->nullable();
             $table->text('street')->nullable();
             $table->tinyText('country')->nullable();
-            $table->text('plz')->nullable();
+            $table->text('zip')->nullable();
             $table->tinyText('city')->nullable();
             $table->text('phone1')->nullable();
             $table->text('fax1')->nullable();
@@ -65,6 +42,7 @@ return new class extends Migration {
             $table->text('www')->nullable();
             $table->string('dob')->nullable();
             $table->text('datev')->nullable();
+            $table->text('uident')->nullable();
             $table->text('email')->nullable();
             $table->text('password')->nullable();
             $table->text('iban')->nullable();
@@ -73,7 +51,7 @@ return new class extends Migration {
             $table->text('phone3')->nullable();
             $table->text('phone4')->nullable();
             $table->text('fax2')->nullable();
-            $table->index(['search','name1']);
+            $table->index(['name1']);
             $table->rememberToken()->nullable();
             $table->softDeletes();
             $table->timestamps();

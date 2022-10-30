@@ -73,12 +73,16 @@ class EmployeesRelationManager extends RelationManager
                     ->recordSelect(function (Select $select, EmployeesRelationManager $livewire) {
                         $event = $livewire->getRelationship()->getParent();
                         $excluded = [... $event->employees->pluck('name1')];
-                        $select->options(User::whereNotIn('name1', $excluded)->pluck('name1', 'id'));
+                        $select->options(User::query()
+                            ->whereNotIn('name1', $excluded)
+                            ->where('role_id', '=', 2)
+                            ->pluck('name1', 'id'));
                         return
                             $select->getSearchResultsUsing(function ($search) use ($excluded) {
                                 return
                                     User::query()
                                         ->whereNotIn('name1', $excluded)
+                                        ->where('role_id', '=', 2)
                                         ->where('name1', 'like', "%{$search}%")
                                         ->pluck('name1', 'id');
                             });

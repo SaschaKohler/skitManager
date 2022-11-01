@@ -18,7 +18,7 @@ class EventsChart extends BarChartWidget
 
 
 
-    public ?string $filter = '1585';
+    public ?string $filter = '';
 
 
     protected function getFilters(): ?array

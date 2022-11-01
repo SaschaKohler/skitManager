@@ -15,9 +15,9 @@ class StatsOverview extends BaseWidget
     {
         return [
             //
-            Card::make('Clients in Database', User::where('role_id' , 3)->count()),
-            Card::make('Employees in Database', User::where('role_id' , 2)->count()),
-            Card::make('Projects this month', Event::where('start' , '>=', now()->subDays(30))->count()),
+            Card::make(__('filament::common.clients'), User::where('role_id' , 3)->count()),
+            Card::make(__('filament::common.employees'), User::where('role_id' , 2)->count()),
+            Card::make(__('filament::common.projects'), Event::where('start' , '>=', now()->subDays(30))->count()),
 
 
         ];

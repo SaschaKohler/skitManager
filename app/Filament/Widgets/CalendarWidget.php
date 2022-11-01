@@ -26,14 +26,6 @@ class CalendarWidget extends FullCalendarWidget
 
     protected string $modalWidth = 'lg';
 
-//    public function getViewData(): array
-//    {
-//  //      return Event::all()->toArray();
-//        dd();
-//        return [];
-////
-//    }
-
     public function fetchEvents(array $fetchInfo): array
     {
         $user = auth()->user();

@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Calendar;
 use App\Models\User;
+use App\Models\Vehicle;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class CalendarPolicy
+class VehiclesPolicy
 {
     use HandlesAuthorization;
 
@@ -18,7 +18,8 @@ class CalendarPolicy
      */
     public function viewAny(User $user)
     {
-        return ($user->role_id == 1 || $user->role_id == 2) ;
+        //
+        return ($user->role_id == 1) ;
 
     }
 
@@ -26,13 +27,13 @@ class CalendarPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $model
+     * @param  \App\Models\Vehicle  $vehicle
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Calendar $calendar)
+    public function view(User $user, Vehicle $vehicle)
     {
         //
-        return ($user->role_id == 1 || $user->role_id == 2) ;
+        return ($user->role_id == 1) ;
 
     }
 
@@ -45,7 +46,7 @@ class CalendarPolicy
     public function create(User $user)
     {
         //
-        return ($user->role_id == 1 || $user->role_id == 2) ;
+        return ($user->role_id == 1) ;
 
     }
 
@@ -53,13 +54,13 @@ class CalendarPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Calendar  $calendar
+     * @param  \App\Models\Vehicle  $vehicle
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Calendar $calendar)
+    public function update(User $user, Vehicle $vehicle)
     {
         //
-        return ($user->role_id == 1 || $user->role_id == 2) ;
+        return ($user->role_id == 1) ;
 
     }
 
@@ -67,13 +68,13 @@ class CalendarPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $model
+     * @param  \App\Models\Vehicle  $vehicle
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Calendar $calendar)
+    public function delete(User $user, Vehicle $vehicle)
     {
         //
-        return ($user->role_id == 1);
+        return ($user->role_id == 1) ;
 
     }
 
@@ -81,13 +82,13 @@ class CalendarPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $model
+     * @param  \App\Models\Vehicle  $vehicle
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Calendar $calendar)
+    public function restore(User $user, Vehicle $vehicle)
     {
         //
-        return ($user->role_id == 1);
+        return ($user->role_id == 1) ;
 
     }
 
@@ -95,13 +96,13 @@ class CalendarPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $model
+     * @param  \App\Models\Vehicle  $vehicle
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Calendar $calendar)
+    public function forceDelete(User $user, Vehicle $vehicle)
     {
         //
-        return ($user->role_id == 1);
+        return ($user->role_id == 1) ;
 
     }
 }

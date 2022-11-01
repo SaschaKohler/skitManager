@@ -10,7 +10,17 @@ return [
     'phone4' => 'Telefon / Fax / Mobil (4)',
     'email1' => 'weitere Email',
     'dob' => 'Geburtstag',
+    'created_at' => 'Erstellt',
+    'updated_at' => 'zuletzt bearbeitet',
     'role_id' => 'Kategorie',
+
+    'dashboard' => [
+      'yesterday' => 'Gestern',
+      'week' => 'letzte Woche',
+      'month' => 'letzter Monat',
+      'year' => 'Jahr',
+    ],
+
     'role' => [
         'admin' => 'Admin',
         'employee' => 'Mitarbeiter',

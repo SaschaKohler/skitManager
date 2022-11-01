@@ -10,15 +10,6 @@ class ListEvents extends ListRecords
 {
     protected static string $resource = EventResource::class;
 
-
-
-
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            EventResource\Widgets\CalendarWidget::class,
-        ];
-    }
     protected function getActions(): array
     {
         return [

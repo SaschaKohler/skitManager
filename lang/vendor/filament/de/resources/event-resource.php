@@ -12,8 +12,14 @@ return [
     "recurrence" => "Wiederholung",
     "attachments" => "Anhang",
     "images" => "Bilder",
-    "client_detail" => "Kunden-Details",
     "client" => "Kunde",
+    "client_detail" => [
+        'header' => "Kunden-Details",
+        'name' => 'Name',
+        'phone1' => 'Telefon',
+        'email' => 'Mail',
+        'address' => 'Addresse'
+    ],
 
     'table' => [
         "title" => "Baustelle",

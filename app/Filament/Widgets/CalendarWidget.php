@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\EventResource\Widgets;
+namespace App\Filament\Widgets;
 
 use App\Filament\Resources\EventResource;
 use App\Models\Calendar;
@@ -11,6 +11,8 @@ use DateInterval;
 use DateTime;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms;
@@ -66,15 +68,26 @@ class CalendarWidget extends FullCalendarWidget
         return $this->event ?? Event::class;
     }
 
+    public function url($event)
+    {
+        $event = Event::find($event['id']);
+        $url = EventResource::getUrl('edit', ['record' => $event->id]);
+
+        $this->redirect($url);
+
+    }
+
     public function onEventClick($event): void
     {
-        parent::onEventClick($event);
+       // parent::onEventClick($event);
+
+
+      //  return fn (Model $record): string => route('posts.edit', ['record' => $record]);
 
         // your code
         //   $this->editEventForm->model($this->event);
-        //  $event = Event::find($event['id']);
         //  return $event;
-
+      $this->url($event);
 
     }
 
@@ -279,6 +292,7 @@ class CalendarWidget extends FullCalendarWidget
     {
 
         return [
+
             Forms\Components\Grid::make()
                 ->schema([
                     Forms\Components\Toggle::make('extendedProps.allDay')
@@ -286,15 +300,15 @@ class CalendarWidget extends FullCalendarWidget
                         ->columnSpan(2),
                     Forms\Components\Select::make('extendedProps.calendar_id')
                         ->disableLabel()
+                        ->required()
+                        ->allowHtml()
+                        ->searchable()
                         ->options(function () {
                             $calendars = Calendar::all();
                             return $calendars->mapWithKeys(function ($calendars) {
                                 return [$calendars->getKey() => static::getCleanOptionString($calendars)];
                             })->toArray();
                         })
-                        ->required()
-                        ->allowHtml()
-                        ->searchable()
                         ->getSearchResultsUsing(function (string $query) {
                             $calendar = Calendar::where('type', 'like', "%{$query}%")
                                 ->limit(50)
@@ -313,6 +327,7 @@ class CalendarWidget extends FullCalendarWidget
 
             Forms\Components\Card::make()
                 ->schema([
+
                     Forms\Components\TextInput::make('title')
                         ->label(__('filament::widgets/calendar-widget.title'))
                         ->required()
@@ -388,5 +403,12 @@ class CalendarWidget extends FullCalendarWidget
                 ->with('color', $model?->color)
                 ->render();
 
+    }
+
+    protected function getFormComponentActions(): array
+    {
+        return [
+           \Filament\Tables\Actions\Action::make('action')
+        ];
     }
 }

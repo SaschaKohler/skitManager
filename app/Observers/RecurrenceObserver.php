@@ -138,19 +138,19 @@ class RecurrenceObserver
     public function updated(Event $event)
     {
 
-        if ($event->events()->exists() || $event->event) {
-            $start = Carbon::parse($event->getOriginal('start'))->diffInRealSeconds($event->start, false);
-            $end = Carbon::parse($event->getOriginal('end'))->diffInRealSeconds($event->end, false);
-            if ($event->event)   // event is a childEvent so call all events with start bigger than this child
-                $childEvents = $event->event->events()->whereDate('start', '>', $event->getOriginal('start'))->get();
-            else
-                $childEvents = $event->events;
-
-            foreach ($childEvents as $childEvent) {
-                if ($start)
-                    $childEvent->start = Carbon::parse($childEvent->start)->addSeconds($start)->format('Y-m-d H:i');
-                if ($end)
-                    $childEvent->end = Carbon::parse($childEvent->end)->addSeconds($end)->format('Y-m-d H:i');
+//        if ($event->events()->exists() || $event->event) {
+//            $start = Carbon::parse($event->getOriginal('start'))->diffInRealSeconds($event->start, false);
+//            $end = Carbon::parse($event->getOriginal('end'))->diffInRealSeconds($event->end, false);
+//            if ($event->event)   // event is a childEvent so call all events with start bigger than this child
+//                $childEvents = $event->event->events()->whereDate('start', '>', $event->getOriginal('start'))->get();
+//            else
+//                $childEvents = $event->events;
+//
+//            foreach ($childEvents as $childEvent) {
+//                if ($start)
+//                    $childEvent->start = Carbon::parse($childEvent->start)->addSeconds($start)->format('Y-m-d H:i');
+//                if ($end)
+//                    $childEvent->end = Carbon::parse($childEvent->end)->addSeconds($end)->format('Y-m-d H:i');
 
 //                    switch (Carbon::parse($childEvent->start)->dayOfWeek) {
 //                        case CarbonInterface::SATURDAY:
@@ -169,9 +169,9 @@ class RecurrenceObserver
 //                if ($event->isDirty('title') && $childEvent->name == $event->getOriginal('title')) {
 //                    $childEvent->title = $event->title;
 //                }
-                $childEvent->saveQuietly();
-            }
-        }
+//                $childEvent->saveQuietly();
+//            }
+//        }
 
 //        $check = $event->wasChanged('recurrence');
 //        $dirty = $event->isDirty('recurrence');

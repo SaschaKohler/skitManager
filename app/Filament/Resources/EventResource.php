@@ -21,7 +21,9 @@ class EventResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
-    protected static ?string $navigationGroup = 'Events';
+    protected static ?string $navigationGroup = 'Projekte';
+
+    protected static ?string $navigationLabel = 'Events';
 
     public static function form(Form $form): Form
     {
@@ -97,7 +99,7 @@ class EventResource extends Resource
                     ])->columnSpan(['lg' => 2]),
 
                 Forms\Components\Fieldset::make('Client')
-                    ->label(__('filament::resources/event-resource.client_detail'))
+                    ->label(__('filament::resources/event-resource.client_detail.header'))
                     ->schema([
                         Forms\Components\Select::make('user_id')
                             ->label(__('filament::resources/event-resource.table.client'))
@@ -108,16 +110,22 @@ class EventResource extends Resource
                             ->preload(),
                         Forms\Components\Card::make()->schema([
                             Forms\Components\Placeholder::make('Name')
+                                ->label(__('filament::resources/event-resource.client_detail.name'))
                                 ->content(fn(Event $record): string => $record->client->name1),
                             Forms\Components\Placeholder::make('email')
+                                ->label(__('filament::resources/event-resource.client_detail.email'))
                                 ->content(fn(Event $record): string => $record->client->email),
                             Forms\Components\Placeholder::make('phone1')
+                                ->label(__('filament::resources/event-resource.client_detail.phone1'))
                                 ->content(fn(Event $record): string => $record->client->phone1),
                             Forms\Components\Placeholder::make('street')
+                                ->label(__('filament::resources/event-resource.client_detail.address'))
                                 ->content(fn(Event $record): string => $record->client->street . ' ' . $record->client->city),
                             Forms\Components\Placeholder::make('created_at')
+                                ->label(__('filament::common.created_at'))
                                 ->content(fn(Event $record): string => $record->created_at->diffForHumans()),
                             Forms\Components\Placeholder::make('updated_at')
+                                ->label(__('filament::common.updated_at'))
                                 ->content(fn(Event $record): string => $record->updated_at->diffForHumans()),
                         ])
                             ->hidden(fn(?Event $record) => $record === null)
@@ -219,14 +227,6 @@ class EventResource extends Resource
             'index' => Pages\ListEvents::route('/'),
             'create' => Pages\CreateEvent::route('/create'),
             'edit' => Pages\EditEvent::route('/{record}/edit'),
-        ];
-    }
-
-    public
-    static function getWidgets(): array
-    {
-        return [
-    //        EventResource\Widgets\CalendarWidget::class,
         ];
     }
 

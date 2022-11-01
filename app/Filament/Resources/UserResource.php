@@ -139,10 +139,9 @@ class UserResource extends Resource
         return $table
             ->columns([
                 //
-                Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('name1')
                     ->label(__('filament::resources/user-resource.name1'))
-                    ->searchable()
+                    ->sortable()
                     ->searchable(isIndividual: true, isGlobal: false),
 
                 Tables\Columns\TextColumn::make('email')

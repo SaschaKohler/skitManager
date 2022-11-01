@@ -24,14 +24,6 @@ class CalendarWidget extends FullCalendarWidget
     protected static string $view = 'filament.resources.event-resource.widgets.calendar-widget';
 
 
-//    public function getViewData(): array
-//    {
-//  //      return Event::all()->toArray();
-//        dd();
-//        return [];
-////
-//    }
-
     public function fetchEvents(array $fetchInfo): array
     {
         $user = auth()->user();

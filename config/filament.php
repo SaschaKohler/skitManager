@@ -139,8 +139,8 @@ return [
         'namespace' => 'App\\Filament\\Widgets',
         'path' => app_path('Filament/Widgets'),
         'register' => [
-            \App\Filament\Resources\EventResource\Widgets\CalendarWidget::class,
-            Widgets\AccountWidget::class,
+            \App\Filament\Widgets\CalendarWidget::class,
+        //    Widgets\AccountWidget::class,
          //   Widgets\FilamentInfoWidget::class,
         ],
     ],
@@ -183,7 +183,7 @@ return [
     */
 
     'database_notifications' => [
-        'enabled' => false,
+        'enabled' => true,
         'trigger' => 'notifications.database-notifications-trigger',
         'polling_interval' => '30s',
     ],

@@ -17,60 +17,58 @@ class EventsChart extends BarChartWidget
     protected static ?string $pollingInterval = null;
 
 
-    public ?string $filter = 'yesterday';
+
+    public ?string $filter = '1585';
 
 
     protected function getFilters(): ?array
 
     {
-
-
-        return [
-
-            'yesterday' => 'Yesterday',
-            'week' => 'Last week',
-            'month' => 'Last month',
-            'year' => 'This year',
-        ];
+        return
+            User::query()->whereHas('events')->where('role_id' , '=',2 )->get()
+            ->pluck('name1','id')->toArray();
     }
 
     protected function getData(): array
     {
-        $activeFilter = $this->filter;
 
-        if ($activeFilter == 'yesterday')
-            $users = User::whereHas('events', function ($query) {
-                $query->where('start', '>=', Carbon::now()->subDays(1)
-                    ->toDate()->format('Y-m-d'));
-            })->with('events')->get();
-        elseif ($activeFilter == 'week')
-            $users = User::whereHas('events', function ($query) {
-                $query->where('start', '>=', Carbon::now()->subWeeks(1)
-                    ->toDate()->format('Y-m-d'));
-            })->with('events')->get();
-        elseif ($activeFilter == 'month')
-            $users = User::whereHas('events', function ($query) {
-                $query->where('start', '>=', Carbon::now()->subWeeks(4)
-                    ->toDate()->format('Y-m-d'));
-            })->with('events')->get();
-        elseif ($activeFilter == 'year')
-            $users = User::whereHas('events', function ($query) {
-                $query->where('start', '>=', Carbon::now()->startOfYear()
-                    ->toDate()->format('Y-m-d'));
-            })->with('events')->get();
+        $users = User::whereHas('events', function ($query) {
+            $query->where('start', '>=', Carbon::now()->startOfYear()->toDateString());
+        })->withSum('events', 'event_user.sum')->get();
 
+
+        $project = array();
+
+        foreach ($users as $user) {
+            $data = array();
+            foreach ($user->events as $event) {
+                $date = explode(' ', $event->start);
+                $hours = number_format($event->pivot->sum / 3200, '2', '.', '.');
+
+                $data[] = $date[0] . '::' . $event->title . '::'
+                    . $hours;
+            }
+            $project[$user->id] = array('events' => $data);
+        }
+
+        $user = User::find($this->filter);
 
         $labels = array();
         $data = array();
         $backgroundColor = array();
         $borderColor = array();
-        foreach ($users as $user) {
-            array_push($labels, $user->name1);
-            array_push($data, $user->events->sum('pivot.sum') / 3600);   // seconds -> hours
-            array_push($borderColor, $user->color);
-            $int_value = preg_split('/[(|)]/', $user->color);    // rgb(a,b,c)  -> rgba(a,b,c,o)
-            array_push($backgroundColor, 'rgba(' . $int_value[1] . ',0.2)');
-        }
+
+            foreach ($project[$user->id] as $item) {
+                foreach ($item as $dat) {
+
+                    $values = explode('::', $dat);
+                    array_push($labels, $values[0]);
+                    array_push($data, $values[2]);
+                    array_push($borderColor, $user->color);
+                    $int_value = preg_split('/[(|)]/', $user->color);    // rgb(a,b,c)  -> rgba(a,b,c,o)
+                    array_push($backgroundColor, 'rgba(' . $int_value[1] . ',0.2)');
+                }
+            }
 
 //        $data = Trend::query(User::whereHas('events')->with('events'))
 //            ->between(
@@ -102,7 +100,7 @@ class EventsChart extends BarChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Hours in sum (' . $activeFilter . ')',
+                    'label' => $user->name1 . ' ' . array_sum($data) . 'h',
                     'data' => $data,
                     'backgroundColor' => $backgroundColor,
                     'borderColor' => $borderColor,
@@ -114,5 +112,10 @@ class EventsChart extends BarChartWidget
             ],
             'labels' => $labels
         ];
+    }
+
+    public static function canView(): bool
+    {
+        return auth()->user()->isAdmin();
     }
 }

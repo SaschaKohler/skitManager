@@ -13,15 +13,16 @@ use Illuminate\Database\Eloquent\Builder;
 class NextEvents extends BaseWidget
 {
 
-    protected static ?int $sort = 3;
 
-    protected int | string | array $columnSpan = 'full';
+
+    protected static ?int $sort = 2;
+
 
     protected function getTableQuery(): Builder
     {
         // ...
         return Event::with(['client','employees'])
-            ->where('start','>=',
+            ->where('start','<=',
                 Carbon::today()->toDateString())->take(5);
     }
 
@@ -29,7 +30,8 @@ class NextEvents extends BaseWidget
     {
         return [
             Tables\Columns\TextColumn::make('start')->date('D, d.M.y'),
-            Tables\Columns\TextColumn::make('client.search'),
+            Tables\Columns\TextColumn::make('client.name1'),
+            Tables\Columns\TextColumn::make('employees.name1'),
             Tables\Columns\TextColumn::make('employees.name1'),
             Tables\Columns\TextColumn::make('calendar.type')
         ];
@@ -38,5 +40,10 @@ class NextEvents extends BaseWidget
     protected function isTablePaginationEnabled(): bool
     {
         return false;
+    }
+
+    public static function canView(): bool
+    {
+        return auth()->user()->isAdmin();
     }
 }

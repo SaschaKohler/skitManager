@@ -51,7 +51,7 @@ class AppServiceProvider extends ServiceProvider
                 UserMenuItem::make()
                     ->label(__('filament::layout.buttons.manage_calendars.label'))
                     ->url(CalendarResource::getUrl())
-                    ->icon('heroicon-s-calendar'),
+                    ->icon('heroicon-s-calendar')
 
             ]);
         });

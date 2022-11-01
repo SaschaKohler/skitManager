@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'clients' => 'Kunden',
+    'employees' => 'Mitarbeiter',
+    'projects' => 'Projekte',
     'street' => 'Strasse',
     'zip' => 'Postleitzahl',
     'city' => 'Stadt / Ort',

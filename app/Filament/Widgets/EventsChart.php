@@ -18,7 +18,7 @@ class EventsChart extends BarChartWidget
 
 
 
-    public ?string $filter = '';
+    public ?string $filter = 'none';
 
 
     protected function getFilters(): ?array
@@ -32,31 +32,31 @@ class EventsChart extends BarChartWidget
     protected function getData(): array
     {
 
+        if($this->filter!= 'none') {
         $users = User::whereHas('events', function ($query) {
             $query->where('start', '>=', Carbon::now()->startOfYear()->toDateString());
         })->withSum('events', 'event_user.sum')->get();
 
+            $project = array();
 
-        $project = array();
+            foreach ($users as $user) {
+                $data = array();
+                foreach ($user->events as $event) {
+                    $date = explode(' ', $event->start);
+                    $hours = number_format($event->pivot->sum / 3200, '2', '.', '.');
 
-        foreach ($users as $user) {
-            $data = array();
-            foreach ($user->events as $event) {
-                $date = explode(' ', $event->start);
-                $hours = number_format($event->pivot->sum / 3200, '2', '.', '.');
-
-                $data[] = $date[0] . '::' . $event->title . '::'
-                    . $hours;
+                    $data[] = $date[0] . '::' . $event->title . '::'
+                        . $hours;
+                }
+                $project[$user->id] = array('events' => $data);
             }
-            $project[$user->id] = array('events' => $data);
-        }
 
-        $user = User::find($this->filter);
+            $user = User::find($this->filter);
 
-        $labels = array();
-        $data = array();
-        $backgroundColor = array();
-        $borderColor = array();
+            $labels = array();
+            $data = array();
+            $backgroundColor = array();
+            $borderColor = array();
 
             foreach ($project[$user->id] as $item) {
                 foreach ($item as $dat) {
@@ -97,21 +97,31 @@ class EventsChart extends BarChartWidget
 //            ],
 //            'labels' => $data->map(fn(TrendValue $value) => $value->date),
 //        ];
-        return [
-            'datasets' => [
-                [
-                    'label' => $user->name1 . ' ' . array_sum($data) . 'h',
-                    'data' => $data,
-                    'backgroundColor' => $backgroundColor,
-                    'borderColor' => $borderColor,
-                    'borderWidth' => 1,
-                    'hoverBorderWidth' => 2
+            return [
+                'datasets' => [
+                    [
+                        'label' => $user->name1 . ' ' . array_sum($data) . 'h',
+                        'data' => $data,
+                        'backgroundColor' => $backgroundColor,
+                        'borderColor' => $borderColor,
+                        'borderWidth' => 1,
+                        'hoverBorderWidth' => 2
 
 
+                    ],
                 ],
+                'labels' => $labels
+            ];
+        }
+        else{
+            return [
+            'datasets' => [
+              'label' => 'empty'
             ],
-            'labels' => $labels
-        ];
+                'labels' => 'empty',
+
+            ];
+        }
     }
 
     public static function canView(): bool

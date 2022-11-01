@@ -12,11 +12,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class NextEvents extends BaseWidget
 {
-
-
+    protected static ?string $heading = 'nächste Baustellen';
     protected static ?int $sort = 2;
-
-
 
     protected function getTableQuery(): Builder
     {

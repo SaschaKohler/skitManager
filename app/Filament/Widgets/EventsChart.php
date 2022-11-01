@@ -31,8 +31,9 @@ class EventsChart extends BarChartWidget
 
     protected function getData(): array
     {
+        $activeFilter = $this->filter;
 
-        if($this->filter!= 'none') {
+        if($activeFilter!= 'none') {
         $users = User::whereHas('events', function ($query) {
             $query->where('start', '>=', Carbon::now()->startOfYear()->toDateString());
         })->withSum('events', 'event_user.sum')->get();
@@ -51,7 +52,7 @@ class EventsChart extends BarChartWidget
                 $project[$user->id] = array('events' => $data);
             }
 
-            $user = User::find($this->filter);
+            $user = User::find($activeFilter);
 
             $labels = array();
             $data = array();
@@ -70,33 +71,6 @@ class EventsChart extends BarChartWidget
                 }
             }
 
-//        $data = Trend::query(User::whereHas('events')->with('events'))
-//            ->between(
-//                start: now()->startOfYear(),
-//                end: now()->endOfYear(),
-//            )
-//            ->perYear();
-
-
-//        $data = Trend::model(Event::class)
-//            ->between(
-//                start: now()->startOfYear(),
-//                end: now()->endOfYear(),
-//            )
-//            ->dateColumn('start')
-//            ->perMonth()
-//            ->count();
-//
-//
-//        return [
-//            'datasets' => [
-//                [
-//                    'label' => 'Events per month',
-//                    'data' => $data->map(fn(TrendValue $value) => $value->aggregate),
-//                ],
-//            ],
-//            'labels' => $data->map(fn(TrendValue $value) => $value->date),
-//        ];
             return [
                 'datasets' => [
                     [

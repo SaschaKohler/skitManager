@@ -13,30 +13,39 @@ use Flowframe\Trend\TrendValue;
 
 class EventsChart extends BarChartWidget
 {
-    protected static ?string $heading = 'Chart';
-    protected static ?string $pollingInterval = null;
-
-
+    protected static ?string $heading = 'Zeiten';
+    protected static ?string $pollingInterval = '10s';
 
     public ?string $filter = 'none';
 
+
+    /**
+     * @param string|null $filter
+     */
 
     protected function getFilters(): ?array
 
     {
         return
-            User::query()->whereHas('events')->where('role_id' , '=',2 )->get()
-            ->pluck('name1','id')->toArray();
+            User::query()->whereHas('events')->where('role_id', '=', 2)->get()
+                ->pluck('name1', 'id')->toArray();
     }
 
     protected function getData(): array
     {
-        $activeFilter = $this->filter;
 
-        if($activeFilter!= 'none') {
+
         $users = User::whereHas('events', function ($query) {
             $query->where('start', '>=', Carbon::now()->startOfYear()->toDateString());
-        })->withSum('events', 'event_user.sum')->get();
+        })->get();
+
+        if ($users->isEmpty() == 'none') {
+            return [];
+        } elseif (!$users->isEmpty()) {
+            if ($this->filter == 'none')
+                $activeFilter = User::whereHas('events')->first()->id;
+            else
+                $activeFilter = $this->filter;
 
             $project = array();
 
@@ -86,15 +95,8 @@ class EventsChart extends BarChartWidget
                 ],
                 'labels' => $labels
             ];
-        }
-        else{
-            return [
-            'datasets' => [
-              'label' => 'empty'
-            ],
-                'labels' => 'empty',
-
-            ];
+        } else {
+            return [];
         }
     }
 

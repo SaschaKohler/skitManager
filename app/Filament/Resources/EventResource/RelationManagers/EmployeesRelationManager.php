@@ -75,14 +75,14 @@ class EmployeesRelationManager extends RelationManager
                         $excluded = [... $event->employees->pluck('name1')];
                         $select->options(User::query()
                             ->whereNotIn('name1', $excluded)
-                            ->where('role_id', '=', 2)
+                            ->whereIn('role_id',[1,2])
                             ->pluck('name1', 'id'));
                         return
                             $select->getSearchResultsUsing(function ($search) use ($excluded) {
                                 return
                                     User::query()
                                         ->whereNotIn('name1', $excluded)
-                                        ->where('role_id', '=', 2)
+                                        ->whereIn('role_id', [1,2])
                                         ->where('name1', 'like', "%{$search}%")
                                         ->pluck('name1', 'id');
                             });

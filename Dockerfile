@@ -18,6 +18,7 @@ RUN apk add --no-cache \
         libjpeg-turbo-dev \
         libpng-dev \
         libpq-dev \
+        postgresql-client\
     ;
 
 RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql

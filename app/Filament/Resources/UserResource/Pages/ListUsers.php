@@ -5,6 +5,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource;
 use App\Models\User;
 use Filament\Forms\Components\FileUpload;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 class ListUsers extends ListRecords
 {
     protected static string $resource = UserResource::class;
+
+    protected int $counter = 0;
 
     protected function getActions(): array
     {
@@ -46,7 +49,6 @@ class ListUsers extends ListRecords
                         $i++;
                     }
                     fclose($file); //Close after reading
-                    $j = 0;
                     //      dd($importData_arr);
 
                     foreach ($importData_arr as $importData) {
@@ -97,7 +99,6 @@ class ListUsers extends ListRecords
                         }
 
 
-                        $j++;
                         try {
                             $user_exist = User::query()
                                 ->where('uuid','=', $uuid)
@@ -128,14 +129,18 @@ class ListUsers extends ListRecords
 
                                 ]);
                                 DB::commit();
+                                $this->counter++;
                             }
 
                         } catch (\Exception $e) {
                             DB::rollBack();
                         }
                     }
-                    $this->notify('success', 'CSV imported');
-
+                    Notification::make()
+                        ->title('Import erfolgreich')
+                        ->success()
+                        ->body("**{$this->counter}** Datensätze importiert")
+                        ->send();
                 }
 
 

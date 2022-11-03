@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->id();
             $table->string('uuid')->nullable();
             $table->string('avatar')->nullable();
-            $table->text('color')->nullable()->default('rgb(255, 159, 64)');
+            $table->text('color')->nullable();
             $table->text('title1')->nullable();
             $table->text('name1')->nullable();
             $table->text('name2')->nullable();
@@ -43,7 +43,7 @@ return new class extends Migration {
             $table->string('dob')->nullable();
             $table->text('datev')->nullable();
             $table->text('uident')->nullable();
-            $table->text('email')->nullable();
+            $table->string('email')->nullable();
             $table->text('password')->nullable();
             $table->text('iban')->nullable();
             $table->text('bic')->nullable();

@@ -53,47 +53,41 @@ class ListUsers extends ListRecords
 
                     foreach ($importData_arr as $importData) {
 
-                        $role_id = '3';
-                        $manager = '';
-                        $title2 = '';
-                        $name2 = '';
-                        $uident = '';
-                        $email1 = '';
+                        $manager = null;
+                        $title2 = null;
+                        $name2 = null;
+                        $uident = null;
+                        $email1 = null;
+                        $email = null;
 
                         $name1 = utf8_encode($importData[4]); //Get user names
                         $street = utf8_encode($importData[6]);
                         $title1 = $importData[3];
                         $zip = utf8_encode($importData[8]);
                         $city = utf8_encode($importData[9]);
-                        $email = $importData[55];
+                        $email = $importData[55] ? $importData[55] : null;
                         $uuid = $importData[0];
-                        if ($importData[10] != '')
-                            $phone1 = $importData[10];
-                        else $phone1 = 123456789;
+                        $phone1 = $importData[10] ? $importData[10] : null;
 
                         $phone2 = $importData[12];
                         $phone3 = $importData[82];
 
                         if ($importData[27] == 'PERSONAL')
                             $role_id = 2;
-                        elseif ($importData[27] == 'KUNDE')
-                            $role_id = 3;
                         elseif ($importData[27] == 'HÄNDLER')
                             $role_id = 4;
+                        else $role_id = 3;
 
-                        if ($importData[3] == 'Firma' || $importData[50] != '') {
+                        if ($importData[3] == 'Firma') {
                             $uident = $importData[50];
                             $role_id = 3;
                             $email1 = $importData[40];
-                            $phone1 = $importData[10];
                             $name2 = utf8_encode($importData[5]);
                             $title2 = $importData[16];
                             $manager = utf8_encode($importData[17]);
-                            //    $name1 = utf8_encode($importData[4]);
                         } else if ($importData[3] == 'Gemeinde') {
                             $role_id = 3;
                             $email1 = $importData[40];
-                            $phone1 = $importData[10];
                             $title2 = $importData[16];
                             $manager = utf8_encode($importData[17]);
                         }
@@ -101,10 +95,9 @@ class ListUsers extends ListRecords
 
                         try {
                             $user_exist = User::query()
-                                ->where('uuid','=', $uuid)
+                                ->where('uuid', '=', $uuid)
                                 ->count();
-                            if(!$user_exist)
-                            {
+                            if (!$user_exist) {
                                 DB::beginTransaction();
                                 User::create([
                                     'uuid' => $uuid,
@@ -123,9 +116,9 @@ class ListUsers extends ListRecords
                                     'title2' => $title2,
                                     'name1' => $name1,
                                     'name2' => $name2,
-                                    'color' => 'rgb(' . random_int(0,255) . ','
-                                        . random_int(0,255) . ','
-                                        . random_int(0,255) . ')'
+                                    'color' => 'rgb(' . random_int(0, 255) . ','
+                                        . random_int(0, 255) . ','
+                                        . random_int(0, 255) . ')'
 
                                 ]);
                                 DB::commit();

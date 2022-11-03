@@ -97,8 +97,8 @@ class MyProfile extends Page
                             Forms\Components\DatePicker::make("dob")
                                 ->label(__('filament-breezy::default.profile.personal_info.dob')),
                             Forms\Components\ColorPicker::make("color")
-                                ->label(__('filament-breezy::default.profile.personal_info.color')),
-
+                                ->label(__('filament-breezy::default.profile.personal_info.color'))
+                                ->rgb(),
                         ])->columns(4)
                 ])->columns(4)
         ];

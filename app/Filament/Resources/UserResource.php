@@ -48,9 +48,9 @@ class UserResource extends Resource
                                 //->afterStateUpdated(fn(string $context, $state, callable $set) => $context === 'create' ? $set('search', Str::upper($state)) : null),
 
                                 Forms\Components\TextInput::make('email')
-                                    ->email()
-                                    ->unique(User::class, 'email', ignoreRecord: true)
-                                    ->required(),
+                                    ->required()
+                                    ->email(),
+                               //     ->unique(table: User::class, column: 'email' ,ignoreRecord: true),
                                 Forms\Components\TextInput::make('phone1')
                                     ->label(__('filament::resources/user-resource.phone1'))
                                     ->required(),
@@ -145,6 +145,7 @@ class UserResource extends Resource
                     ->searchable(isIndividual: true, isGlobal: false),
 
                 Tables\Columns\TextColumn::make('email')
+                    ->searchable(isIndividual: true, isGlobal: false)
                     ->toggleable(),
                 Tables\Columns\BadgeColumn::make('role_id')
                     ->label(__('filament::common.role_id'))

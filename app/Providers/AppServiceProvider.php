@@ -56,11 +56,11 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
-        Page::$reportValidationErrorUsing = function (ValidationException $exception) {
-            Notification::make()
-                ->title($exception->getMessage())
-                ->danger()
-                ->send();
-        };
+//        Page::$reportValidationErrorUsing = function (ValidationException $exception) {
+//            Notification::make()
+//                ->title($exception->getMessage())
+//                ->danger()
+//                ->send();
+//        };
     }
 }

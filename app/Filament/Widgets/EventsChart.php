@@ -27,7 +27,7 @@ class EventsChart extends BarChartWidget
 
     {
         return
-            User::query()->whereHas('events')->where('role_id', '=', 2)->get()
+            User::query()->whereHas('events')->whereIn('role_id', [1,2])->get()
                 ->pluck('name1', 'id')->toArray();
     }
 

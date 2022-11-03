@@ -48,7 +48,7 @@ class UserResource extends Resource
                                 //->afterStateUpdated(fn(string $context, $state, callable $set) => $context === 'create' ? $set('search', Str::upper($state)) : null),
 
                                 Forms\Components\TextInput::make('email')
-                                    ->required()
+                                  //  ->required()
                                     ->email(),
                                //     ->unique(table: User::class, column: 'email' ,ignoreRecord: true),
                                 Forms\Components\TextInput::make('phone1')

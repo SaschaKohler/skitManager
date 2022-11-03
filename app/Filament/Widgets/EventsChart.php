@@ -53,7 +53,7 @@ class EventsChart extends BarChartWidget
                 $data = array();
                 foreach ($user->events as $event) {
                     $date = explode(' ', $event->start);
-                    $hours = number_format($event->pivot->sum / 3200, '2', '.', '.');
+                    $hours = number_format($event->pivot->sum / 3600, '2', '.', '.');
 
                     $data[] = $date[0] . '::' . $event->title . '::'
                         . $hours;

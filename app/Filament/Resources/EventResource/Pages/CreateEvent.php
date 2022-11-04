@@ -33,4 +33,6 @@ class CreateEvent extends CreateRecord
             ])
             ->sendToDatabase(auth()->user());
     }
+
+
 }

@@ -9,21 +9,16 @@
 return [
     'timeZone' => config('app.timezone'),
 
-   // 'plugins' => ['dayGridView'],
-    'googleCalendarApiKey' => 'AIzaSyB1XI1v4UR56-YAuaf4hnTwJgum6_hAUZU',
-    'events' => [
-        'googleCalendarId' => 'sascha.cloud.01@gmail.com',
-    ],
     'locale' => config('app.locale'),
-    'initialView' => 'timeGridWeek',
+    'initialView' => 'gridSevenDay',
 
     'headerToolbar' => [
         'left' => 'prev,next today',
         'center' => 'title',
-        'right' => 'listSevenDay,gridSevenDay,timeGridWeek,dayGridMonth',
+        'right' => 'list14Day,gridSevenDay,dayGridMonth',
     ],
     'views' => [
-        'listSevenDay' => [
+        'list14Day' => [
             'type' => 'list',
             'duration' => [ 'days' => '14' ],
             'buttonText' => 'nächsten 14 Tage'
@@ -48,7 +43,7 @@ return [
     'navLinks' => true,
     'slotMinTime' => '06:00:00',
     'slotMaxTime' => '22:00:00',
-    'slotDuration' => '00:20',
+    'slotDuration' => '00:10',
 
 
     'editable' => true,

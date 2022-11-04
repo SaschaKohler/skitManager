@@ -17,6 +17,7 @@
         "laravel/tinker": "^2.7",
         "orangehill/iseed": "^3.0",
         "saade/filament-fullcalendar": "^1.4",
+        "spatie/laravel-google-calendar": "^3.5",
         "squirephp/countries-de": "^3.3"
     },
     "require-dev": {

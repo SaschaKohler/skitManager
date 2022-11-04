@@ -21,6 +21,8 @@ class CalendarResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -28,10 +30,16 @@ class CalendarResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('type')
+                            ->label(__('filament::resources/calendar-resource.type'))
                             ->required(),
-                        Forms\Components\TextInput::make('description'),
+                        Forms\Components\TextInput::make('description')
+                            ->label(__('filament::resources/calendar-resource.description')),
+
                         Forms\Components\ColorPicker::make('color')
-                            ->required()
+                            ->label(__('filament::resources/calendar-resource.color'))
+                            ->rgb()
+                            ->required(),
+
                     ])->columnSpan(['lg' => 2]),
             ])->columns(3);
     }
@@ -41,11 +49,12 @@ class CalendarResource extends Resource
         return $table
             ->columns([
                 //
-                Tables\Columns\TextColumn::make('type'),
-                Tables\Columns\TextColumn::make('description'),
-                Tables\Columns\TextColumn::make('color'),
-                Tables\Columns\ColorColumn::make('color'),
-
+                Tables\Columns\TextColumn::make('type')
+                    ->label(__('filament::resources/calendar-resource.type')),
+                Tables\Columns\TextColumn::make('description')
+                    ->label(__('filament::resources/calendar-resource.description')),
+                Tables\Columns\ColorColumn::make('color')
+                    ->label(__('filament::resources/calendar-resource.color'))
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -83,4 +92,5 @@ class CalendarResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
+
 }

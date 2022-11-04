@@ -27,37 +27,97 @@ class DatabaseSeeder extends Seeder
 //       \App\Models\Info::factory(10)->create();
 
 
-//        \App\Models\User::factory(5)
+        \App\Models\User::factory(5)
 ////            ->has(Info::factory())
-//            ->create();
+            ->create();
+
+        //Color ID	Color Name	Hex Code
+//undefined	Who knows	#039be5
+//1	Lavender	#7986cb
+//2	Sage	#33b679
+//3	Grape	#8e24aa
+//4	Flamingo	#e67c73
+//5	Banana	#f6c026
+//6	Tangerine	#f5511d
+//7	Peacock	#039be5
+//8	Graphite	#616161
+//9	Blueberry	#3f51b5
+//10Basil	#0b8043
+//11Tomato	#d60000
 
         Calendar::factory()->create([
-            'type' => 'Zaunmontage'
-        ]);
-        Calendar::factory()->create([
-            'type' => 'Gartenpflege'
-        ]);
-        Calendar::factory()->create([
-            'type' => 'Baumpflege'
-        ]);
-        Calendar::factory()->create([
-            'type' => 'Rasen anlegen'
-        ]);
-        Calendar::factory()->create([
-            'type' => 'Transport'
-        ]);
-        Calendar::factory()->create([
-            'type' => 'Winterdienst'
-        ]);
-        Calendar::factory()->create([
-            'type' => 'Böschungsmähen'
-        ]);
-        Calendar::factory()->create([
-            'type' => 'keine Kategorie'
+            'type' => 'ohne Kategorie',
+            'color_id' => 'undefined',
+            'description' => 'office@dirneder.at',
+            'color' => '#039be5'
         ]);
 
-
-
+        Calendar::factory()->create([
+            'type' => 'Stockfräsen',
+            'color_id' => '1',
+            'description' => 'Lavender',
+            'color' => '#7986cb'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'Gartenpflege',
+            'color_id' => '2',
+            'description' => 'Sage',
+            'color' => '#33b679'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'Zaunmontage',
+            'color_id' => '3',
+            'description' => 'Grape',
+            'color' => '#8e24aa'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'Rasen anlegen',
+            'color_id' => '4',
+            'description' => 'Flamingo',
+            'color' => '#e67c73'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'Hecke schneiden',
+            'color_id' => '5',
+            'description' => 'Banana',
+            'color' => '#f6c026'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'pers. Termin',
+            'color_id' => '6',
+            'description' => 'Tangerine',
+            'color' => '#f5511d'
+        ]);
+        Calendar::factory()->create([
+            'type' => 'Böschungsmähen',
+            'color_id' => '7',
+            'description' => 'Peacock',
+            'color' => '#039be5'
+        ]);
+          Calendar::factory()->create([
+              'type' => 'Böschungsmähen',
+              'color_id' => '8',
+              'description' => 'Graphite',
+              'color' => '#616161'
+          ]);
+          Calendar::factory()->create([
+              'type' => 'Angebot bestätigt',
+              'color_id' => '9',
+              'description' => 'Blueberry',
+              'color' => '#3f51b5'
+          ]);
+          Calendar::factory()->create([
+              'type' => 'Baumpflege',
+              'color_id' => '10',
+              'description' => 'Basil',
+              'color' => '#0b8043'
+          ]);
+          Calendar::factory()->create([
+              'type' => 'Lieferdatum',
+              'color_id' => '11',
+              'description' => 'Tomato',
+              'color' => '#d60000'
+          ]);
 
         User::factory()->create([
             'phone1' => '0650 903 3 72',

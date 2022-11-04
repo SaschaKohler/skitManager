@@ -6,19 +6,17 @@ use App\Filament\Resources\EventResource;
 use App\Models\Calendar;
 use App\Models\Event;
 use App\Models\User;
-use Closure;
+use Carbon\Carbon;
 use DateInterval;
 use DateTime;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms;
 
-use Illuminate\Support\Facades\DB;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+use function PHPUnit\Framework\isInstanceOf;
 
 class CalendarWidget extends FullCalendarWidget
 {
@@ -26,83 +24,163 @@ class CalendarWidget extends FullCalendarWidget
 
     protected string $modalWidth = 'lg';
 
+
+
     public function fetchEvents(array $fetchInfo): array
     {
         $user = auth()->user();
 
-        if ($user->role_id == 2) {
+//        if ($user->role_id == 2) {
+//
+//            // You can use $fetchInfo to filter events by date.
+//
+//            $myEvents = Event::select('title','google_id','start','end',
+//            'backgroundColor','borderColor')
+//                ->where([
+//                    ['start', '>=', $fetchInfo['start']],
+//                    ['end', '<=', $fetchInfo['end']],
+//                ])
+//                ->whereHas('employees', function (Builder $query) {
+//                    $query->where('user_id', auth()->id());
+//                })
+//                ->get();
+//
+//
+//        }
 
-            // You can use $fetchInfo to filter events by date.
-
-            return Event::query()
-                ->where([
-                    ['start', '>=', $fetchInfo['start']],
-                    ['end', '<=', $fetchInfo['end']],
-                ])
-                ->whereHas('employees', function (Builder $query) {
-                    $query->where('user_id', auth()->id());
-                })
-                ->get()
-                ->toArray();
-        }
-        return Event::query()
+        $myEvents = Event::query()
             ->where([
                 ['start', '>=', $fetchInfo['start']],
                 ['end', '<=', $fetchInfo['end']],
             ])
-            ->get()
-            ->toArray();
+            ->get()->flatten()->toArray();
+        $gcal = \Spatie\GoogleCalendar\Event::get();
+
+        $google_events = $gcal->map(function ($events) {
+            $color_id = $events->colorId ? $events->colorId : 'undefined';
+            $calendar = Calendar::select('id','color')
+                ->where('color_id','=',$color_id)->get()
+                ->toArray();
+            return [
+                'id' => $events->id,
+                'title' => $events->summary,
+                'start' => Carbon::parse($events->startDateTime)->toDateTimeString(),
+                'end' => Carbon::parse($events->endDateTime)->toDateTimeString(),
+                'backgroundColor' => $calendar[0]['color'],
+                'borderColor' => $calendar[0]['color'],
+                'calendar_id' => $calendar[0]['id'],
+                ];
+        })->toArray();
+
+
+//        dd(
+//            array_diff(
+//                array_map('serialize', $google_events),
+//                array_map('serialize', $myEvents)
+//            )
+//        );
+//dd($gcal,$google_events);
+
+//        dd(collect($myEvents)->filter(function ($item) {
+//            return $item;
+//        }));
+
+        $items = array();
+        foreach($myEvents as $event){
+            array_push($items,$event['google_id']);
+        }
+
+        $google_events_coll = collect($google_events);
+
+        $filter = $google_events_coll->whereNotIn('id' , $items)->toArray();
+
+        return array_merge($filter,$myEvents);
 
     }
+
+
 
     protected function getFormModel(): Model|string|null
     {
         return $this->event ?? Event::class;
     }
 
-    public function url($event)
+    public function url($param)
     {
-        $event = Event::find($event['id']);
-        $url = EventResource::getUrl('edit', ['record' => $event->id]);
+        $event = Event::query()
+            ->where('title', '=', $param['title'])
+            ->get()->toArray();
+        if ($event) {
+            $url = EventResource::getUrl('edit', ['record' => $event[0]['id']]);
+
+        } else {
+            $user = User::where('name1', 'like', '%' . $param['title'] . '%')->first();
+            $new = new Event();
+            $new->google_id = $param['id'];
+            $new->title = $param['title'];
+            $new->start = $param['start'];
+            $new->end = $param['end'];
+            $new->user_id = 4;
+            $new->calendar_id = $param['extendedProps']['calendar_id'];
+            if ($user) $new->user_id = $user['id'];
+            $new->save();
+
+
+//            $to_del = \Spatie\GoogleCalendar\Event::find($param['id']);
+//            $to_del->delete();
+
+
+            $url = EventResource::getUrl('edit', ['record' => $new->id]);
+        }
 
         $this->redirect($url);
+
 
     }
 
     public function onEventClick($event): void
     {
-       // parent::onEventClick($event);
+        // parent::onEventClick($event);
 
 
-      //  return fn (Model $record): string => route('posts.edit', ['record' => $record]);
+        //  return fn (Model $record): string => route('posts.edit', ['record' => $record]);
 
         // your code
         //   $this->editEventForm->model($this->event);
         //  return $event;
-      $this->url($event);
+        $this->url($event);
 
     }
 
     public function onEventDrop($newEvent, $oldEvent, $relatedEvents): void
     {
 
-        $this->event = Event::find($newEvent['id']);
 
-        if (!array_key_exists('end', $newEvent)) {
-            $dt = DateTime::createFromFormat("Y-m-d\TH:i:s\Z", $newEvent['start']);
-            if ($dt) {
-                $dt->add(new DateInterval('PT1H'));
-                $newEvent['end'] = $dt->format('Y-m-d\TH:i:s\Z');
-                $newEvent['allDay'] = false;
-                $newEvent['extendedProps']['allDay'] = false;
-            } else {
-                $newEvent['allDay'] = true;
-                $newEvent['extendedProps']['allDay'] = true;
+        if(array_key_exists('extendedProps',$oldEvent)) {
 
+            $this->event = Event::find($newEvent['id']);
+
+            if (!array_key_exists('end', $newEvent)) {
+                $dt = DateTime::createFromFormat("Y-m-d\TH:i:s\Z", $newEvent['start']);
+                if ($dt) {
+                    $dt->add(new DateInterval('PT1H'));
+                    $newEvent['end'] = $dt->format('Y-m-d\TH:i:s\Z');
+                    $newEvent['allDay'] = false;
+                    $newEvent['extendedProps']['allDay'] = false;
+                } else {
+                    $newEvent['allDay'] = true;
+                    $newEvent['extendedProps']['allDay'] = true;
+
+                }
             }
+            $this->event->update($newEvent);
+
+            $this->refreshEvents();
         }
-        $this->event->update($newEvent);
+
         $this->refreshEvents();
+
+
 
     }
 
@@ -131,8 +209,11 @@ class CalendarWidget extends FullCalendarWidget
 
 
         $this->event = Event::create($data);
-        $this->event->backgroundColor = $this->event->calendar->color;
-        $this->event->borderColor = $this->event->calendar->color;
+
+
+        $this->event->backgroundColor = $this->event->calendar()->pluck('backgroundColor')[0];
+        $this->event->borderColor = $this->event->calendar()->pluck('borderColor')[0];
+        $this->event->textColor = $this->event->calendar()->pluck('textColor')[0];
         $this->event->update();
         $this->refreshEvents();
 
@@ -174,8 +255,9 @@ class CalendarWidget extends FullCalendarWidget
 
         //  $this->event->
         $this->event->update($dat);
-        $this->event->backgroundColor = $this->event->calendar()->pluck('color')[0];
-        $this->event->borderColor = $this->event->calendar()->pluck('color')[0];
+        $this->event->backgroundColor = $this->event->calendar()->pluck('backgroundColor')[0];
+        $this->event->borderColor = $this->event->calendar()->pluck('borderColor')[0];
+        $this->event->textColor = $this->event->calendar()->pluck('textColor')[0];
         $this->event->update();
 
         $this->refreshEvents();
@@ -247,7 +329,7 @@ class CalendarWidget extends FullCalendarWidget
                     Forms\Components\Select::make('extendedProps.recurrence')
                         ->label(__('filament::widgets/calendar-widget.recurrence.header'))
                         ->options([
-                            '10' =>__('filament::widgets/calendar-widget.recurrence.none'),
+                            '10' => __('filament::widgets/calendar-widget.recurrence.none'),
                             '1' => __('filament::widgets/calendar-widget.recurrence.daily'),
                             '2' => __('filament::widgets/calendar-widget.recurrence.weekly'),
                             '3' => __('filament::widgets/calendar-widget.recurrence.14day'),
@@ -268,7 +350,7 @@ class CalendarWidget extends FullCalendarWidget
                         ->options(function () {
                             return User::where('role_id', 3)->pluck('name1', 'id');
                         })
-                        ->getSearchResultsUsing(function ($query){
+                        ->getSearchResultsUsing(function ($query) {
                             return User::where('name1', 'like', "%{$query}%")->
                             where('role_id', 3)->pluck('name1', 'id');
                         })
@@ -342,7 +424,7 @@ class CalendarWidget extends FullCalendarWidget
                     Forms\Components\Select::make('extendedProps.recurrence')
                         ->label(__('filament::widgets/calendar-widget.recurrence.header'))
                         ->options([
-                            '10' =>__('filament::widgets/calendar-widget.recurrence.none'),
+                            '10' => __('filament::widgets/calendar-widget.recurrence.none'),
                             '1' => __('filament::widgets/calendar-widget.recurrence.daily'),
                             '2' => __('filament::widgets/calendar-widget.recurrence.weekly'),
                             '3' => __('filament::widgets/calendar-widget.recurrence.14day'),
@@ -400,7 +482,7 @@ class CalendarWidget extends FullCalendarWidget
     protected function getFormComponentActions(): array
     {
         return [
-           \Filament\Tables\Actions\Action::make('action')
+            \Filament\Tables\Actions\Action::make('action')
         ];
     }
 }

@@ -19,11 +19,11 @@ return [
         ],
 
         'manage_users' => [
-            'label' => 'User verwalten'
+            'label' => 'Benutzer verwalten'
         ],
 
         'manage_calendars' => [
-            'label' => 'Kalendar verwalten'
+            'label' => 'Kategorien verwalten'
         ],
 
 

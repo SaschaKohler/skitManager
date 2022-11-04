@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
+            $table->string('google_id')->nullable();
             $table->string('title')->nullable();
             $table->string('url')->nullable()->default('');
-            $table->string('backgroundColor')->nullable()->default('green');
-            $table->string('borderColor')->nullable()->default('blue');
+            $table->string('backgroundColor')->nullable();
+            $table->string('borderColor')->nullable();
+            $table->string('textColor')->nullable();
             $table->dateTime('start')->nullable();
             $table->dateTime('end')->nullable();
             $table->boolean('allDay')->default('false');

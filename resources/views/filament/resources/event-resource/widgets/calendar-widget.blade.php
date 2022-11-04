@@ -1,6 +1,7 @@
 @php($locale = strtolower(str_replace('_', '-', $this->config('locale', config('app.locale')))))
 
 <x-filament::widget>
+    <select></select>
     <x-filament::card>
         <div
             wire:ignore

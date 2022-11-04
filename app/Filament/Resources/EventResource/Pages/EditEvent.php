@@ -22,14 +22,20 @@ class EditEvent extends EditRecord
         ];
     }
 
-//    protected function getRedirectUrl(): string
-//    {
-//        return $this->getResource()::getUrl('index');
-//    }
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
 
     protected function afterSave(): void
     {
         $event = $this->record;
+
+        $event->backgroundColor = $event->calendar()->pluck('color')[0];
+        $event->borderColor = $event->calendar()->pluck('color')[0];
+
+        $event->update();
 
         if ($event->employees->count()) {
 

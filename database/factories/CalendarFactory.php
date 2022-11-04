@@ -16,10 +16,11 @@ class CalendarFactory extends Factory
      */
     public function definition()
     {
+        $color = $this->faker->hexColor();
         return [
             //
             'description' => $this->faker->text(20),
-            'color' => $this->faker->hexColor()
+            'color' => $color,
         ];
     }
 }

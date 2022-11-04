@@ -111,22 +111,22 @@ class EventResource extends Resource
                         Forms\Components\Card::make()->schema([
                             Forms\Components\Placeholder::make('Name')
                                 ->label(__('filament::resources/event-resource.client_detail.name'))
-                                ->content(fn(Event $record): string => $record->client->name1),
+                                ->content(fn(Event $record): ?string => $record->client->name1),
                             Forms\Components\Placeholder::make('email')
                                 ->label(__('filament::resources/event-resource.client_detail.email'))
-                                ->content(fn(Event $record): string => $record->client->email),
+                                ->content(fn(Event $record): ?string => $record->client->email),
                             Forms\Components\Placeholder::make('phone1')
                                 ->label(__('filament::resources/event-resource.client_detail.phone1'))
-                                ->content(fn(Event $record): string => $record->client->phone1),
+                                ->content(fn(Event $record): ?string => $record->client->phone1),
                             Forms\Components\Placeholder::make('street')
                                 ->label(__('filament::resources/event-resource.client_detail.address'))
-                                ->content(fn(Event $record): string => $record->client->street . ' ' . $record->client->city),
+                                ->content(fn(Event $record): ?string => $record->client->street . ' ' . $record->client->city),
                             Forms\Components\Placeholder::make('created_at')
                                 ->label(__('filament::common.created_at'))
-                                ->content(fn(Event $record): string => $record->created_at->diffForHumans()),
+                                ->content(fn(Event $record): ?string => $record->created_at->diffForHumans()),
                             Forms\Components\Placeholder::make('updated_at')
                                 ->label(__('filament::common.updated_at'))
-                                ->content(fn(Event $record): string => $record->updated_at->diffForHumans()),
+                                ->content(fn(Event $record): ?string => $record->updated_at->diffForHumans()),
                         ])
                             ->hidden(fn(?Event $record) => $record === null)
                             ->columns(1)

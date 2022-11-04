@@ -27,9 +27,9 @@ class DatabaseSeeder extends Seeder
 //       \App\Models\Info::factory(10)->create();
 
 
-        \App\Models\User::factory(5)
-////            ->has(Info::factory())
-            ->create();
+//        \App\Models\User::factory(5)
+//            ->has(Info::factory())
+//            ->create();
 
         //Color ID	Color Name	Hex Code
 //undefined	Who knows	#039be5

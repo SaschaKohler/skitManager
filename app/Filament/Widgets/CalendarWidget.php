@@ -30,23 +30,24 @@ class CalendarWidget extends FullCalendarWidget
     {
         $user = auth()->user();
 
-//        if ($user->role_id == 2) {
-//
-//            // You can use $fetchInfo to filter events by date.
-//
-//            $myEvents = Event::select('title','google_id','start','end',
-//            'backgroundColor','borderColor')
-//                ->where([
-//                    ['start', '>=', $fetchInfo['start']],
-//                    ['end', '<=', $fetchInfo['end']],
-//                ])
-//                ->whereHas('employees', function (Builder $query) {
-//                    $query->where('user_id', auth()->id());
-//                })
-//                ->get();
-//
-//
-//        }
+        if ($user->role_id == 2) {
+
+            // You can use $fetchInfo to filter events by date.
+
+            $employeeEvents = Event::query()
+                ->where([
+                    ['start', '>=', $fetchInfo['start']],
+                    ['end', '<=', $fetchInfo['end']],
+                ])
+                ->whereHas('employees', function (Builder $query) {
+                    $query->where('user_id', auth()->id());
+                })
+                ->get();
+
+            return $employeeEvents;
+        }
+
+        $gcal = \Spatie\GoogleCalendar\Event::get();
 
         $myEvents = Event::query()
             ->where([
@@ -54,7 +55,6 @@ class CalendarWidget extends FullCalendarWidget
                 ['end', '<=', $fetchInfo['end']],
             ])
             ->get()->flatten()->toArray();
-        $gcal = \Spatie\GoogleCalendar\Event::get();
 
         $google_events = $gcal->map(function ($events) {
             $color_id = $events->colorId ? $events->colorId : 'undefined';
@@ -71,19 +71,6 @@ class CalendarWidget extends FullCalendarWidget
                 'calendar_id' => $calendar[0]['id'],
                 ];
         })->toArray();
-
-
-//        dd(
-//            array_diff(
-//                array_map('serialize', $google_events),
-//                array_map('serialize', $myEvents)
-//            )
-//        );
-//dd($gcal,$google_events);
-
-//        dd(collect($myEvents)->filter(function ($item) {
-//            return $item;
-//        }));
 
         $items = array();
         foreach($myEvents as $event){

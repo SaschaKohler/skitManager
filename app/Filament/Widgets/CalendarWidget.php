@@ -29,8 +29,6 @@ class CalendarWidget extends FullCalendarWidget
     protected static ?string $heading = 'Total customers';
 
 
-
-
     public function fetchEvents(array $fetchInfo): array
     {
         $user = auth()->user();
@@ -47,7 +45,7 @@ class CalendarWidget extends FullCalendarWidget
                 ->whereHas('employees', function (Builder $query) {
                     $query->where('user_id', auth()->id());
                 })
-                ->get();
+                ->get()->toArray();
 
             return $employeeEvents;
         }
@@ -113,7 +111,7 @@ class CalendarWidget extends FullCalendarWidget
             $url = EventResource::getUrl('edit', ['record' => $event[0]['id']]);
 
         } else {
-            $user = User::where('name1', 'like', '%' . explode(' ',$param['title'])[0] . '%')->first();
+            $user = User::where('name1', 'like', '%' . explode(' ', $param['title'])[0] . '%')->first();
             $new = new Event();
             $new->google_id = $param['id'];
             $new->title = $param['title'];
@@ -155,9 +153,7 @@ class CalendarWidget extends FullCalendarWidget
 
     public function onEventDrop($newEvent, $oldEvent, $relatedEvents): void
     {
-
-
-        if (array_key_exists('extendedProps', $oldEvent)) {
+        if (array_key_exists('google_id', $oldEvent['extendedProps'])) {
 
             $this->event = Event::find($newEvent['id']);
 
@@ -176,8 +172,42 @@ class CalendarWidget extends FullCalendarWidget
             }
             $this->event->update($newEvent);
 
+            Notification::make()
+                ->title('Eintrag geändert')
+                ->icon('heroicon-o-document-text')
+                ->iconColor('success')
+                ->duration(2000)
+                ->send();
+
+            if ($this->event->employees->count()) {
+
+                foreach ($this->event->employees as $employee) {
+
+                    Notification::make()
+                        ->title('Eintrag geändert')
+                        ->icon('heroicon-o-document-text')
+                        ->iconColor('success')
+                        ->body("**{$this->event->title}** / **{$this->event->calendar->type}**\\
+            Kunde: *{$this->event->client->name1}* am *{$this->event->start}*")
+                        ->actions([
+                            Action::make('View')
+                                ->url(EventResource::getUrl('edit', ['record' => $this->event])),
+                        ])
+                        ->sendToDatabase($employee);
+                }
+
+            }
+
             $this->refreshEvents();
+            return;
         }
+
+        Notification::make()
+            ->title('Eintrag nicht änderbar (google-calendar)')
+            ->icon('heroicon-o-document-text')
+            ->iconColor('danger')
+            ->duration(2000)
+            ->send();
 
         $this->refreshEvents();
 

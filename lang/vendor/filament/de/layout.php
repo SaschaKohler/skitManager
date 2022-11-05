@@ -26,6 +26,10 @@ return [
             'label' => 'Kategorien verwalten'
         ],
 
+        'manage_vehicles' => [
+            'label' => 'Fahrzeuge verwalten'
+        ],
+
 
         'logout' => [
             'label' => 'Abmelden',

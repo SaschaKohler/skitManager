@@ -18,7 +18,7 @@ class CalendarPolicy
      */
     public function viewAny(User $user)
     {
-        return ($user->role_id == 1 || $user->role_id == 2) ;
+        return ($user->role_id == 1) ;
 
     }
 
@@ -32,7 +32,7 @@ class CalendarPolicy
     public function view(User $user, Calendar $calendar)
     {
         //
-        return ($user->role_id == 1 || $user->role_id == 2) ;
+        return ($user->role_id == 1 ) ;
 
     }
 
@@ -45,7 +45,7 @@ class CalendarPolicy
     public function create(User $user)
     {
         //
-        return ($user->role_id == 1 || $user->role_id == 2) ;
+        return ($user->role_id == 1 ) ;
 
     }
 
@@ -59,7 +59,7 @@ class CalendarPolicy
     public function update(User $user, Calendar $calendar)
     {
         //
-        return ($user->role_id == 1 || $user->role_id == 2) ;
+        return ($user->role_id == 1 ) ;
 
     }
 

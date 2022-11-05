@@ -19,15 +19,15 @@ return [
         ],
 
         'manage_users' => [
-            'label' => 'Benutzer verwalten'
+            'label' => 'Kundenstamm / Benutzer'
         ],
 
         'manage_calendars' => [
-            'label' => 'Kategorien verwalten'
+            'label' => 'Kategorien (Baustellen)'
         ],
 
         'manage_vehicles' => [
-            'label' => 'Fahrzeuge verwalten'
+            'label' => 'Fahrzeuge'
         ],
 
 

@@ -21,6 +21,8 @@ class CalendarResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
+    protected static ?string $label = 'Kategorie (Farbe)';
+    protected static ?string $pluralLabel = 'Kategorien (Farben)';
 
 
     public static function form(Form $form): Form

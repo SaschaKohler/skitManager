@@ -20,6 +20,19 @@ class VehicleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
+    protected static ?string $label = 'Fahrzeug';
+    protected static ?string $pluralLabel = 'Fahrzeuge';
+
+
+
+    /**
+     * @param string|null $label
+     */
+    public static function setLabel(?string $label): void
+    {
+        self::$label = 'Fahrzeuge';
+
+    }
     public static function form(Form $form): Form
     {
         return $form

@@ -24,6 +24,11 @@ class CalendarWidget extends FullCalendarWidget
     protected static string $view = 'filament.resources.event-resource.widgets.calendar-widget';
 
     protected string $modalWidth = 'lg';
+    protected static ?string $title = 'fun';
+
+    protected static ?string $heading = 'Total customers';
+
+
 
 
     public function fetchEvents(array $fetchInfo): array

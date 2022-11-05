@@ -23,7 +23,9 @@ class EventResource extends Resource
 
     protected static ?string $navigationGroup = 'Projekte';
 
-    protected static ?string $navigationLabel = 'Events';
+    protected static ?string $navigationLabel = 'Baustellen';
+    protected static ?string $pluralLabel = 'Baustellen';
+
 
     public static function form(Form $form): Form
     {

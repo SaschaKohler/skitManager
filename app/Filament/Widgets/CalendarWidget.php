@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms;
 
+use PHPUnit\Exception;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 use function PHPUnit\Framework\isInstanceOf;
 
@@ -23,7 +24,6 @@ class CalendarWidget extends FullCalendarWidget
     protected static string $view = 'filament.resources.event-resource.widgets.calendar-widget';
 
     protected string $modalWidth = 'lg';
-
 
 
     public function fetchEvents(array $fetchInfo): array
@@ -47,7 +47,6 @@ class CalendarWidget extends FullCalendarWidget
             return $employeeEvents;
         }
 
-        $gcal = \Spatie\GoogleCalendar\Event::get();
 
         $myEvents = Event::query()
             ->where([
@@ -56,35 +55,43 @@ class CalendarWidget extends FullCalendarWidget
             ])
             ->get()->flatten()->toArray();
 
-        $google_events = $gcal->map(function ($events) {
-            $color_id = $events->colorId ? $events->colorId : 'undefined';
-            $calendar = Calendar::select('id','color')
-                ->where('color_id','=',$color_id)->get()
-                ->toArray();
-            return [
-                'id' => $events->id,
-                'title' => $events->summary,
-                'start' => Carbon::parse($events->startDateTime)->toDateTimeString(),
-                'end' => Carbon::parse($events->endDateTime)->toDateTimeString(),
-                'backgroundColor' => $calendar[0]['color'],
-                'borderColor' => $calendar[0]['color'],
-                'calendar_id' => $calendar[0]['id'],
-                ];
-        })->toArray();
 
-        $items = array();
-        foreach($myEvents as $event){
-            array_push($items,$event['google_id']);
+        if ($gcal = \Spatie\GoogleCalendar\Event::get()) {
+
+
+            $google_events = $gcal->map(function ($events) {
+                $color_id = $events->colorId ? $events->colorId : 'undefined';
+                $calendar = Calendar::select('id', 'color')
+                    ->where('color_id', '=', $color_id)->get()
+                    ->toArray();
+                return [
+                    'id' => $events->id,
+                    'title' => $events->summary,
+                    'start' => Carbon::parse($events->startDateTime)->toDateTimeString(),
+                    'end' => Carbon::parse($events->endDateTime)->toDateTimeString(),
+                    'backgroundColor' => $calendar[0]['color'],
+                    'borderColor' => $calendar[0]['color'],
+                    'calendar_id' => $calendar[0]['id'],
+                ];
+            })->toArray();
+
+            $google_events_coll = collect($google_events);
+
+
+            $items = array();
+            foreach ($myEvents as $event) {
+                array_push($items, $event['google_id']);
+            }
+
+            $filter = $google_events_coll->whereNotIn('id', $items)->toArray();
+            return array_merge($filter, $myEvents);
+
         }
 
-        $google_events_coll = collect($google_events);
+        return $myEvents;
 
-        $filter = $google_events_coll->whereNotIn('id' , $items)->toArray();
-
-        return array_merge($filter,$myEvents);
 
     }
-
 
 
     protected function getFormModel(): Model|string|null
@@ -101,15 +108,17 @@ class CalendarWidget extends FullCalendarWidget
             $url = EventResource::getUrl('edit', ['record' => $event[0]['id']]);
 
         } else {
-            $user = User::where('name1', 'like', '%' . $param['title'] . '%')->first();
+            $user = User::where('name1', 'like', '%' . explode(' ',$param['title'])[0] . '%')->first();
             $new = new Event();
             $new->google_id = $param['id'];
             $new->title = $param['title'];
             $new->start = $param['start'];
             $new->end = $param['end'];
-            $new->user_id = 4;
             $new->calendar_id = $param['extendedProps']['calendar_id'];
+
             if ($user) $new->user_id = $user['id'];
+            else             $new->user_id = 4;
+
             $new->save();
 
 
@@ -143,7 +152,7 @@ class CalendarWidget extends FullCalendarWidget
     {
 
 
-        if(array_key_exists('extendedProps',$oldEvent)) {
+        if (array_key_exists('extendedProps', $oldEvent)) {
 
             $this->event = Event::find($newEvent['id']);
 
@@ -166,7 +175,6 @@ class CalendarWidget extends FullCalendarWidget
         }
 
         $this->refreshEvents();
-
 
 
     }

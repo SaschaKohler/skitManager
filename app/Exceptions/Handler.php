@@ -45,6 +45,13 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+
+        });
+        $this->renderable(function (GuzzleHttp\Exception\ConnectException $e, $request) {
+            return response()->json([
+                'responseMessage' => 'You do not have the required authorization.',
+                'responseStatus'  => 403,
+            ]);
         });
     }
 }

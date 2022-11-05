@@ -95,6 +95,7 @@ class EventResource extends Resource
                                     ->multiple()
                                     ->disk('public')
                                     ->enableOpen()
+                                    ->hint('max. 2MB')
                             ])->columns(1)
                     ])->columnSpan(['lg' => 2]),
 
@@ -141,27 +142,22 @@ class EventResource extends Resource
                 //
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('filament::resources/event-resource.table.title'))
-
                     ->sortable()
                     ->searchable(isIndividual: true, isGlobal: false),
                 Tables\Columns\TextColumn::make('client.name1')
                     ->label(__('filament::resources/event-resource.table.client'))
-
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->url(fn(Event $record) => UserResource::getUrl('edit', ['record' => $record->client])),
                 Tables\Columns\TextColumn::make('employees.name1')
                     ->label(__('filament::resources/event-resource.table.employees'))
-
                     ->toggleable()
                     ->wrap(),
                 Tables\Columns\TextColumn::make('vehicles.branding')
                     ->label(__('filament::resources/event-resource.table.vehicles'))
-
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('start')
                     ->label(__('filament::resources/event-resource.table.start'))
-
                     ->date('d.M.y'),
                 Tables\Columns\TextColumn::make('calendar.type')
                     ->label(__('filament::resources/event-resource.table.calendar_type'))
@@ -188,7 +184,6 @@ class EventResource extends Resource
                     ->form([
                         Forms\Components\Select::make('calendar_id')
                             ->label(__('filament::resources/event-resource.table.calendar_type'))
-
                             ->options(fn() => Calendar::pluck('type', 'id'))
 
                     ])

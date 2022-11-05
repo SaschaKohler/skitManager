@@ -228,23 +228,27 @@ class CalendarWidget extends FullCalendarWidget
 
     public function createEvent(array $event): void
     {
+
+        $calendar = Calendar::find($event['extendedProps']['calendar_id']);
+
+
         // Create the event with the provided $data.
         $data = $event;
         $data['user_id'] = $event['extendedProps']['user_id'];
         $data['allDay'] = $event['extendedProps']['allDay'];
         $data['calendar_id'] = $event['extendedProps']['calendar_id'];
-        // $data['backgroundColor'] = $event['extendedProps']['backgroundColor'];
-        // $data['borderColor'] = $event['extendedProps']['backgroundColor'];
+        $data['backgroundColor'] = $calendar->color;
+         $data['borderColor'] = $calendar->color;
         $data['recurrence'] = $data['extendedProps']['recurrence'];
 
 
         $this->event = Event::create($data);
 
 
-        $this->event->backgroundColor = $this->event->calendar()->pluck('backgroundColor')[0];
-        $this->event->borderColor = $this->event->calendar()->pluck('borderColor')[0];
-        $this->event->textColor = $this->event->calendar()->pluck('textColor')[0];
-        $this->event->update();
+//        $this->event->backgroundColor = $this->event->calendar()->pluck('backgroundColor')[0];
+//        $this->event->borderColor = $this->event->calendar()->pluck('borderColor')[0];
+//        $this->event->textColor = $this->event->calendar()->pluck('textColor')[0];
+//        $this->event->update();
         $this->refreshEvents();
 
         Notification::make()

@@ -27,7 +27,7 @@ class EventsChart extends BarChartWidget
 
     {
         return
-            User::query()->whereHas('events')->whereIn('role_id', [1,2])->get()
+            User::whereHas('events')->whereIn('role_id', [1,2])->get()
                 ->pluck('name1', 'id')->toArray();
     }
 
@@ -39,11 +39,11 @@ class EventsChart extends BarChartWidget
             $query->where('start', '>=', Carbon::now()->startOfYear()->toDateString());
         })->get();
 
-        if ($users->isEmpty() == 'none') {
+        if ($users->isEmpty()) {
             return [];
         } elseif (!$users->isEmpty()) {
             if ($this->filter == 'none')
-                $activeFilter = User::whereHas('events')->first()->id;
+                $activeFilter = User::whereHas('events')->whereIn('role_id', [1,2])->first()->id;
             else
                 $activeFilter = $this->filter;
 

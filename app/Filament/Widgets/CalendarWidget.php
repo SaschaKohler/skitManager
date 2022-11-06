@@ -59,22 +59,21 @@ class CalendarWidget extends FullCalendarWidget
             ->get()->flatten()->toArray();
 
 
-        if ($gcal = \Spatie\GoogleCalendar\Event::get()) {
+        if ($gcal = \Spatie\GoogleCalendar\Event::get(startDateTime: Carbon::now()->subMonth(3))) {
 
 
             $google_events = $gcal->map(function ($events) {
                 $color_id = $events->colorId ? $events->colorId : 'undefined';
                 $calendar = Calendar::select('id', 'color')
-                    ->where('color_id', '=', $color_id)->get()
-                    ->toArray();
+                    ->where('color_id', '=', $color_id)->get();
                 return [
                     'id' => $events->id,
                     'title' => $events->summary,
                     'start' => Carbon::parse($events->startDateTime)->toDateTimeString(),
                     'end' => Carbon::parse($events->endDateTime)->toDateTimeString(),
-                    'backgroundColor' => $calendar[0]['color'],
-                    'borderColor' => $calendar[0]['color'],
-                    'calendar_id' => $calendar[0]['id'],
+                    'backgroundColor' => $calendar[0]->color,
+                    'borderColor' => $calendar[0]->color,
+                    'calendar_id' => $calendar[0]->id,
                 ];
             })->toArray();
 
@@ -176,40 +175,41 @@ class CalendarWidget extends FullCalendarWidget
                 ->title('Eintrag geändert')
                 ->icon('heroicon-o-document-text')
                 ->iconColor('success')
-                ->duration(2000)
+                ->duration(5000)
                 ->send();
 
             if ($this->event->employees->count()) {
 
-                foreach ($this->event->employees as $employee) {
+                $this->sendNotificationsToEmployees($newEvent);
 
-                    Notification::make()
-                        ->title('Eintrag geändert')
-                        ->icon('heroicon-o-document-text')
-                        ->iconColor('success')
-                        ->body("**{$this->event->title}** / **{$this->event->calendar->type}**\\
-            Kunde: *{$this->event->client->name1}* am *{$this->event->start}*")
-                        ->actions([
-                            Action::make('View')
-                                ->url(EventResource::getUrl('edit', ['record' => $this->event])),
-                        ])
-                        ->sendToDatabase($employee);
-                }
-
+//                foreach ($this->event->employees as $employee) {
+//
+//                    Notification::make()
+//                        ->title('Eintrag geändert')
+//                        ->icon('heroicon-o-document-text')
+//                        ->iconColor('success')
+//                        ->body("**{$this->event->title}** / **{$this->event->calendar->type}**\\
+//            Kunde: *{$this->event->client->name1}* am *{$this->event->start}*")
+//                        ->actions([
+//                            Action::make('View')
+//                                ->url(EventResource::getUrl('edit', ['record' => $this->event])),
+//                        ])
+//                        ->sendToDatabase($employee);
+//                }
             }
-
             $this->refreshEvents();
             return;
         }
 
+        $this->refreshEvents();
+
         Notification::make()
-            ->title('Eintrag nicht änderbar (google-calendar)')
-            ->icon('heroicon-o-document-text')
+            ->title('nicht möglich -> google-calendar')
+            ->icon('heroicon-o-shield-exclamation')
             ->iconColor('danger')
-            ->duration(2000)
+            ->duration(5000)
             ->send();
 
-        $this->refreshEvents();
 
 
     }
@@ -220,10 +220,35 @@ class CalendarWidget extends FullCalendarWidget
     public function onEventResize($event, $oldEvent, $relatedEvents): void
     {
         // your code
-        $this->event = $this->resolveEventRecord($event);
-        $this->event->update($event);
-        $this->refreshEvents();
+        if (array_key_exists('google_id', $oldEvent['extendedProps'])) {
 
+            $this->event = $this->resolveEventRecord($event);
+            $this->event->update($event);
+
+            Notification::make()
+                ->title('Eintrag geändert')
+                ->icon('heroicon-o-document-text')
+                ->iconColor('success')
+                ->duration(5000)
+                ->send();
+
+            if ($this->event->employees->count()) {
+                $this->sendNotificationsToEmployees($event);
+
+                $this->refreshEvents();
+                return;
+
+            }
+            $this->refreshEvents();
+            Notification::make()
+                ->title('nicht möglich -> google-calendar')
+                ->icon('heroicon-o-shield-exclamation')
+                ->iconColor('danger')
+                ->duration(5000)
+                ->send();
+
+
+        }
     }
 
     public function createEvent(array $event): void
@@ -519,4 +544,28 @@ class CalendarWidget extends FullCalendarWidget
             \Filament\Tables\Actions\Action::make('action')
         ];
     }
-}
+
+
+    private function sendNotificationsToEmployees(?array $event)
+    {
+
+        $this->event = $this->resolveEventRecord($event);
+
+        foreach ($this->event->employees as $employee) {
+
+            Notification::make()
+                ->title('Eintrag geändert')
+                ->icon('heroicon-o-shield-exclamation')
+                ->iconColor('success')
+                ->body("**{$this->event->title}** / **{$this->event->calendar->type}**\\
+            Kunde: *{$this->event->client->name1}* am *{$this->event->start}*")
+                ->actions([
+                    Action::make('View')
+                        ->url(EventResource::getUrl('edit', ['record' => $this->event])),
+                ])
+                ->sendToDatabase($employee);
+        }
+
+
+    }
+    }

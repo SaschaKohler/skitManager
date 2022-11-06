@@ -91,7 +91,6 @@ class VehicleResource extends Resource
 
 
                     ])
-
             ])->columns(4);
     }
 
@@ -100,13 +99,20 @@ class VehicleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
+                    ->label(__('filament::resources/vehicle-resource.image'))
                     ->disk('public')
                     ->rounded(),
-                Tables\Columns\TextColumn::make('branding'),
+                Tables\Columns\TextColumn::make('branding')
+                    ->label(__('filament::resources/vehicle-resource.branding'))
+            ->wrap(),
                 Tables\Columns\TextColumn::make('permit')
-                    ->date(),
-                Tables\Columns\TextColumn::make('license_plate'),
+                    ->label(__('filament::resources/vehicle-resource.permit'))
+                    ->date()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('license_plate')
+                    ->label(__('filament::resources/vehicle-resource.license_plate')),
                 Tables\Columns\TextColumn::make('inspection')
+                    ->label(__('filament::resources/vehicle-resource.inspection'))
                     ->date()
                     ->sortable()
 

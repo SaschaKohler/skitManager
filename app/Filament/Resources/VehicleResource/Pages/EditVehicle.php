@@ -18,4 +18,11 @@ class EditVehicle extends EditRecord
             Actions\RestoreAction::make(),
         ];
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
+
 }

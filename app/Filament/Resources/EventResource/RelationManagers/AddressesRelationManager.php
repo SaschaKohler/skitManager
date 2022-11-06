@@ -52,7 +52,8 @@ class AddressesRelationManager extends RelationManager
                     ->label(__('filament::forms/components/address-form.country'))
                     ->searchable()
                     ->getSearchResultsUsing(fn(string $query) => Country::where('name', 'like', "%{$query}%")->pluck('name', 'id'))
-                    ->getOptionLabelUsing(fn($value): ?string => Country::find($value)?->getAttribute('name')),
+                    ->getOptionLabelUsing(fn($value): ?string => Country::find($value)?->getAttribute('name'))
+                    ->default('Österreich')
             ]);
     }
 

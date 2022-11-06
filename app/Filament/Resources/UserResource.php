@@ -8,6 +8,8 @@ use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use App\Models\ZipCode;
+use Closure;
 use Filament\Forms;
 use Filament\Pages\Page;
 use Filament\Resources\Form;
@@ -32,7 +34,6 @@ class UserResource extends Resource
     protected static ?string $pluralLabel = 'User';
 
 
-
     public static function form(Form $form): Form
     {
         return $form
@@ -51,9 +52,9 @@ class UserResource extends Resource
                                 //->afterStateUpdated(fn(string $context, $state, callable $set) => $context === 'create' ? $set('search', Str::upper($state)) : null),
 
                                 Forms\Components\TextInput::make('email')
-                                  //  ->required()
+                                    //  ->required()
                                     ->email(),
-                               //     ->unique(table: User::class, column: 'email' ,ignoreRecord: true),
+                                //     ->unique(table: User::class, column: 'email' ,ignoreRecord: true),
                                 Forms\Components\TextInput::make('phone1')
                                     ->label(__('filament::resources/user-resource.phone1'))
                                     ->required(),
@@ -69,12 +70,30 @@ class UserResource extends Resource
                             ->label(__('filament::resources/user-resource.extended'))
                             ->schema([
                                 Forms\Components\TextInput::make('street')
-                                    ->label(__('filament::common.street')),
+                                    ->label(__('filament::common.street'))
+                                    ->columnSpan(2),
 
-                                Forms\Components\TextInput::make('zip')
-                                    ->label(__('filament::common.zip')),
-                                Forms\Components\TextInput::make('city')
-                                    ->label(__('filament::common.city')),
+                                Forms\Components\Select::make('zip')
+                                    ->label(__('filament::common.zip'))
+                                    ->reactive()
+                                    ->searchable()
+                                    ->getSearchResultsUsing(fn(string $query) => ZipCode::where('zip', 'like', "%{$query}%")->pluck('zip', 'id'))
+                                    ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('zip'))
+                                    ->afterStateUpdated(function (Closure $set, $state) {
+                                        $set('city', ZipCode::find($state)->getAttribute('id'));
+                                    })
+                                    ->columnSpan(1),
+
+                                Forms\Components\Select::make('city')
+                                    ->label(__('filament::common.city'))
+                                    ->reactive()
+                                    ->searchable()
+                                    ->getSearchResultsUsing(fn(string $query) => ZipCode::where('location', 'like', "%{$query}%")->pluck('location', 'id'))
+                                    ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('location'))
+                                    ->afterStateUpdated(function (Closure $set, $state) {
+                                        $set('zip', ZipCode::find($state)->getAttribute('id'));
+                                    }),
+
                                 Forms\Components\TextInput::make('phone2')
                                     ->label(__('filament::common.phone2'))
                                     ->tel(),
@@ -91,7 +110,7 @@ class UserResource extends Resource
                                     ->rgb(),
 
 
-                            ]),
+                            ])->columns(2),
                         Forms\Components\Tabs\Tab::make('bank account')
                             ->label(__('filament::resources/user-resource.bank_account'))
                             ->schema([

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\EventResource\RelationManagers;
 
+use App\Models\ZipCode;
+use Closure;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -17,27 +19,32 @@ class AddressesRelationManager extends RelationManager
 
     protected static ?string $pluralModelLabel = 'zus. Adressen';
 
-
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('street')
-                    ->label(__('filament::forms/components/address-form.street')),
-
-
-                Forms\Components\TextInput::make('zip')
-                    ->label(__('filament::forms/components/address-form.zip')),
-
-
-                Forms\Components\TextInput::make('city')
-                    ->label(__('filament::forms/components/address-form.city')),
-
-
                 Forms\Components\TextInput::make('manager')
                     ->label(__('filament::forms/components/address-form.manager')),
-
+                Forms\Components\TextInput::make('street')
+                    ->label(__('filament::forms/components/address-form.street')),
+                Forms\Components\Select::make('zip')
+                    ->label(__('filament::common.zip'))
+                    ->reactive()
+                    ->searchable()
+                    ->getSearchResultsUsing(fn(string $query) => ZipCode::where('zip', 'like', "%{$query}%")->pluck('zip', 'id'))
+                    ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('zip'))
+                    ->afterStateUpdated(function (Closure $set, $state) {
+                        $set('city', ZipCode::find($state)->getAttribute('id'));
+                    }),
+                Forms\Components\Select::make('city')
+                    ->label(__('filament::common.city'))
+                    ->reactive()
+                    ->searchable()
+                    ->getSearchResultsUsing(fn(string $query) => ZipCode::where('location', 'like', "%{$query}%")->pluck('location', 'id'))
+                    ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('location'))
+                    ->afterStateUpdated(function (Closure $set, $state) {
+                        $set('zip', ZipCode::find($state)->getAttribute('id'));
+                    }),
 
                 Forms\Components\Select::make('country')
                     ->label(__('filament::forms/components/address-form.country'))

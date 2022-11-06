@@ -182,20 +182,6 @@ class CalendarWidget extends FullCalendarWidget
 
                 $this->sendNotificationsToEmployees($newEvent);
 
-//                foreach ($this->event->employees as $employee) {
-//
-//                    Notification::make()
-//                        ->title('Eintrag geändert')
-//                        ->icon('heroicon-o-document-text')
-//                        ->iconColor('success')
-//                        ->body("**{$this->event->title}** / **{$this->event->calendar->type}**\\
-//            Kunde: *{$this->event->client->name1}* am *{$this->event->start}*")
-//                        ->actions([
-//                            Action::make('View')
-//                                ->url(EventResource::getUrl('edit', ['record' => $this->event])),
-//                        ])
-//                        ->sendToDatabase($employee);
-//                }
             }
             $this->refreshEvents();
             return;
@@ -209,9 +195,6 @@ class CalendarWidget extends FullCalendarWidget
             ->iconColor('danger')
             ->duration(5000)
             ->send();
-
-
-
     }
 
     /**

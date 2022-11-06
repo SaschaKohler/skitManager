@@ -24,6 +24,8 @@ class EmployeesRelationManager extends RelationManager
     protected static ?string $label = 'Employees';
     protected static ?string $recordTitleAttribute = 'name1';
 
+    protected static ?string $pluralLabel = 'Mitarbeiter';
+
 
     public static function form(Form $form): Form
     {

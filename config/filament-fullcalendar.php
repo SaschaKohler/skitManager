@@ -18,6 +18,9 @@ return [
         'right' => 'gridSevenDay,list14Day,dayGridMonth',
     ],
     'views' => [
+        'day' => [
+            'type' => 'timeGrid'
+        ],
         'list14Day' => [
             'type' => 'list',
             'duration' => [ 'days' => '14' ],
@@ -37,7 +40,8 @@ return [
                 'omitZeroMinute' => false,
                 'meridiem' => 'short'
             ]
-        ]
+        ],
+        'timeGridDay'
     ],
 
     'navLinks' => true,

@@ -80,8 +80,8 @@ class UserResource extends Resource
                                     ->getSearchResultsUsing(fn(string $query) => ZipCode::where('zip', 'like', "%{$query}%")->pluck('zip', 'id'))
                                     ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('zip'))
                                     ->afterStateUpdated(function (Closure $set, $state) {
-                                        if(filled($state))
-                                        $set('city', ZipCode::find($state)->getAttribute('id'));
+                                        if (filled($state))
+                                            $set('city', ZipCode::find($state)->getAttribute('id'));
                                     })
                                     ->columnSpan(1),
 
@@ -92,7 +92,7 @@ class UserResource extends Resource
                                     ->getSearchResultsUsing(fn(string $query) => ZipCode::where('location', 'like', "%{$query}%")->pluck('location', 'id'))
                                     ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('location'))
                                     ->afterStateUpdated(function (Closure $set, $state) {
-                                        if(filled($state))
+                                        if (filled($state))
                                             $set('zip', ZipCode::find($state)->getAttribute('id'));
                                     }),
 
@@ -180,7 +180,8 @@ class UserResource extends Resource
                     ])
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('events.title')
-                    ->label(__('filament::resources/user-resource.table.events')),
+                    ->label(__('filament::resources/user-resource.table.events'))
+                    ->wrap(),
 
 
                 Tables\Columns\ColorColumn::make('color')

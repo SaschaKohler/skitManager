@@ -119,7 +119,7 @@ class CalendarWidget extends FullCalendarWidget
             if ($user)
                 $new->user_id = $user['id'];
             else
-                $new->user_id = 4;
+                $new->user_id = User::where('name1', '=', 'KUNDE')->first()['id'];
 
             $new->save();
 

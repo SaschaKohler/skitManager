@@ -59,7 +59,7 @@ class CalendarWidget extends FullCalendarWidget
             ->get()->flatten()->toArray();
 
 
-        if ($gcal = \Spatie\GoogleCalendar\Event::get(startDateTime: Carbon::now()->subMonth(3))) {
+        if ($gcal = \Spatie\GoogleCalendar\Event::get(startDateTime: Carbon::now()->subDays(14))) {
 
 
             $google_events = $gcal->map(function ($events) {
@@ -68,7 +68,7 @@ class CalendarWidget extends FullCalendarWidget
                     ->where('color_id', '=', $color_id)->get();
                 return [
                     'id' => $events->id,
-                    'title' => $events->summary .' **GOOGLE-CALENDAR**',
+                    'title' => $events->summary . ' **GOOGLE-CALENDAR**',
                     'start' => Carbon::parse($events->startDateTime)->toDateTimeString(),
                     'end' => Carbon::parse($events->endDateTime)->toDateTimeString(),
                     'backgroundColor' => $calendar[0]->color,
@@ -103,30 +103,25 @@ class CalendarWidget extends FullCalendarWidget
 
     public function url($param)
     {
-        $event = Event::query()
-            ->where('title', '=', $param['title'])
-            ->get()->toArray();
-        if ($event) {
-            $url = EventResource::getUrl('edit', ['record' => $event[0]['id']]);
+        if (is_numeric($param['id'])) {            // google_id is none numeric  local events have primary key numeric
+            $event = Event::find($param['id'])->toArray();
+            $url = EventResource::getUrl('edit', ['record' => $event['id']]);
 
         } else {
             $user = User::where('name1', 'like', '%' . explode(' ', $param['title'])[0] . '%')->first();
             $new = new Event();
             $new->google_id = $param['id'];
-            $new->title = explode(' *',$param['title'])[0];
+            $new->title = explode(' *', $param['title'])[0];
             $new->start = $param['start'];
             $new->end = $param['end'];
             $new->calendar_id = $param['extendedProps']['calendar_id'];
 
-            if ($user) $new->user_id = $user['id'];
-            else             $new->user_id = 4;
+            if ($user)
+                $new->user_id = $user['id'];
+            else
+                $new->user_id = 4;
 
             $new->save();
-
-
-//            $to_del = \Spatie\GoogleCalendar\Event::find($param['id']);
-//            $to_del->delete();
-
 
             $url = EventResource::getUrl('edit', ['record' => $new->id]);
         }
@@ -140,12 +135,6 @@ class CalendarWidget extends FullCalendarWidget
     {
         // parent::onEventClick($event);
 
-
-        //  return fn (Model $record): string => route('posts.edit', ['record' => $record]);
-
-        // your code
-        //   $this->editEventForm->model($this->event);
-        //  return $event;
         $this->url($event);
 
     }
@@ -246,7 +235,7 @@ class CalendarWidget extends FullCalendarWidget
         $data['allDay'] = $event['extendedProps']['allDay'];
         $data['calendar_id'] = $event['extendedProps']['calendar_id'];
         $data['backgroundColor'] = $calendar->color;
-         $data['borderColor'] = $calendar->color;
+        $data['borderColor'] = $calendar->color;
         $data['recurrence'] = $data['extendedProps']['recurrence'];
 
 
@@ -551,4 +540,4 @@ class CalendarWidget extends FullCalendarWidget
 
 
     }
-    }
+}

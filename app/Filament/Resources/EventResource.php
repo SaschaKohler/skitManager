@@ -125,7 +125,8 @@ class EventResource extends Resource
                             Forms\Components\Placeholder::make('street')
                                 ->label(__('filament::resources/event-resource.client_detail.address'))
                                 ->content(fn(Event $record): ?string => $record->client->street . ' / '
-                                    . ZipCode::find($record->client->city)?->location ?? null),
+                                //    . ZipCode::find($record->client->city)?->location ?? null
+                                ),
                             Forms\Components\Placeholder::make('created_at')
                                 ->label(__('filament::common.created_at'))
                                 ->content(fn(Event $record): ?string => $record->created_at->diffForHumans()),

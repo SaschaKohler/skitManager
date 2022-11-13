@@ -68,7 +68,7 @@ class CalendarWidget extends FullCalendarWidget
                     ->where('color_id', '=', $color_id)->get();
                 return [
                     'id' => $events->id,
-                    'title' => $events->summary,
+                    'title' => $events->summary .' **GOOGLE-CALENDAR**',
                     'start' => Carbon::parse($events->startDateTime)->toDateTimeString(),
                     'end' => Carbon::parse($events->endDateTime)->toDateTimeString(),
                     'backgroundColor' => $calendar[0]->color,
@@ -113,7 +113,7 @@ class CalendarWidget extends FullCalendarWidget
             $user = User::where('name1', 'like', '%' . explode(' ', $param['title'])[0] . '%')->first();
             $new = new Event();
             $new->google_id = $param['id'];
-            $new->title = $param['title'];
+            $new->title = explode(' *',$param['title'])[0];
             $new->start = $param['start'];
             $new->end = $param['end'];
             $new->calendar_id = $param['extendedProps']['calendar_id'];

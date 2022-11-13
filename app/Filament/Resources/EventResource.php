@@ -6,6 +6,7 @@ use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Models\Calendar;
 use App\Models\Event;
+use App\Models\ZipCode;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -123,7 +124,8 @@ class EventResource extends Resource
                                 ->content(fn(Event $record): ?string => $record->client->phone1),
                             Forms\Components\Placeholder::make('street')
                                 ->label(__('filament::resources/event-resource.client_detail.address'))
-                                ->content(fn(Event $record): ?string => $record->client->street . ' ' . $record->client->city),
+                                ->content(fn(Event $record): ?string => $record->client->street . ' / '
+                                    . ZipCode::find($record->client->city)?->location),
                             Forms\Components\Placeholder::make('created_at')
                                 ->label(__('filament::common.created_at'))
                                 ->content(fn(Event $record): ?string => $record->created_at->diffForHumans()),

@@ -34,7 +34,7 @@ class AddressesRelationManager extends RelationManager
                     ->getSearchResultsUsing(fn(string $query) => ZipCode::where('zip', 'like', "%{$query}%")->pluck('zip', 'id'))
                     ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('zip'))
                     ->afterStateUpdated(function (Closure $set, $state) {
-                        if(filled($state))
+                        if (filled($state))
                             $set('city', ZipCode::find($state)->getAttribute('id'));
                     }),
                 Forms\Components\Select::make('city')
@@ -44,8 +44,8 @@ class AddressesRelationManager extends RelationManager
                     ->getSearchResultsUsing(fn(string $query) => ZipCode::where('location', 'like', "%{$query}%")->pluck('location', 'id'))
                     ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('location'))
                     ->afterStateUpdated(function (Closure $set, $state) {
-                        if(filled($state))
-                        $set('zip', ZipCode::find($state)->getAttribute('id'));
+                        if (filled($state))
+                            $set('zip', ZipCode::find($state)->getAttribute('id'));
                     }),
 
                 Forms\Components\Select::make('country')
@@ -66,10 +66,13 @@ class AddressesRelationManager extends RelationManager
 
 
                 Tables\Columns\TextColumn::make('zip')
-                    ->label(__('filament::forms/components/address-form.zip')),
+                    ->label(__('filament::forms/components/address-form.zip'))
+                    ->getStateUsing(fn($record): ?string => ZipCode::find($record->zip)?->zip ?? null),
+
 
                 Tables\Columns\TextColumn::make('city')
-                    ->label(__('filament::forms/components/address-form.city')),
+                    ->label(__('filament::forms/components/address-form.city'))
+                    ->getStateUsing(fn($record): ?string => ZipCode::find($record->city)?->location ?? null),
 
 
                 Tables\Columns\TextColumn::make('country')

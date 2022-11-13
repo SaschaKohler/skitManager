@@ -73,28 +73,28 @@ class UserResource extends Resource
                                     ->label(__('filament::common.street'))
                                     ->columnSpan(2),
 
-                                Forms\Components\TextInput::make('zip')
+                                Forms\Components\Select::make('zip')
                                     ->label(__('filament::common.zip'))
-//                                    ->reactive()
-//                                    ->searchable()
-//                                    ->getSearchResultsUsing(fn(string $query) => ZipCode::where('zip', 'like', "%{$query}%")->pluck('zip', 'id'))
-//                                    ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('zip'))
-//                                    ->afterStateUpdated(function (Closure $set, $state) {
-//                                        if(filled($state))
-//                                        $set('city', ZipCode::find($state)->getAttribute('id'));
-//                                    })
+                                    ->reactive()
+                                    ->searchable()
+                                    ->getSearchResultsUsing(fn(string $query) => ZipCode::where('zip', 'like', "%{$query}%")->pluck('zip', 'id'))
+                                    ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('zip'))
+                                    ->afterStateUpdated(function (Closure $set, $state) {
+                                        if(filled($state))
+                                        $set('city', ZipCode::find($state)->getAttribute('id'));
+                                    })
                                     ->columnSpan(1),
 
-                                Forms\Components\TextInput::make('city')
-                                    ->label(__('filament::common.city')),
-//                                    ->reactive()
-//                                    ->searchable()
-//                                    ->getSearchResultsUsing(fn(string $query) => ZipCode::where('location', 'like', "%{$query}%")->pluck('location', 'id'))
-//                                    ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('location'))
-//                                    ->afterStateUpdated(function (Closure $set, $state) {
-//                                        if(filled($state))
-//                                            $set('zip', ZipCode::find($state)->getAttribute('id'));
-//                                    }),
+                                Forms\Components\Select::make('city')
+                                    ->label(__('filament::common.city'))
+                                    ->reactive()
+                                    ->searchable()
+                                    ->getSearchResultsUsing(fn(string $query) => ZipCode::where('location', 'like', "%{$query}%")->pluck('location', 'id'))
+                                    ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('location'))
+                                    ->afterStateUpdated(function (Closure $set, $state) {
+                                        if(filled($state))
+                                            $set('zip', ZipCode::find($state)->getAttribute('id'));
+                                    }),
 
                                 Forms\Components\TextInput::make('phone2')
                                     ->label(__('filament::common.phone2'))

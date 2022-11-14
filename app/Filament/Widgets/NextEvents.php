@@ -20,7 +20,7 @@ class NextEvents extends BaseWidget
         // ...
         return Event::with(['client','employees'])
             ->where('start','>=',
-                Carbon::today()->toDateString())->take(6);
+                Carbon::today()->toDateString())->take(10);
     }
 
     protected function getTableColumns(): array

@@ -28,6 +28,7 @@ class NextEvents extends BaseWidget
         return [
             Tables\Columns\TextColumn::make('start')
                 ->label(__('filament::resources/event-resource.table.start'))
+                ->sortable()
                 ->date('D, d.M.y'),
             Tables\Columns\TextColumn::make('client.name1')
                 ->label(__('filament::resources/event-resource.table.client')),

@@ -156,12 +156,11 @@ class EventResource extends Resource
                     ->url(fn(Event $record) => UserResource::getUrl('edit', ['record' => $record->client])),
                 Tables\Columns\TextColumn::make('employees.name1')
                     ->label(__('filament::resources/event-resource.table.employees'))
-                    ->toggleable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->wrap(),
                 Tables\Columns\TextColumn::make('vehicles.branding')
                     ->label(__('filament::resources/event-resource.table.vehicles'))
-                    ->toggleable(),
-
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('start')
                     ->label(__('filament::resources/event-resource.table.start'))
                     ->sortable()

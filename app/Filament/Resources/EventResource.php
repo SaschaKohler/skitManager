@@ -164,6 +164,7 @@ class EventResource extends Resource
 
                 Tables\Columns\TextColumn::make('start')
                     ->label(__('filament::resources/event-resource.table.start'))
+                    ->sortable()
                     ->date('d.M.y'),
                 Tables\Columns\TextColumn::make('calendar.type')
                     ->label(__('filament::resources/event-resource.table.calendar_type'))

@@ -36,7 +36,12 @@ class EditUser extends EditRecord
                     'password' => Hash::make($data['new_password'])
                 ]);
                 $this->notify('success','Password updated successfully');
-            })
+            }),
+            Actions\CreateAction::make(),
+            Actions\DeleteAction::make(),
+            Actions\RestoreAction::make(),
+            Actions\ForceDeleteAction::make(),
+
         ];
     }
 

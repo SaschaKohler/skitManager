@@ -181,7 +181,9 @@ class UserResource extends Resource
                     ])->query(function ($query, array $data) {
                         return $query->when($data['role_id'],
                             fn($query) => $query->where('role_id', '=', $data['role_id']));
-                    })
+                    }),
+                Tables\Filters\TrashedFilter::make(),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

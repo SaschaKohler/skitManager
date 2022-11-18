@@ -175,8 +175,8 @@ class EventResource extends Resource
                 Tables\Filters\Filter::make('start')
                     ->form([
                         Forms\Components\DatePicker::make('start_at')
-                            ->label(__('filament::resources/event-resource.table.filters.start_at'))
-                            ->default(Carbon::today()->toDateString()),
+                            ->label(__('filament::resources/event-resource.table.filters.start_at')),
+                          //  ->default(Carbon::today()->toDateString()),
                         Forms\Components\DatePicker::make('end_at')
                             ->label(__('filament::resources/event-resource.table.filters.end_at'))
                          //   ->default(Carbon::today()->addDays(3)->toDateString()),  // user specific

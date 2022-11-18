@@ -311,4 +311,9 @@ class EventResource extends Resource
                 ->render();
 
     }
+
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return true;
+    }
 }

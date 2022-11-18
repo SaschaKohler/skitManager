@@ -179,7 +179,7 @@ class EventResource extends Resource
                             ->default(Carbon::today()->toDateString()),
                         Forms\Components\DatePicker::make('end_at')
                             ->label(__('filament::resources/event-resource.table.filters.end_at'))
-                            ->default(Carbon::today()->addDays(3)->toDateString()),
+                         //   ->default(Carbon::today()->addDays(3)->toDateString()),  // user specific
                     ])
                     ->query(function ($query, array $data) {
                         return $query->when($data['start_at'],

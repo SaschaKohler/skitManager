@@ -10,17 +10,14 @@ return [
     'timeZone' => config('app.timezone'),
 
     'locale' => config('app.locale'),
-    'initialView' => 'gridSevenDay',
+    'initialView' => 'timeGridWeek',
 
     'headerToolbar' => [
         'left' => 'prev,next today',
         'center' => 'title',
-        'right' => 'gridSevenDay,list14Day,dayGridMonth',
+        'right' => 'timeGridWeek,list14Day,dayGridMonth',
     ],
     'views' => [
-        'day' => [
-            'type' => 'timeGrid'
-        ],
         'list14Day' => [
             'type' => 'list',
             'duration' => [ 'days' => '14' ],

@@ -19,6 +19,7 @@ class EditEvent extends EditRecord
             Actions\RestoreAction::make(),
             Actions\ForceDeleteAction::make(),
             Actions\CreateAction::make(),
+
         ];
     }
 

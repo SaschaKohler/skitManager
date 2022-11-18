@@ -174,18 +174,33 @@ class EventResource extends Resource
                 //
                 Tables\Filters\Filter::make('start')
                     ->form([
-                        Forms\Components\DatePicker::make('start_at')
-                            ->label(__('filament::resources/event-resource.table.filters.start_at')),
-                          //  ->default(Carbon::today()->toDateString()),
-                        Forms\Components\DatePicker::make('end_at')
-                            ->label(__('filament::resources/event-resource.table.filters.end_at'))
-                         //   ->default(Carbon::today()->addDays(3)->toDateString()),  // user specific
+                        Forms\Components\DatePicker::make('from')
+                            ->label(__('filament::resources/event-resource.table.filters.from')),
+                        //  ->default(Carbon::today()->toDateString()),
+                        Forms\Components\DatePicker::make('until')
+                            ->label(__('filament::resources/event-resource.table.filters.until'))
+                        //   ->default(Carbon::today()->addDays(3)->toDateString()),  // user specific
                     ])
                     ->query(function ($query, array $data) {
-                        return $query->when($data['start_at'],
-                            fn($query) => $query->whereDate('start', '>=', $data['start_at']))
-                            ->when($data['end_at'],
-                                fn($query) => $query->whereDate('end', '<=', $data['end_at']));
+                        return $query->when($data['from'],
+                            fn($query) => $query->whereDate('start', '>=', $data['from']))
+                            ->when($data['until'],
+                                fn($query) => $query->whereDate('end', '<=', $data['until']));
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['from'] ?? null) {
+                            $indicators['from'] = __('filament::resources/event-resource.table.filters.from') . Carbon::parse($data['from'])
+                                    ->toFormattedDateString();
+                        }
+
+                        if ($data['until'] ?? null) {
+                            $indicators['until'] = __('filament::resources/event-resource.table.filters.until') . Carbon::parse($data['until'])
+                                    ->toFormattedDateString();
+                        }
+
+                        return $indicators;
                     }),
                 Tables\Filters\Filter::make('calendar_id')
                     ->form([
@@ -203,7 +218,28 @@ class EventResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\ReplicateAction::make()
+                        ->form([
+                            Forms\Components\DatePicker::make('start')
+                                ->label(__('filament::resources/event-resource.table.start'))
+                                ->firstDayOfWeek(1)
+                                ->required(),
+                        ])
+                        ->beforeReplicaSaved(function (Model $replica, array $data): void {
+                            $data['end'] = $data['start'];
+                            $replica->fill($data);
+                        })
+                        ->afterReplicaSaved(function (Model $replica, Model $record): void {
+                            $replica->employees()->sync($record->employees()->get());
+                            $replica->vehicles()->sync($record->vehicles()->get());
+
+                        })
+                    ,
+                    Tables\Actions\DeleteAction::make()
+
+                ]),
 
             ])
             ->bulkActions([

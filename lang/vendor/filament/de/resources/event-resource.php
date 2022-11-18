@@ -29,8 +29,8 @@ return [
         'vehicles' => 'Fahrzeuge',
         "calendar_type" => "Kategorie",
         'filters' => [
-            'start_at' => 'Beginn',
-            'end_at' => 'Ende'
+            'from' => 'Von ',
+            'until' => 'Bis '
         ]
 
 

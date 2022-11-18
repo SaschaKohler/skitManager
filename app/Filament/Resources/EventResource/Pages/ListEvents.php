@@ -17,5 +17,15 @@ class ListEvents extends ListRecords
         ];
     }
 
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return true;
+    }
+
+    protected function isTableStriped(): bool
+    {
+        return false;
+    }
+
 
 }

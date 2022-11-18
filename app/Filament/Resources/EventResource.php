@@ -209,6 +209,7 @@ class EventResource extends Resource
                 Tables\Actions\RestoreBulkAction::make(),
                 Tables\Actions\ForceDeleteBulkAction::make(),
             ]);
+
     }
 
 
@@ -274,8 +275,5 @@ class EventResource extends Resource
 
     }
 
-    protected function shouldPersistTableFiltersInSession(): bool
-    {
-        return true;
-    }
+
 }

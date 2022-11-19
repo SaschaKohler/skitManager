@@ -15,30 +15,14 @@ return [
     'headerToolbar' => [
         'left' => 'prev,next today',
         'center' => 'title',
-        'right' => 'timeGridWeek,list14Day,dayGridMonth',
+        'right' => 'timeGridDay,timeGridWeek,list14Day,dayGridMonth',
     ],
     'views' => [
         'list14Day' => [
             'type' => 'list',
-            'duration' => [ 'days' => '14' ],
+            'duration' => ['days' => '14'],
             'buttonText' => 'nächsten 14 Tage'
         ],
-        'gridSevenDay' => [
-            'type' => 'timeGrid',
-            'duration' => [ 'days' => 7 ],
-            'slotDuration' => '00:30',
-            'slotMinTime' => '04:00',
-            'slotMaxTime' => '23:00',
-            'buttonText' => 'nächsten 7 Tage',
-            'slotLabelInterval' => '01:00',
-            'slotLabelFormat' => [
-                'hour' => 'numeric',
-                'minute' => '2-digit',
-                'omitZeroMinute' => false,
-                'meridiem' => 'short'
-            ]
-        ],
-        'timeGridDay'
     ],
 
     'navLinks' => true,
@@ -49,7 +33,7 @@ return [
 
     'editable' => true,
 
-    'selectable' => false,
+    'selectable' => true,
 
     'dayMaxEvents' => true,
 ];

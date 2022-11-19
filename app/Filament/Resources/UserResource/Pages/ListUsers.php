@@ -4,6 +4,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
 use App\Models\User;
+use App\Models\ZipCode;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
@@ -38,6 +39,7 @@ class ListUsers extends ListRecords
 //Read the contents of the uploaded file
                     while (($filedata = fgetcsv($file, 1000, ";")) !== FALSE) {
                         $num = count($filedata);
+
 // Skip first row (Remove below comment if you want to skip the first row)
                         if ($i == 0) {
                             $i++;
@@ -49,7 +51,6 @@ class ListUsers extends ListRecords
                         $i++;
                     }
                     fclose($file); //Close after reading
-                    //      dd($importData_arr);
 
                     foreach ($importData_arr as $importData) {
 
@@ -63,14 +64,19 @@ class ListUsers extends ListRecords
                         $name1 = utf8_encode($importData[4]); //Get user names
                         $street = utf8_encode($importData[6]);
                         $title1 = $importData[3];
-                        $zip = utf8_encode($importData[8]);
-                        $city = utf8_encode($importData[9]);
+//                        $zip = utf8_encode($importData[8]);
+//                        $city = utf8_encode($importData[9]);
                         $email = $importData[55] ? $importData[55] : null;
                         $uuid = $importData[0];
                         $phone1 = $importData[10] ? $importData[10] : null;
 
                         $phone2 = $importData[12];
                         $phone3 = $importData[82];
+
+                        $zip = ZipCode::select('id','location')
+                            ->where('zip', '=', utf8_encode($importData[8]))
+                           ->pluck('id','location')->implode(',');
+                        $city = $zip;
 
                         if ($importData[27] == 'PERSONAL')
                             $role_id = 2;

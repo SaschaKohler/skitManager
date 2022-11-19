@@ -189,8 +189,8 @@ class DatabaseSeeder extends Seeder
 //            $event->employees()->sync($employees->random(rand(2,4))
 //
 //            );
-//        $this->call(ZipCodesTableSeeder::class);
-    });
+  //  });
+        Seeder::call(ZipCodesTableSeeder::class);
 
         Vehicle::factory(16)->create();//->each(function (Vehicle $vehicle) use ($events) {
      //       $vehicle->events()->sync($events->random(random_int(1, 2)));

@@ -68,11 +68,12 @@ class EventsChart extends BarChartWidget
             $backgroundColor = array();
             $borderColor = array();
 
+           // dd($project);
             foreach ($project[$user->id] as $item) {
                 foreach ($item as $dat) {
 
                     $values = explode('::', $dat);
-                    array_push($labels, $values[0]);
+                    array_push($labels, Carbon::parse($values[0])->toFormattedDateString());
                     array_push($data, $values[2]);
                     array_push($borderColor, $user->color);
                     $int_value = preg_split('/[(|)]/', $user->color);    // rgb(a,b,c)  -> rgba(a,b,c,o)

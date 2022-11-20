@@ -61,12 +61,14 @@ class ListUsers extends ListRecords
                         $email1 = null;
                         $email = null;
 
-                        $name1 = utf8_encode($importData[4]); //Get user names
-                        $street = utf8_encode($importData[6]);
+                        $name1 = $importData[4]; //Get user names
+                        $name2 = $importData[5];
+
+                        $street = $importData[6];
                         $title1 = $importData[3];
 //                        $zip = utf8_encode($importData[8]);
 //                        $city = utf8_encode($importData[9]);
-                        $email = $importData[55] ? $importData[55] : null;
+                        $email = utf8_encode($importData[55]) ? $importData[55] : null;
                         $uuid = $importData[0];
                         $phone1 = $importData[10] ? $importData[10] : null;
 
@@ -74,7 +76,7 @@ class ListUsers extends ListRecords
                         $phone3 = $importData[82];
 
                         $zip = ZipCode::select('id','location')
-                            ->where('zip', '=', utf8_encode($importData[8]))
+                            ->where('zip', '=', $importData[8])
                            ->pluck('id','location')->implode(',');
                         $city = $zip;
 
@@ -88,14 +90,13 @@ class ListUsers extends ListRecords
                             $uident = $importData[50];
                             $role_id = 3;
                             $email1 = $importData[40];
-                            $name2 = utf8_encode($importData[5]);
                             $title2 = $importData[16];
-                            $manager = utf8_encode($importData[17]);
+                            $manager = $importData[17];
                         } else if ($importData[3] == 'Gemeinde') {
                             $role_id = 3;
                             $email1 = $importData[40];
                             $title2 = $importData[16];
-                            $manager = utf8_encode($importData[17]);
+                            $manager = $importData[17];
                         }
 
 
@@ -132,6 +133,7 @@ class ListUsers extends ListRecords
                             }
 
                         } catch (\Exception $e) {
+                       //     dd($e,$this->counter);
                             DB::rollBack();
                         }
                     }

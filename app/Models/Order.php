@@ -16,13 +16,20 @@ class Order extends Model
         'id'
     ];
 
-    public function event(): BelongsTo
+//    public function event(): BelongsTo
+//    {
+//        return $this->belongsTo(Event::class, 'event_id');
+//    }
+
+    public function client(): BelongsTo
     {
-        return $this->belongsTo(Event::class, 'event_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
+
+
 }

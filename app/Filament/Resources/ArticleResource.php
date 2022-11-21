@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ArticleResource\Pages;
 use App\Filament\Resources\ArticleResource\RelationManagers;
 use App\Models\Article;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Resources\Form;
@@ -13,6 +14,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Livewire\Features\Placeholder;
 
 class ArticleResource extends Resource
 {
@@ -31,49 +33,40 @@ class ArticleResource extends Resource
                 Forms\Components\TextInput::make('short_text'),
                 Forms\Components\TextInput::make('unit'),
                 Forms\Components\TextInput::make('lpr')
-                    ->numeric()
                     ->mask(fn(Mask $mask) => $mask
-                        ->numeric()
-                        ->decimalPlaces(2)
+                        ->money('€')
+                        ->decimalSeparator('.')
+                        ->mapToDecimalSeparator([','])
                         ->minValue(0)
-                        ->decimalSeparator(',')
-                        ->padFractionalZeros()
                     ),
                 Forms\Components\TextInput::make('ek')
-                    ->numeric()
                     ->mask(fn(Mask $mask) => $mask
-                        ->numeric()
-                        ->decimalPlaces(2)
-                        ->decimalSeparator(',')
+                        ->money('€')
+                        ->decimalSeparator('.')
+                        ->mapToDecimalSeparator([','])
                         ->minValue(0)
-                        ->padFractionalZeros()
                     ),
                 Forms\Components\TextInput::make('vk1')
-                    ->numeric()
                     ->mask(fn(Mask $mask) => $mask
-                        ->numeric()
-                        ->decimalPlaces(2)
-                        ->decimalSeparator(',')
+                        ->money('€')
+                        ->decimalSeparator('.')
+                        ->mapToDecimalSeparator([','])
                         ->minValue(0)
-                        ->padFractionalZeros()
                     ),
                 Forms\Components\TextInput::make('vk2')
-                    ->numeric()
                     ->mask(fn(Mask $mask) => $mask
-                        ->numeric()
-                        ->decimalPlaces(2)
-                        ->decimalSeparator(',')
-                        ->minValue(0)
-                        ->padFractionalZeros()
-                    ),
+                            ->money('€')
+                            ->decimalSeparator('.')
+                            ->mapToDecimalSeparator([','])
+                            ->minValue(0)
+                        ),
                 Forms\Components\TextInput::make('vk3')
-                    ->numeric()
                     ->mask(fn(Mask $mask) => $mask
-                        ->numeric()
-                        ->decimalPlaces(2)
-                        ->decimalSeparator(',')
+                        ->money('€')
+                        ->decimalSeparator('.')
+                        ->mapToDecimalSeparator([','])
                         ->minValue(0)
-                        ->padFractionalZeros()
+
                     ),
             ]);
     }
@@ -89,11 +82,11 @@ class ArticleResource extends Resource
                     ->wrap()
                     ->searchable(isIndividual: true, isGlobal: false),
                 Tables\Columns\TextColumn::make('unit'),
-                Tables\Columns\TextColumn::make('lpr'),
-                Tables\Columns\TextColumn::make('ek'),
-                Tables\Columns\TextColumn::make('vk1'),
-                Tables\Columns\TextColumn::make('vk2'),
-                Tables\Columns\TextColumn::make('vk3'),
+                Tables\Columns\TextColumn::make('lpr')->money('eur'),
+                Tables\Columns\TextColumn::make('ek')->money('eur'),
+                Tables\Columns\TextColumn::make('vk1')->money('eur'),
+                Tables\Columns\TextColumn::make('vk2')->money('eur'),
+                Tables\Columns\TextColumn::make('vk3')->money('eur'),
             ])
             ->filters([
                 //

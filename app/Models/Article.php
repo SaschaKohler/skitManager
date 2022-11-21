@@ -17,16 +17,17 @@ class Article extends Model
     protected function lpr(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => str_replace('.', ',', $value),
-            set: fn($value) => str_replace(',', '.', $value)
+//            get: fn($value) => $value * 100,
+//            set: fn($value) => str_replace(',', '.', $value)
+
         );
     }
 
     protected function ek(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => str_replace('.', ',', $value),
-            set: fn($value) => str_replace(',', '.', $value)
+        // get: fn($value) => str_replace('.', ',', $value),
+//            set: fn($value) => trim($value, ',')
 
         );
     }
@@ -34,8 +35,10 @@ class Article extends Model
     protected function vk1(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => str_replace('.', ',', $value),
-            set: fn($value) => str_replace(',', '.', $value)
+//            get: fn($value) => str_replace('.', ',', $value),
+//            set: fn($value) => str_replace(',', '.', $value)
+//            set: fn($value) => trim($value, ',')
+
 
         );
     }
@@ -43,16 +46,21 @@ class Article extends Model
     protected function vk2(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => str_replace('.', ',', $value),
-            set: fn($value) => str_replace(',', '.', $value)
+//            get: fn($value) => $value * 100,
+
+//            get: fn($value) => str_replace('.', ',', $value),
+//            set: fn($value) => str_replace(',', '.', $value)
+
         );
     }
 
     protected function vk3(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => str_replace('.', ',', $value),
-            set: fn($value) => str_replace(',', '.', $value)
+//            get: fn($value) => str_replace('.', ',', $value),
+//            set: fn($value) => str_replace(',', '.', $value)
+       //     set: fn($value) => trim($value, ',')
+
         );
     }
 

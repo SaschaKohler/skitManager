@@ -3,18 +3,17 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
-use App\Filament\Resources\OrderResource\RelationManagers;
-use App\Forms\Components\AddressForm;
 use App\Models\Article;
 use App\Models\Order;
-use App\Models\Shop\Product;
 use Filament\Forms;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput\Mask;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class OrderResource extends Resource
 {
@@ -26,6 +25,7 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
+
                 Forms\Components\Group::make()
                     ->schema([
                         Forms\Components\Card::make()
@@ -36,7 +36,6 @@ class OrderResource extends Resource
                             ->schema(static::getFormSchema('items')),
                     ])
                     ->columnSpan(['lg' => fn(?Order $record) => $record === null ? 3 : 2]),
-
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\Placeholder::make('created_at')
@@ -49,7 +48,10 @@ class OrderResource extends Resource
                     ])
                     ->columnSpan(['lg' => 1])
                     ->hidden(fn(?Order $record) => $record === null),
-            ]);
+
+
+            ])
+            ->columns(3);
 
     }
 
@@ -61,7 +63,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('number')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('event.client.name')
+                Tables\Columns\TextColumn::make('client.name1')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -73,7 +75,6 @@ class OrderResource extends Resource
                     ]),
 
                 Tables\Columns\TextColumn::make('total_price')
-                    ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -112,9 +113,30 @@ class OrderResource extends Resource
     {
         if ($section === 'items') {
             return [
+                Forms\Components\Placeholder::make('total_price')
+                    ->content(function ($get) {
+                        return collect($get('items'))->map(function ($item) {
+                            return [
+                                'price' => $item['qty'] * $item['unit_price'],
+                            ];
+                        })->sum('price');
+                    }),
                 Forms\Components\Repeater::make('items')
                     ->relationship()
+                    ->registerListeners([
+                        'repeater::createItem' => [
+                            function (Repeater $component,): void {
+                                static::calculateTransactionDetails($component->getLivewire());
+                            },
+                        ],
+                        'repeater::deleteItem' => [
+                            function (Repeater $component,): void {
+                                static::calculateTransactionDetails($component->getLivewire());
+                            },
+                        ]
+                    ])
                     ->schema([
+
                         Forms\Components\Select::make('article_id')
                             ->label('Article')
                             ->options(Article::query()->pluck('short_text', 'id'))
@@ -127,9 +149,10 @@ class OrderResource extends Resource
 
                         Forms\Components\TextInput::make('qty')
                             ->numeric()
+                            ->reactive()
                             ->default(1)
                             ->columnSpan([
-                                'md' => 2,
+                                'md' => 1,
                             ])
                             ->required(),
 
@@ -137,10 +160,22 @@ class OrderResource extends Resource
                             ->label('Unit Price')
                             ->disabled()
                             ->numeric()
+                            ->mask(fn(Mask $mask) => $mask
+                                ->money('€')
+                                ->decimalSeparator('.')
+                                ->mapToDecimalSeparator([','])
+                                ->minValue(0)
+                            )
                             ->required()
                             ->columnSpan([
-                                'md' => 3,
+                                'md' => 2,
                             ]),
+                        Forms\Components\Placeholder::make('sub_total')
+                            ->disabled()
+                            ->content(function ($get) {
+                                return $get('qty') * $get('unit_price');
+                            })
+                            ->columnSpan(['md' => 2])
                     ])
                     ->orderable()
                     ->defaultItems(1)
@@ -158,27 +193,27 @@ class OrderResource extends Resource
                 ->disabled()
                 ->required(),
 
-            Forms\Components\Select::make('event_id')
-                ->relationship('event', 'title')
+            Forms\Components\Select::make('user_id')
+                ->relationship('client', 'name1')
                 ->searchable()
-                ->required(),
-//                ->createOptionForm([
-//                    Forms\Components\TextInput::make('name')
-//                        ->required(),
-//
-//                    Forms\Components\TextInput::make('email')
-//                        ->required()
-//                        ->email()
-//                        ->unique(),
-//
-//                    Forms\Components\TextInput::make('phone'),
-//                ])
-//                ->createOptionAction(function (Forms\Components\Actions\Action $action) {
-//                    return $action
-//                        ->modalHeading('Create customer')
-//                        ->modalButton('Create customer')
-//                        ->modalWidth('lg');
-//                }),
+                ->required()
+                ->createOptionForm([
+                    Forms\Components\TextInput::make('name1')
+                        ->required(),
+
+                    Forms\Components\TextInput::make('email')
+                        ->required()
+                        ->email()
+                        ->unique(),
+
+                    Forms\Components\TextInput::make('phone1'),
+                ])
+                ->createOptionAction(function (Forms\Components\Actions\Action $action) {
+                    return $action
+                        ->modalHeading('Create customer')
+                        ->modalButton('Create customer')
+                        ->modalWidth('lg');
+                }),
 
             Forms\Components\Select::make('status')
                 ->options([
@@ -202,5 +237,17 @@ class OrderResource extends Resource
 //            Forms\Components\MarkdownEditor::make('notes')
 //                ->columnSpan('full'),
         ];
+    }
+
+    public static function calculateTransactionDetails($component)
+    {
+        $price = collect($component->data['items'])->map(function ($item) {
+            return [
+                'price' => $item['qty'] * $item['unit_price'],
+            ];
+        })->sum('price');
+
+        $component->data['total_price'] = $price;
+
     }
 }

@@ -65,6 +65,12 @@ class ListArticles extends ListRecords
                         $vk2 = floatval(str_replace(',', '.', $importData[10])) ?? null;
                         $vk3 = floatval(str_replace(',', '.', $importData[11])) ?? null;
 
+//                        $lpr = intval(trim($importData[7],',')) ?? null;
+//                        $ek =  intval(trim($importData[8],',')) ?? null;
+//                        $vk1 = intval(trim($importData[9],',')) ?? null;
+//                        $vk2 = intval(trim($importData[10],',')) ?? null;
+//                        $vk3 = intval(trim($importData[11],',')) ?? null;
+
 
 //                        $vk1_perc = floatval(100 - (($ek*10 / $vk1*10) * 100)) ?? null;
 //                        $vk2_perc = floatval(100 - (($ek*10 / $vk2*10) * 100)) ?? null;
@@ -82,7 +88,7 @@ class ListArticles extends ListRecords
 //                            $vk1_perc,
 //                            $vk2_perc,
 //                            $vk3_perc,
-//                        );
+                 //       );
                         try {
                             $article_exist = Article::query()
                                 ->where('uuid', '=', $uuid)

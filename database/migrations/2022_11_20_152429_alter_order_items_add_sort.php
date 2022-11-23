@@ -13,18 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('email')->nullable()->unique()->change();
+        Schema::table('order_items', function (Blueprint $table) {
+            $table->unsignedInteger('sort')->default(0)->after('id');
         });
-
     }
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
+
     public function down()
     {
-        //
+        Schema::table('order_items', function (Blueprint $table) {
+            $table->dropColumn('sort');
+        });
     }
 };

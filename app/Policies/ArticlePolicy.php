@@ -19,7 +19,8 @@ class ArticlePolicy
     public function viewAny(User $user)
     {
         //
-        return ($user->role_id == 1 || $user->role_id == 2);
+//        return ($user->role_id == 1 || $user->role_id == 2);
+        return auth()->user()->name1 == 'Sascha Kohler';
 
     }
 
@@ -32,8 +33,9 @@ class ArticlePolicy
      */
     public function view(User $user, Article $article)
     {
-        //
-        return ($user->role_id == 1 || $user->role_id == 2);
+        return auth()->user()->name1 == 'Sascha Kohler';
+
+//        return ($user->role_id == 1 || $user->role_id == 2);
 
     }
 
@@ -46,7 +48,8 @@ class ArticlePolicy
     public function create(User $user)
     {
         //
-        return ($user->role_id == 1 || $user->role_id == 2);
+        return auth()->user()->name1 == 'Sascha Kohler';
+//        return ($user->role_id == 1 || $user->role_id == 2);
 
     }
 
@@ -60,7 +63,8 @@ class ArticlePolicy
     public function update(User $user, Article $article)
     {
         //
-        return ($user->role_id == 1 || $user->role_id == 2);
+//        return ($user->role_id == 1 || $user->role_id == 2);
+        return auth()->user()->name1 == 'Sascha Kohler';
 
     }
 
@@ -74,7 +78,8 @@ class ArticlePolicy
     public function delete(User $user, Article $article)
     {
         //
-        return ($user->role_id == 1 || $user->role_id == 2);
+//        return ($user->role_id == 1 || $user->role_id == 2);
+        return auth()->user()->name1 == 'Sascha Kohler';
 
     }
 
@@ -88,7 +93,8 @@ class ArticlePolicy
     public function restore(User $user, Article $article)
     {
         //
-        return ($user->role_id == 1 || $user->role_id == 2);
+//        return ($user->role_id == 1 || $user->role_id == 2);
+        return auth()->user()->name1 == 'Sascha Kohler';
 
     }
 
@@ -102,7 +108,8 @@ class ArticlePolicy
     public function forceDelete(User $user, Article $article)
     {
         //
-        return ($user->role_id == 1 || $user->role_id == 2);
+//        return ($user->role_id == 1 || $user->role_id == 2);
+        return auth()->user()->name1 == 'Sascha Kohler';
 
     }
 }

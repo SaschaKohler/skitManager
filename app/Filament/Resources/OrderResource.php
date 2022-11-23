@@ -20,6 +20,11 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
+    protected static ?string $navigationGroup = 'Buchführung';
+
+    protected static ?string $pluralLabel = 'Rechnungen';
+
+
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
     public static function form(Form $form): Form
@@ -36,20 +41,21 @@ class OrderResource extends Resource
                         Forms\Components\Card::make()
                             ->schema([
                                 Forms\Components\Placeholder::make('total')
+                                    ->label(__('filament::resources/order-resource.form.total'))
                                     ->reactive()
                                     ->content(function (callable $get) {
                                         if ($get('discount'))
-                                            return round(array_sum(data_get($get('items'), '*.sub_total')) - array_sum(data_get($get('items'), '*.sub_total')) * $get('discount') / 100, 2) . ' €';
-                                        return  round(array_sum(data_get($get('items'), '*.sub_total')),2) . ' €';
+                                            return number_format(array_sum(data_get($get('items'), '*.sub_total')) - array_sum(data_get($get('items'), '*.sub_total')) * $get('discount') / 100, 2) . ' €';
+                                        return  number_format(array_sum(data_get($get('items'), '*.sub_total')),2) . ' €';
 
                                     })->extraAttributes(['class' => 'text-2xl text-bold'])
                                     ->columnSpan(1),
                                 Forms\Components\Placeholder::make('created_at')
-                                    ->label('Created at')
+                                    ->label(__('filament::resources/order-resource.created_at'))
                                     ->content(fn(Order $record): ?string => $record->created_at?->diffForHumans())
                                     ->columnSpan(1),
                                 Forms\Components\Placeholder::make('updated_at')
-                                    ->label('Last modified at')
+                                    ->label(__('filament::resources/order-resource.updated_at'))
                                     ->content(fn(Order $record): ?string => $record->updated_at?->diffForHumans())
                                     ->columnSpan(1),
                             ])
@@ -58,6 +64,7 @@ class OrderResource extends Resource
 
 
                         Forms\Components\Section::make('Order items')
+                            ->label(__('filament::resources/order-resource.form.order_items'))
                             ->schema(static::getFormSchema('items')),
                     ])
                     ->columnSpan(['lg' => fn(?Order $record) => $record === null ? 8 : 8]),
@@ -73,13 +80,16 @@ class OrderResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('number')
+                    ->label(__('filament::resources/order-resource.table.number'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('client.name1')
+                    ->label(__('filament::resources/order-resource.table.client_name'))
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\BadgeColumn::make('status')
+                    ->label(__('filament::resources/order-resource.table.status'))
                     ->colors([
                         'danger' => 'cancelled',
                         'warning' => 'processing',
@@ -87,11 +97,12 @@ class OrderResource extends Resource
                     ]),
 
                 Tables\Columns\TextColumn::make('total_price')
+                    ->label(__('filament::resources/order-resource.table.total_price'))
                     ->money('eur')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Order Date')
+                    ->label(__('filament::resources/order-resource.table.order_created_at'))
                     ->date()
                     ->toggleable(),
             ])
@@ -127,12 +138,14 @@ class OrderResource extends Resource
         if ($section === 'items') {
             return [
                 Forms\Components\TextInput::make('discount')
+                    ->label(__('filament::resources/order-resource.form.total_discount'))
                     ->reactive()
                     ->numeric()
                     ->suffix('%'),
 
 
                 Forms\Components\Repeater::make('items')
+                    ->label(__('filament::resources/order-resource.form.items'))
                     ->relationship()
 //                    ->registerListeners([
 //                        'repeater::createItem' => [
@@ -149,11 +162,11 @@ class OrderResource extends Resource
                     ->schema([
 
                         Forms\Components\Select::make('article_id')
-                            ->label('Article')
+                            ->label(__('filament::resources/order-resource.form.article'))
                             ->required()
                             ->reactive()
                             ->searchable()
-                            //    ->options(Article::all()->pluck('short_text','id'))
+                            ->preload()
                             ->getSearchResultsUsing(fn(string $query) => Article::where('search', 'like', mb_strtoupper("%{$query}%", 'UTF-8'))->pluck('short_text', 'id'))
                             ->getOptionLabelUsing(fn($value): ?string => Article::find($value)?->getAttribute('short_text'))
                             ->afterStateUpdated(function ($state, callable $set, $get) {
@@ -165,6 +178,7 @@ class OrderResource extends Resource
                                 'md' => 10,
                             ]),
                         Forms\Components\TextInput::make('discount')
+                            ->label(__('filament::resources/order-resource.form.row_discount'))
                             ->reactive()
                             ->suffix('%')
                             ->columnSpan(['md' => 3])
@@ -175,6 +189,7 @@ class OrderResource extends Resource
                             }),
 
                         Forms\Components\TextInput::make('qty')
+                            ->label(__('filament::resources/order-resource.form.qty'))
                             ->numeric()
                             ->reactive()
                             ->default(1)
@@ -186,12 +201,13 @@ class OrderResource extends Resource
                             ])
                             ->required(),
                         Forms\Components\TextInput::make('unit')
+                            ->label(__('filament::resources/order-resource.form.unit'))
                             ->reactive()
                             ->disabled()
                             ->columnSpan(['md' => 1]),
 
                         Forms\Components\TextInput::make('unit_price')
-                            ->label('Unit Price')
+                            ->label(__('filament::resources/order-resource.form.unit_price'))
                             ->disabled()
                             ->reactive()
                             ->numeric()
@@ -206,6 +222,7 @@ class OrderResource extends Resource
                                 'md' => 2,
                             ]),
                         Forms\Components\TextInput::make('sub_total')
+                            ->label(__('filament::resources/order-resource.form.sub_total'))
                             ->disabled()
                             ->reactive()
                             ->numeric()
@@ -223,11 +240,13 @@ class OrderResource extends Resource
 
         return [
             Forms\Components\TextInput::make('number')
+                ->label(__('filament::resources/order-resource.form.number'))
                 ->default('OR-' . random_int(100000, 999999))
                 ->disabled()
                 ->required(),
 
             Forms\Components\Select::make('user_id')
+                ->label(__('filament::resources/order-resource.form.client_name'))
                 ->relationship('client', 'name1')
                 ->searchable()
                 ->preload(),
@@ -250,6 +269,7 @@ class OrderResource extends Resource
 //                }),
 
             Forms\Components\Select::make('status')
+                ->label(__('filament::resources/order-resource.table.status'))
                 ->options([
                     'new' => 'New',
                     'processing' => 'Processing',
@@ -259,11 +279,6 @@ class OrderResource extends Resource
                 ])
                 ->required()
 
-//            Forms\Components\Select::make('currency')
-//                ->searchable()
-//                ->getSearchResultsUsing(fn (string $query) => Currency::where('name', 'like', "%{$query}%")->pluck('name', 'id'))
-//                ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->getAttribute('name'))
-//                ->required(),
 //
 //            AddressForm::make('address')
 //                ->columnSpan('full'),

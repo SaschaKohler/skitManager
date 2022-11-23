@@ -26,7 +26,6 @@ return new class extends Migration {
             $table->decimal('vk1', 10, 2)->nullable();
             $table->decimal('vk2', 10, 2)->nullable();
             $table->decimal('vk3', 10, 2)->nullable();
-//            $table->integer('lpr')->nullable();
 //            $table->integer('ek')->nullable();
 //            $table->integer('vk1')->nullable();
 //            $table->integer('vk2')->nullable();

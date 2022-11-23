@@ -133,7 +133,7 @@ class ListUsers extends ListRecords
                             }
 
                         } catch (\Exception $e) {
-                       //     dd($e,$this->counter);
+                            dd($e);
                             DB::rollBack();
                         }
                     }

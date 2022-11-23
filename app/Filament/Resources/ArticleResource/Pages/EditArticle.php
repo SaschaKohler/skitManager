@@ -10,6 +10,9 @@ class EditArticle extends EditRecord
 {
     protected static string $resource = ArticleResource::class;
 
+    protected static ?string $pluralLabel = 'Artikel';
+
+
     protected function getActions(): array
     {
         return [

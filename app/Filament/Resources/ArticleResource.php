@@ -23,7 +23,7 @@ class ArticleResource extends Resource
     protected static ?string $navigationLabel = 'Artikel';
     protected static ?string $pluralLabel = 'Artikel';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
     public static function form(Form $form): Form
     {
@@ -33,16 +33,21 @@ class ArticleResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('search')
+                            ->label(__('filament::resources/article-resource.form.search'))
                             ->columnSpan(2),
                         Forms\Components\TextInput::make('short_text')
+                            ->label(__('filament::resources/article-resource.form.short_text'))
                             ->columnSpan(3),
 
                         Forms\Components\TextInput::make('unit')
+                            ->label(__('filament::resources/article-resource.form.unit'))
                             ->columnSpan(1),
 
                         Forms\Components\Fieldset::make('Pricing')
+                            ->label(__('filament::resources/article-resource.form.pricing'))
                             ->schema([
                                 Forms\Components\TextInput::make('ek')
+                                    ->label(__('filament::resources/article-resource.form.ek'))
                                     ->reactive()
                                     ->mask(fn(Mask $mask) => $mask
                                         ->money('€')
@@ -50,53 +55,75 @@ class ArticleResource extends Resource
                                         ->mapToDecimalSeparator([','])
                                         ->minValue(0)
                                     )
+                                    ->afterStateUpdated(function ($state, $get, $set) {
+                                        if (filled($state)) {
+                                            $set('vk1', round($get('ek') * $get('vk1_perc') / 100 + $get('ek'), 2));
+                                            $set('vk2', round($get('ek') * $get('vk2_perc') / 100 + $get('ek'), 2));
+                                            $set('vk3', round($get('ek') * $get('vk3_perc') / 100 + $get('ek'), 2));
+
+                                        }
+                                    })
                                     ->columnSpan(2),
 
                                 Forms\Components\TextInput::make('lpr')
+                                    ->label(__('filament::resources/article-resource.form.lpr'))
                                     ->mask(fn(Mask $mask) => $mask
                                         ->money('€')
                                         ->decimalSeparator('.')
                                         ->mapToDecimalSeparator([','])
                                         ->minValue(0)
+                                        ->padFractionalZeros()
                                     )
                                     ->columnSpan(1),
-
                             ])->columns(3),
 
                         Forms\Components\Fieldset::make('Calculations')
+                            ->label(__('filament::resources/article-resource.form.calculations'))
                             ->schema([
                                 Forms\Components\TextInput::make('vk1')
+                                    ->label(__('filament::resources/article-resource.form.vk1'))
                                     ->reactive()
+                                    ->disabled()
+                                    ->prefix('€')
                                     ->afterStateUpdated(function ($state, callable $set, $get) {
                                         ($state > 0) ? $set('vk1_perc', round(100 - ($get('ek') / $state * 100), 2)) : 0;
                                     })->columnSpan(2),
 
                                 Forms\Components\TextInput::make('vk1_perc')
+                                    ->label(__('filament::resources/article-resource.form.vk1_perc'))
                                     ->reactive()
                                     ->suffix('%')
                                     ->afterStateUpdated(fn($state, callable $set, $get) => $set('vk1', round($get('ek') + $get('ek') * ($state / 100), 2)))
                                     ->columnSpan(1),
 
                                 Forms\Components\TextInput::make('vk2')
+                                    ->label(__('filament::resources/article-resource.form.vk2'))
                                     ->reactive()
+                                    ->disabled()
+                                    ->prefix('€')
                                     ->afterStateUpdated(function ($state, callable $set, $get) {
                                         ($state > 0) ? $set('vk2_perc', round(100 - ($get('ek') / $state * 100), 2)) : 0;
                                     })->columnSpan(2),
 
                                 Forms\Components\TextInput::make('vk2_perc')
+                                    ->label(__('filament::resources/article-resource.form.vk2_perc'))
                                     ->reactive()
                                     ->suffix('%')
                                     ->afterStateUpdated(fn($state, callable $set, $get) => $set('vk2', round($get('ek') + $get('ek') * ($state / 100), 2)))
                                     ->columnSpan(1),
 
                                 Forms\Components\TextInput::make('vk3')
+                                    ->label(__('filament::resources/article-resource.form.vk3'))
                                     ->reactive()
+                                    ->disabled()
+                                    ->prefix('€')
                                     ->afterStateUpdated(function ($state, callable $set, $get) {
                                         ($state > 0) ? $set('vk3_perc', round(100 - ($get('ek') / $state * 100), 2)) : 0;
                                     })->columnSpan(2),
 
 
                                 Forms\Components\TextInput::make('vk3_perc')
+                                    ->label(__('filament::resources/article-resource.form.vk3_perc'))
                                     ->reactive()
                                     ->suffix('%')
                                     ->afterStateUpdated(fn($state, callable $set, $get) => $set('vk3', round($get('ek') + $get('ek') * ($state / 100), 2)))
@@ -118,23 +145,39 @@ class ArticleResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('search')
+                    ->label(__('filament::resources/article-resource.table.search'))
                     ->wrap()
                     ->searchable(isIndividual: true, isGlobal: false),
                 Tables\Columns\TextColumn::make('short_text')
+                    ->label(__('filament::resources/article-resource.table.short_text'))
                     ->wrap()
                     ->searchable(isIndividual: true, isGlobal: false),
-                Tables\Columns\TextColumn::make('unit'),
-                Tables\Columns\TextColumn::make('lpr')->money('eur'),
-                Tables\Columns\TextColumn::make('ek')->money('eur'),
-                Tables\Columns\TextColumn::make('vk1')->money('eur'),
-//                Tables\Columns\TextColumn::make('vk2')->money('eur'),
-//                Tables\Columns\TextColumn::make('vk3')->money('eur'),
+                Tables\Columns\TextColumn::make('unit')
+                    ->label(__('filament::resources/article-resource.table.unit')),
+                Tables\Columns\TextColumn::make('lpr')
+                    ->label(__('filament::resources/article-resource.table.lpr'))
+                    ->money('eur')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('ek')
+                    ->label(__('filament::resources/article-resource.table.ek'))
+                    ->money('eur'),
+                Tables\Columns\TextColumn::make('vk1')
+                    ->label(__('filament::resources/article-resource.table.vk1'))
+                    ->money('eur'),
+              Tables\Columns\TextColumn::make('vk2')
+                    ->label(__('filament::resources/article-resource.table.vk2'))
+                    ->money('eur')
+                  ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('vk3')
+                    ->label(__('filament::resources/article-resource.table.vk3'))
+                    ->money('eur')
+                ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\Filter::make('Article')
                     ->form([
                         Forms\Components\TextInput::make('Article')
-                            ->label(__('filament::resources/order-resource.table.filters.article')),
+                            ->label(__('filament::resources/article-resource.table.filters.article')),
 
                     ])
                     ->query(function ($query, array $data) {
@@ -146,10 +189,8 @@ class ArticleResource extends Resource
                         $indicators = [];
 
                         if ($data['Article'] ?? null) {
-                            $indicators['Article'] = __('filament::resources/event-resource.table.filters.article');
-
+                            $indicators['Article'] = __('filament::resources/article-resource.table.filters.article');
                         }
-
                         return $indicators;
                     }),
             ])

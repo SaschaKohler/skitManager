@@ -29,45 +29,84 @@ class ArticleResource extends Resource
     {
         return $form
             ->schema([
-                //
-                Forms\Components\TextInput::make('short_text'),
-                Forms\Components\TextInput::make('unit'),
-                Forms\Components\TextInput::make('lpr')
-                    ->mask(fn(Mask $mask) => $mask
-                        ->money('€')
-                        ->decimalSeparator('.')
-                        ->mapToDecimalSeparator([','])
-                        ->minValue(0)
-                    ),
-                Forms\Components\TextInput::make('ek')
-                    ->mask(fn(Mask $mask) => $mask
-                        ->money('€')
-                        ->decimalSeparator('.')
-                        ->mapToDecimalSeparator([','])
-                        ->minValue(0)
-                    ),
-                Forms\Components\TextInput::make('vk1')
-                    ->mask(fn(Mask $mask) => $mask
-                        ->money('€')
-                        ->decimalSeparator('.')
-                        ->mapToDecimalSeparator([','])
-                        ->minValue(0)
-                    ),
-                Forms\Components\TextInput::make('vk2')
-                    ->mask(fn(Mask $mask) => $mask
-                            ->money('€')
-                            ->decimalSeparator('.')
-                            ->mapToDecimalSeparator([','])
-                            ->minValue(0)
-                        ),
-                Forms\Components\TextInput::make('vk3')
-                    ->mask(fn(Mask $mask) => $mask
-                        ->money('€')
-                        ->decimalSeparator('.')
-                        ->mapToDecimalSeparator([','])
-                        ->minValue(0)
 
-                    ),
+                Forms\Components\Card::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('search')
+                            ->columnSpan(2),
+                        Forms\Components\TextInput::make('short_text')
+                            ->columnSpan(3),
+
+                        Forms\Components\TextInput::make('unit')
+                            ->columnSpan(1),
+
+                        Forms\Components\Fieldset::make('Pricing')
+                            ->schema([
+                                Forms\Components\TextInput::make('ek')
+                                    ->reactive()
+                                    ->mask(fn(Mask $mask) => $mask
+                                        ->money('€')
+                                        ->decimalSeparator('.')
+                                        ->mapToDecimalSeparator([','])
+                                        ->minValue(0)
+                                    )
+                                    ->columnSpan(2),
+
+                                Forms\Components\TextInput::make('lpr')
+                                    ->mask(fn(Mask $mask) => $mask
+                                        ->money('€')
+                                        ->decimalSeparator('.')
+                                        ->mapToDecimalSeparator([','])
+                                        ->minValue(0)
+                                    )
+                                    ->columnSpan(1),
+
+                            ])->columns(3),
+
+                        Forms\Components\Fieldset::make('Calculations')
+                            ->schema([
+                                Forms\Components\TextInput::make('vk1')
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                                        ($state > 0) ? $set('vk1_perc', round(100 - ($get('ek') / $state * 100), 2)) : 0;
+                                    })->columnSpan(2),
+
+                                Forms\Components\TextInput::make('vk1_perc')
+                                    ->reactive()
+                                    ->suffix('%')
+                                    ->afterStateUpdated(fn($state, callable $set, $get) => $set('vk1', round($get('ek') + $get('ek') * ($state / 100), 2)))
+                                    ->columnSpan(1),
+
+                                Forms\Components\TextInput::make('vk2')
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                                        ($state > 0) ? $set('vk2_perc', round(100 - ($get('ek') / $state * 100), 2)) : 0;
+                                    })->columnSpan(2),
+
+                                Forms\Components\TextInput::make('vk2_perc')
+                                    ->reactive()
+                                    ->suffix('%')
+                                    ->afterStateUpdated(fn($state, callable $set, $get) => $set('vk2', round($get('ek') + $get('ek') * ($state / 100), 2)))
+                                    ->columnSpan(1),
+
+                                Forms\Components\TextInput::make('vk3')
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, callable $set, $get) {
+                                        ($state > 0) ? $set('vk3_perc', round(100 - ($get('ek') / $state * 100), 2)) : 0;
+                                    })->columnSpan(2),
+
+
+                                Forms\Components\TextInput::make('vk3_perc')
+                                    ->reactive()
+                                    ->suffix('%')
+                                    ->afterStateUpdated(fn($state, callable $set, $get) => $set('vk3', round($get('ek') + $get('ek') * ($state / 100), 2)))
+                                    ->columnSpan(1),
+
+
+                            ])->columns(3)
+
+
+                    ])->columns(4)
             ]);
     }
 
@@ -78,6 +117,9 @@ class ArticleResource extends Resource
         return $table
             ->columns([
                 //
+                Tables\Columns\TextColumn::make('search')
+                    ->wrap()
+                    ->searchable(isIndividual: true, isGlobal: false),
                 Tables\Columns\TextColumn::make('short_text')
                     ->wrap()
                     ->searchable(isIndividual: true, isGlobal: false),
@@ -85,11 +127,31 @@ class ArticleResource extends Resource
                 Tables\Columns\TextColumn::make('lpr')->money('eur'),
                 Tables\Columns\TextColumn::make('ek')->money('eur'),
                 Tables\Columns\TextColumn::make('vk1')->money('eur'),
-                Tables\Columns\TextColumn::make('vk2')->money('eur'),
-                Tables\Columns\TextColumn::make('vk3')->money('eur'),
+//                Tables\Columns\TextColumn::make('vk2')->money('eur'),
+//                Tables\Columns\TextColumn::make('vk3')->money('eur'),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('Article')
+                    ->form([
+                        Forms\Components\TextInput::make('Article')
+                            ->label(__('filament::resources/order-resource.table.filters.article')),
+
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query->when($data['Article'],
+                            fn($query) => $query->where('search', 'like', strtoupper("%{$data['Article']}%")));
+
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['Article'] ?? null) {
+                            $indicators['Article'] = __('filament::resources/event-resource.table.filters.article');
+
+                        }
+
+                        return $indicators;
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

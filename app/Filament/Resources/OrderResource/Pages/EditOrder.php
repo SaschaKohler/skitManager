@@ -19,13 +19,20 @@ class EditOrder extends EditRecord
         ];
     }
 
-    protected function handleRecordUpdate(Model $record, array $data): Model
+    protected function afterSave()
     {
-        foreach($record->items as $item)
-        { dd($item); }
-        dd($record->items);
-        $record->update($data);
+        $sum_items = round(collect($this->record->items)->map(function ($item) {
+            return [
+                'price' => $item['qty'] * $item['unit_price'] - $item['qty'] * $item['unit_price'] * $item['discount'] / 100
+            ];
+        })->sum('price'),2);
 
-        return $record;
+        if ($this->record->discount)
+            $this->record->total_price = round($sum_items - $sum_items * $this->record->discount / 100,2);
+        else
+            $this->record->total_price = $sum_items;
+
+        $this->record->save();
     }
+
 }

@@ -37,7 +37,7 @@ class ListArticles extends ListRecords
                     $importData_arr = array(); // Read through the file and store the contents as an array
                     $i = 0;
 //Read the contents of the uploaded file
-                    while (($filedata = fgetcsv($file, 1000, ";")) !== FALSE) {
+                    while (($filedata = fgetcsv($file, 0, ";")) !== FALSE) {
                         $num = count($filedata);
 
 // Skip first row (Remove below comment if you want to skip the first row)
@@ -57,8 +57,8 @@ class ListArticles extends ListRecords
                         //    dd($importData);
                         $uuid = $importData[0] ?? null;
                         $search = utf8_encode($importData[4]) ?? null;
-                        $short_text = $importData[5] ?? null;
-                        $unit = utf8_encode($importData[6]) ?? null;
+                        $short_text = utf8_encode($importData[5]) ?? null;
+                        $unit = utf8_encode($importData[6])?? null;
                         $lpr = floatval(str_replace(',', '.', $importData[7])) ?? null;
                         $ek = floatval(str_replace(',', '.', $importData[8])) ?? null;
                         $vk1 = floatval(str_replace(',', '.', $importData[9])) ?? null;
@@ -116,7 +116,7 @@ class ListArticles extends ListRecords
                             }
 
                         } catch (\Exception $e) {
-                            // dd($e);
+                             dd($e);
                             DB::rollBack();
                         }
                     }
@@ -129,4 +129,10 @@ class ListArticles extends ListRecords
                 )
         ];
     }
+
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return true;
+    }
+
 }

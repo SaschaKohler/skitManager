@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Article;
 use App\Models\Order;
+use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
@@ -32,27 +33,38 @@ class OrderResource extends Resource
                             ->schema(static::getFormSchema())
                             ->columns(2),
 
+                        Forms\Components\Card::make()
+                            ->schema([
+                                Forms\Components\Placeholder::make('total')
+                                    ->reactive()
+                                    ->content(function (callable $get) {
+                                        if ($get('discount'))
+                                            return round(array_sum(data_get($get('items'), '*.sub_total')) - array_sum(data_get($get('items'), '*.sub_total')) * $get('discount') / 100, 2) . ' €';
+                                        return  round(array_sum(data_get($get('items'), '*.sub_total')),2) . ' €';
+
+                                    })->extraAttributes(['class' => 'text-2xl text-bold'])
+                                    ->columnSpan(1),
+                                Forms\Components\Placeholder::make('created_at')
+                                    ->label('Created at')
+                                    ->content(fn(Order $record): ?string => $record->created_at?->diffForHumans())
+                                    ->columnSpan(1),
+                                Forms\Components\Placeholder::make('updated_at')
+                                    ->label('Last modified at')
+                                    ->content(fn(Order $record): ?string => $record->updated_at?->diffForHumans())
+                                    ->columnSpan(1),
+                            ])
+                            ->columns(['lg' => 3])
+                            ->hidden(fn(?Order $record) => $record === null),
+
+
                         Forms\Components\Section::make('Order items')
                             ->schema(static::getFormSchema('items')),
                     ])
-                    ->columnSpan(['lg' => fn(?Order $record) => $record === null ? 3 : 2]),
-                Forms\Components\Card::make()
-                    ->schema([
-                        Forms\Components\Placeholder::make('created_at')
-                            ->label('Created at')
-                            ->content(fn(Order $record): ?string => $record->created_at?->diffForHumans()),
-
-                        Forms\Components\Placeholder::make('updated_at')
-                            ->label('Last modified at')
-                            ->content(fn(Order $record): ?string => $record->updated_at?->diffForHumans()),
-                    ])
-                    ->columnSpan(['lg' => 1])
-                    ->hidden(fn(?Order $record) => $record === null),
+                    ->columnSpan(['lg' => fn(?Order $record) => $record === null ? 8 : 8]),
 
 
             ])
             ->columns(3);
-
     }
 
     public static function table(Table $table): Table
@@ -75,6 +87,7 @@ class OrderResource extends Resource
                     ]),
 
                 Tables\Columns\TextColumn::make('total_price')
+                    ->money('eur')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -113,52 +126,74 @@ class OrderResource extends Resource
     {
         if ($section === 'items') {
             return [
-                Forms\Components\Placeholder::make('total_price')
-                    ->content(function ($get) {
-                        return collect($get('items'))->map(function ($item) {
-                            return [
-                                'price' => $item['qty'] * $item['unit_price'],
-                            ];
-                        })->sum('price');
-                    }),
+                Forms\Components\TextInput::make('discount')
+                    ->reactive()
+                    ->numeric()
+                    ->suffix('%'),
+
+
                 Forms\Components\Repeater::make('items')
                     ->relationship()
-                    ->registerListeners([
-                        'repeater::createItem' => [
-                            function (Repeater $component,): void {
-                                static::calculateTransactionDetails($component->getLivewire());
-                            },
-                        ],
-                        'repeater::deleteItem' => [
-                            function (Repeater $component,): void {
-                                static::calculateTransactionDetails($component->getLivewire());
-                            },
-                        ]
-                    ])
+//                    ->registerListeners([
+//                        'repeater::createItem' => [
+//                            function (Repeater $component,): void {
+//                                static::calculateTransactionDetails($component->getLivewire());
+//                            },
+//                        ],
+//                        'repeater::deleteItem' => [
+//                            function (Repeater $component,): void {
+//                                static::calculateTransactionDetails($component->getLivewire());
+//                            },
+//                        ]
+//                    ])
                     ->schema([
 
                         Forms\Components\Select::make('article_id')
                             ->label('Article')
-                            ->options(Article::query()->pluck('short_text', 'id'))
                             ->required()
                             ->reactive()
-                            ->afterStateUpdated(fn($state, callable $set) => $set('unit_price', Article::find($state)?->vk1 ?? 0))
+                            ->searchable()
+                            //    ->options(Article::all()->pluck('short_text','id'))
+                            ->getSearchResultsUsing(fn(string $query) => Article::where('search', 'like', mb_strtoupper("%{$query}%", 'UTF-8'))->pluck('short_text', 'id'))
+                            ->getOptionLabelUsing(fn($value): ?string => Article::find($value)?->getAttribute('short_text'))
+                            ->afterStateUpdated(function ($state, callable $set, $get) {
+                                $set('unit_price', Article::find($state)?->vk1 ?? 0);
+                                $set('unit', Article::find($state)?->unit ?? 0);
+                                $set('sub_total', $get('qty') * $get('unit_price'));
+                            })
                             ->columnSpan([
-                                'md' => 5,
+                                'md' => 10,
                             ]),
+                        Forms\Components\TextInput::make('discount')
+                            ->reactive()
+                            ->suffix('%')
+                            ->columnSpan(['md' => 3])
+                            ->afterStateUpdated(function ($state, callable $set, $get) {
+                                filled($state) ?
+                                    $set('sub_total', round($get('sub_total') - $state / 100 * $get('sub_total'), 2)) :
+                                    $set('sub_total', round($get('qty') * $get('unit_price'),2));
+                            }),
 
                         Forms\Components\TextInput::make('qty')
                             ->numeric()
                             ->reactive()
                             ->default(1)
+                            ->afterStateUpdated(function ($state, $get, $set) {
+                                filled($state) ? $set('sub_total', round($get('qty') * $get('unit_price'), 2)) : 0;
+                            })
                             ->columnSpan([
                                 'md' => 1,
                             ])
                             ->required(),
+                        Forms\Components\TextInput::make('unit')
+                            ->reactive()
+                            ->disabled()
+                            ->columnSpan(['md' => 1]),
 
                         Forms\Components\TextInput::make('unit_price')
                             ->label('Unit Price')
                             ->disabled()
+                            ->reactive()
                             ->numeric()
                             ->mask(fn(Mask $mask) => $mask
                                 ->money('€')
@@ -170,12 +205,11 @@ class OrderResource extends Resource
                             ->columnSpan([
                                 'md' => 2,
                             ]),
-                        Forms\Components\Placeholder::make('sub_total')
+                        Forms\Components\TextInput::make('sub_total')
                             ->disabled()
-                            ->content(function ($get) {
-                                return $get('qty') * $get('unit_price');
-                            })
-                            ->columnSpan(['md' => 2])
+                            ->reactive()
+                            ->numeric()
+                            ->columnSpan(['md' => 3])
                     ])
                     ->orderable()
                     ->defaultItems(1)
@@ -196,24 +230,24 @@ class OrderResource extends Resource
             Forms\Components\Select::make('user_id')
                 ->relationship('client', 'name1')
                 ->searchable()
-                ->required()
-                ->createOptionForm([
-                    Forms\Components\TextInput::make('name1')
-                        ->required(),
-
-                    Forms\Components\TextInput::make('email')
-                        ->required()
-                        ->email()
-                        ->unique(),
-
-                    Forms\Components\TextInput::make('phone1'),
-                ])
-                ->createOptionAction(function (Forms\Components\Actions\Action $action) {
-                    return $action
-                        ->modalHeading('Create customer')
-                        ->modalButton('Create customer')
-                        ->modalWidth('lg');
-                }),
+                ->preload(),
+//                  ->createOptionForm([
+//                    Forms\Components\TextInput::make('name1')
+//                        ->required(),
+//
+//                    Forms\Components\TextInput::make('email')
+//                        ->required()
+//                        ->email(),
+////                        ->unique(),
+//
+//                    Forms\Components\TextInput::make('phone1'),
+//                ])
+//                ->createOptionAction(function (Forms\Components\Actions\Action $action) {
+//                    return $action
+//                        ->modalHeading('Create customer')
+//                        ->modalButton('Create customer')
+//                        ->modalWidth('lg');
+//                }),
 
             Forms\Components\Select::make('status')
                 ->options([
@@ -223,7 +257,7 @@ class OrderResource extends Resource
                     'delivered' => 'Delivered',
                     'cancelled' => 'Cancelled',
                 ])
-                ->required(),
+                ->required()
 
 //            Forms\Components\Select::make('currency')
 //                ->searchable()
@@ -239,15 +273,15 @@ class OrderResource extends Resource
         ];
     }
 
-    public static function calculateTransactionDetails($component)
-    {
-        $price = collect($component->data['items'])->map(function ($item) {
-            return [
-                'price' => $item['qty'] * $item['unit_price'],
-            ];
-        })->sum('price');
-
-        $component->data['total_price'] = $price;
-
-    }
+//    public static function calculateTransactionDetails($component)
+//    {
+//        $price = collect($component->data['items'])->map(function ($item) {
+//            return [
+//                'price' => $item['qty'] * $item['unit_price'],
+//            ];
+//        })->sum('price');
+//
+//        $component->data['total_price'] = $price;
+//
+//    }
 }

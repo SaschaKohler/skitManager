@@ -16,11 +16,6 @@ class CreateOrder extends CreateRecord
 
     protected static string $resource = OrderResource::class;
 
-
-
-
-
-
     protected function getSteps(): array
     {
         return [
@@ -35,4 +30,22 @@ class CreateOrder extends CreateRecord
                 ]),
         ];
     }
+
+    protected function afterCreate()
+    {
+        $sum_items = collect($this->record->items)->map(function ($item) {
+            return [
+                'price' => $item['qty'] * $item['unit_price'] - $item['qty'] * $item['unit_price'] * $item['discount'] / 100
+            ];
+        })->sum('price');
+
+        if ($this->record->discount)
+            $this->record->total_price = $sum_items - $sum_items * $this->record->discount / 100;
+        else
+            $this->record->total_price = $sum_items;
+
+
+        $this->record->save();
+    }
+
 }

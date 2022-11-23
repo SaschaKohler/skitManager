@@ -19,6 +19,9 @@ return new class extends Migration
             $table->foreignId('article_id')->nullable()->constrained()->cascadeOnDelete();
             $table->integer('qty');
             $table->decimal('unit_price', 10, 2);
+            $table->decimal('sub_total', 10, 2);
+            $table->decimal('discount', 10, 2)->nullable();
+
             $table->timestamps();
         });
     }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('number', 32)->unique();
             $table->decimal('total_price', 12, 2)->nullable();
+            $table->decimal('discount', 12, 2)->nullable();
             $table->enum('status', ['new', 'processing', 'shipped', 'delivered', 'cancelled'])->default('new');
             $table->text('notes')->nullable();
             $table->timestamps();

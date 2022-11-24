@@ -6,6 +6,10 @@ return [
     'created_at' => 'Erstellt am ',
     'updated_at' => 'geändert am ',
 
+    'wizard' => [
+        'order_details' => 'Rechnungsdetails',
+        'order_items' => 'Artikelliste',
+    ],
     'form' => [
         'total' => 'Summe',
         'order_items' => 'Artikelliste',
@@ -19,6 +23,14 @@ return [
         'sub_total' => 'Zeilensumme',
         'number' => 'Rechnungsnummer',
         'client_name' => 'Kunde',
+        'status' => [
+            'options' => [
+                'new' => 'Neu',
+                'processing' => 'In Bearbeitung',
+                'delivered' => 'Erledigt',
+                'cancelled' => 'Abgebrochen'
+            ]
+        ]
 
     ],
 

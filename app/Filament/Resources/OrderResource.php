@@ -5,10 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Article;
 use App\Models\Order;
+use App\Models\User;
+use App\Models\ZipCode;
 use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -46,7 +49,7 @@ class OrderResource extends Resource
                                     ->content(function (callable $get) {
                                         if ($get('discount'))
                                             return number_format(array_sum(data_get($get('items'), '*.sub_total')) - array_sum(data_get($get('items'), '*.sub_total')) * $get('discount') / 100, 2) . ' €';
-                                        return  number_format(array_sum(data_get($get('items'), '*.sub_total')),2) . ' €';
+                                        return number_format(array_sum(data_get($get('items'), '*.sub_total')), 2) . ' €';
 
                                     })->extraAttributes(['class' => 'text-2xl text-bold'])
                                     ->columnSpan(1),
@@ -63,8 +66,7 @@ class OrderResource extends Resource
                             ->hidden(fn(?Order $record) => $record === null),
 
 
-                        Forms\Components\Section::make('Order items')
-                            ->label(__('filament::resources/order-resource.form.order_items'))
+                        Forms\Components\Section::make(__('filament::resources/order-resource.form.order_items'))
                             ->schema(static::getFormSchema('items')),
                     ])
                     ->columnSpan(['lg' => fn(?Order $record) => $record === null ? 8 : 8]),
@@ -185,7 +187,7 @@ class OrderResource extends Resource
                             ->afterStateUpdated(function ($state, callable $set, $get) {
                                 filled($state) ?
                                     $set('sub_total', round($get('sub_total') - $state / 100 * $get('sub_total'), 2)) :
-                                    $set('sub_total', round($get('qty') * $get('unit_price'),2));
+                                    $set('sub_total', round($get('qty') * $get('unit_price'), 2));
                             }),
 
                         Forms\Components\TextInput::make('qty')
@@ -244,12 +246,27 @@ class OrderResource extends Resource
                 ->default('OR-' . random_int(100000, 999999))
                 ->disabled()
                 ->required(),
+            Forms\Components\Select::make('status')
+                ->label(__('filament::resources/order-resource.table.status'))
+                ->options([
+                    'new' => __('filament::resources/order-resource.form.status.options.new'),
+                    'processing' => __('filament::resources/order-resource.form.status.options.processing'),
+                    'delivered' => __('filament::resources/order-resource.form.status.options.delivered'),
+                    'cancelled' => __('filament::resources/order-resource.form.status.options.cancelled'),
+                ])
+                ->required(),
 
-            Forms\Components\Select::make('user_id')
-                ->label(__('filament::resources/order-resource.form.client_name'))
-                ->relationship('client', 'name1')
-                ->searchable()
-                ->preload(),
+Forms\Components\Card::make()
+            ->schema([
+                Forms\Components\Select::make('user_id')
+                    ->label(__('filament::resources/order-resource.form.client_name'))
+                    ->relationship('client', 'name1')
+                    ->searchable()
+                    ->afterStateUpdated(function ($state, $set) {
+                        $set('street', User::find($state)?->street ?? 0);
+                        $set('zip', ZipCode::find(User::find($state)?->zip)?->getAttribute('zip') ?? 0);
+                        $set('city', ZipCode::find(User::find($state)?->city)?->getAttribute('location') ?? 0);
+                    }),
 //                  ->createOptionForm([
 //                    Forms\Components\TextInput::make('name1')
 //                        ->required(),
@@ -267,17 +284,14 @@ class OrderResource extends Resource
 //                        ->modalButton('Create customer')
 //                        ->modalWidth('lg');
 //                }),
+                Forms\Components\TextInput::make('street')
+                    ->disabled(),
+                Forms\Components\TextInput::make('zip')
+                    ->disabled(),
+                Forms\Components\TextInput::make('city')
+                    ->disabled(),
 
-            Forms\Components\Select::make('status')
-                ->label(__('filament::resources/order-resource.table.status'))
-                ->options([
-                    'new' => 'New',
-                    'processing' => 'Processing',
-                    'shipped' => 'Shipped',
-                    'delivered' => 'Delivered',
-                    'cancelled' => 'Cancelled',
-                ])
-                ->required()
+            ])
 
 //
 //            AddressForm::make('address')
@@ -299,4 +313,10 @@ class OrderResource extends Resource
 //        $component->data['total_price'] = $price;
 //
 //    }
+
+    protected
+    static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 }

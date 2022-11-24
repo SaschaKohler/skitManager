@@ -20,11 +20,14 @@ class CreateOrder extends CreateRecord
     {
         return [
             Step::make('Order Details')
+                ->label(__('filament::resources/order-resource.wizard.order_details'))
                 ->schema([
                     Card::make(OrderResource::getFormSchema())->columns(),
                 ]),
 
             Step::make('Order Items')
+                ->label(__('filament::resources/order-resource.wizard.order_items'))
+
                 ->schema([
                     Card::make(OrderResource::getFormSchema('items')),
                 ]),

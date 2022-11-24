@@ -24,6 +24,7 @@ class ArticleResource extends Resource
     protected static ?string $pluralLabel = 'Artikel';
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+    protected static ?string $navigationGroup = 'Stammdaten';
 
     public static function form(Form $form): Form
     {

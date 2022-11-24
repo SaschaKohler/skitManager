@@ -26,12 +26,14 @@ use Illuminate\Support\Str;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-    protected static bool $shouldRegisterNavigation = false;
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+//    protected static bool $shouldRegisterNavigation = false;
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Admin';
-    protected static ?string $label = 'User';
-    protected static ?string $pluralLabel = 'User';
+
+    protected static ?string $navigationGroup = 'Stammdaten';
+
+    protected static ?string $label = 'Person';
+    protected static ?string $pluralLabel = 'Personen';
 
 
     public static function form(Form $form): Form

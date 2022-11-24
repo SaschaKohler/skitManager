@@ -261,12 +261,12 @@ Forms\Components\Card::make()
                 Forms\Components\Select::make('user_id')
                     ->label(__('filament::resources/order-resource.form.client_name'))
                     ->relationship('client', 'name1')
-                    ->searchable()
-                    ->afterStateUpdated(function ($state, $set) {
-                        $set('street', User::find($state)?->street ?? 0);
-                        $set('zip', ZipCode::find(User::find($state)?->zip)?->getAttribute('zip') ?? 0);
-                        $set('city', ZipCode::find(User::find($state)?->city)?->getAttribute('location') ?? 0);
-                    }),
+                    ->searchable(),
+//                    ->afterStateUpdated(function ($state, $set) {
+//                        $set('street', User::find($state)?->street ?? 0);
+//                        $set('zip', ZipCode::find(User::find($state)?->zip)?->getAttribute('zip') ?? 0);
+//                        $set('city', ZipCode::find(User::find($state)?->city)?->getAttribute('location') ?? 0);
+//                    }),
 //                  ->createOptionForm([
 //                    Forms\Components\TextInput::make('name1')
 //                        ->required(),
@@ -284,12 +284,12 @@ Forms\Components\Card::make()
 //                        ->modalButton('Create customer')
 //                        ->modalWidth('lg');
 //                }),
-                Forms\Components\TextInput::make('street')
-                    ->disabled(),
-                Forms\Components\TextInput::make('zip')
-                    ->disabled(),
-                Forms\Components\TextInput::make('city')
-                    ->disabled(),
+//                Forms\Components\TextInput::make('street')
+//                    ->disabled(),
+//                Forms\Components\TextInput::make('zip')
+//                    ->disabled(),
+//                Forms\Components\TextInput::make('city')
+//                    ->disabled(),
 
             ])
 

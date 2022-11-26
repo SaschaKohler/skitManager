@@ -2,23 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\EventResource\RelationManagers\AddressesRelationManager;
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\Pages\CreateUser;
-use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Pages\Page;
 use Filament\Resources\Form;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 
 class UserResource extends Resource
@@ -186,7 +179,8 @@ class UserResource extends Resource
 
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+            ->slideOver(),
                 Tables\Actions\DeleteAction::make()
             ])
             ->bulkActions([
@@ -227,6 +221,7 @@ class UserResource extends Resource
 //    {
 //   //     return true;
 //    }
+
 
     public static function getPages(): array
     {

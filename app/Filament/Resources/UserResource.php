@@ -177,12 +177,8 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('events.title')
                     ->label(__('filament::resources/user-resource.table.events'))
                     ->wrap(),
-
-
                 Tables\Columns\ColorColumn::make('color')
                     ->label(__('filament::common.color')),
-
-
             ])
             ->filters([
                 //

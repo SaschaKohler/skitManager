@@ -130,10 +130,18 @@ class EventResource extends Resource
                                 ),
                             Forms\Components\Placeholder::make('created_at')
                                 ->label(__('filament::common.created_at'))
-                                ->content(fn(Event $record): ?string => $record->created_at->diffForHumans()),
+                                ->content(function (Event $record) {
+                                    if ($record->author()->exists()) return $record->created_at->diffForHumans() .
+                                        ' -> ' . $record->author->name1;
+                                    return $record->created_at->diffForHumans();
+                                }),
                             Forms\Components\Placeholder::make('updated_at')
                                 ->label(__('filament::common.updated_at'))
-                                ->content(fn(Event $record): ?string => $record->updated_at->diffForHumans()),
+                                ->content(function (Event $record) {
+                                    if ($record->editor()->exists()) return $record->updated_at->diffForHumans() .
+                                        ' -> ' . $record->editor->name1;
+                                    return $record->created_at->diffForHumans();
+                                })
                         ])
                             ->hidden(fn(?Event $record) => $record === null)
                             ->columns(1)

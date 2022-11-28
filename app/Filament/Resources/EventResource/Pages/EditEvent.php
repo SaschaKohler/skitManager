@@ -56,4 +56,12 @@ class EditEvent extends EditRecord
 
     }
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+
+     $data['editor_id'] = auth()->id();
+
+     return $data;
+    }
+
 }

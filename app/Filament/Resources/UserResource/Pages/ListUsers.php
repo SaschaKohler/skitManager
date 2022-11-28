@@ -5,6 +5,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource;
 use App\Models\User;
 use App\Models\ZipCode;
+use Closure;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
@@ -28,6 +29,7 @@ class ListUsers extends ListRecords
                     FileUpload::make('import')
 
                 ])
+
                 ->action(function (array $data) {
 
                     $filepath = public_path("storage" . "/" . $data['import']);
@@ -147,5 +149,15 @@ class ListUsers extends ListRecords
 
                 )
         ];
+    }
+
+    public function finishUpload($name, $tmpPath, $isMultiple)
+    {
+        parent::finishUpload($name, $tmpPath, $isMultiple);
+
+    //    $file = $this->getPropertyValue($name);
+
+     //   dd($file);
+        // $file is the temporary file
     }
 }

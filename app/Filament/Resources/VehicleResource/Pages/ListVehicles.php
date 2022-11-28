@@ -16,4 +16,5 @@ class ListVehicles extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
 }

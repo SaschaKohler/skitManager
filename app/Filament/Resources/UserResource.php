@@ -176,8 +176,7 @@ class UserResource extends Resource
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('events.title')
                     ->label(__('filament::resources/user-resource.table.events'))
-                    ->wrap()
-                    ->words(25),
+                    ->wrap(),
 
 
                 Tables\Columns\ColorColumn::make('color')

@@ -114,6 +114,7 @@ class CalendarWidget extends FullCalendarWidget
             $new->title = explode(' *', $param['title'])[0];
             $new->start = $param['start'];
             $new->end = $param['end'];
+            $new->author_id = auth()->id();
             $new->calendar_id = $param['extendedProps']['calendar_id'];
 
             if ($user)

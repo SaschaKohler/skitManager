@@ -14,10 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::table('calendars', function (Blueprint $table) {
-           $table->dropColumn('color_id');
+            $table->text('color_id')->nullable()->default('undefined');
 
         });
-            //
+        //
     }
 
     /**
@@ -28,7 +28,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('calendars', function (Blueprint $table) {
-            $table->text('color_id')->nullable()->unique();
+            $table->dropColumn('color_id');
+
         });
     }
 };

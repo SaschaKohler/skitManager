@@ -25,12 +25,13 @@ class ArticleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
     protected static ?string $navigationGroup = 'Stammdaten';
+    protected static ?int $navigationSort = 3;
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('search')

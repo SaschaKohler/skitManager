@@ -13,7 +13,8 @@ RUN apk add --no-cache \
 		git \
 		openssl \
 		$PHPIZE_DEPS \
-		zlib-dev \
+		libzip-dev \
+        zip \
         freetype-dev \
         libjpeg-turbo-dev \
         libpng-dev \
@@ -21,10 +22,12 @@ RUN apk add --no-cache \
         postgresql-client\
     ;
 
+
 RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
-RUN docker-php-ext-install pdo pdo_pgsql #pgsql zip pcntl
+RUN docker-php-ext-install pdo pdo_pgsql #zip pgsql pcntl
 #RUN docker-php-ext-install pdo_mysql && docker-php-ext-enable pdo_mysql
 RUN docker-php-ext-install exif && docker-php-ext-enable exif
+RUN docker-php-ext-install zip && docker-php-ext-enable zip
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd
 #RUN pecl install redis && docker-php-ext-enable redis

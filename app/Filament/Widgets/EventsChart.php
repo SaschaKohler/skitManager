@@ -27,8 +27,11 @@ class EventsChart extends BarChartWidget
 
     {
         return
-            User::whereHas('events')->whereIn('role_id', [1,2])->get()
-                ->pluck('name1', 'id')->toArray();
+//            User::whereHas('events')->whereIn('role_id', [1,2])->get()
+//                ->pluck('name1', 'id')->toArray();
+            User::whereHas('events', function ($query) {
+                $query->where('start', '>=', Carbon::now()->startOfYear()->toDateString());
+            })->toArray();
     }
 
     protected function getData(): array

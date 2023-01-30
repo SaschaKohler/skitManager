@@ -38,12 +38,11 @@ class EventsChart extends BarChartWidget
         $users = User::whereHas('events', function ($query) {
             $query->where('start', '>=', Carbon::now()->startOfYear()->toDateString());
         })->get();
-        dd($users);
         if ($users->isEmpty()) {
             return [];
         } elseif (!$users->isEmpty()) {
             if ($this->filter == 'none')
-                $activeFilter = User::whereHas('events')->whereIn('role_id', [1,2])->first()->id;
+                $activeFilter = $users->first()->id;
             else
                 $activeFilter = $this->filter;
 
@@ -68,7 +67,7 @@ class EventsChart extends BarChartWidget
             $backgroundColor = array();
             $borderColor = array();
 
-           dd($project,$user->id);
+         //  dd($project,$user->id);
             foreach ($project[$user->id] as $item) {
                 foreach ($item as $dat) {
 

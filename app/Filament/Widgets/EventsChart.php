@@ -41,7 +41,7 @@ class EventsChart extends BarChartWidget
         $users = User::whereHas('events', function ($query) {
             $query->where('start', '>=', Carbon::now()->startOfYear()->toDateString());
         })->get();
-        dd($users);
+    //    dd($users);
         if ($users->isEmpty()) {
             return [];
         } elseif (!$users->isEmpty()) {

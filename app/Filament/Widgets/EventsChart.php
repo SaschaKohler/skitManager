@@ -68,7 +68,7 @@ class EventsChart extends BarChartWidget
             $backgroundColor = array();
             $borderColor = array();
 
-            dd($project,$user->id);
+        //    dd($project,$user->id);
             foreach ($project[$user->id] as $item) {
                 foreach ($item as $dat) {
 

@@ -52,13 +52,17 @@ class EventsChart extends BarChartWidget
             foreach ($users as $user) {
                 $data = array();
                 foreach ($user->events as $event) {
-                    $date = explode(' ', $event->start);
-                    $hours = number_format($event->pivot->sum / 3600, '2', '.', '.');
+//                    dd() ;
+//                    dd(strtotime($event->start),strtotime(date("Y")));
+                    if (strtotime($event->start) >= strtotime('first day of january this year')) {
+                        $date = explode(' ', $event->start);
+                        $hours = number_format($event->pivot->sum / 3600, '2', '.', '.');
 
-                    $data[] = $date[0] . '::' . $event->title . '::'
-                        . $hours;
+                        $data[] = $date[0] . '::' . $event->title . '::'
+                            . $hours;
+                    }
+                    $project[$user->id] = array('events' => $data);
                 }
-                $project[$user->id] = array('events' => $data);
             }
 
             $user = User::find($activeFilter);

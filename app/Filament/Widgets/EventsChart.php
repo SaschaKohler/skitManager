@@ -57,8 +57,6 @@ class EventsChart extends BarChartWidget
             foreach ($users as $user) {
                 $data = array();
                 foreach ($user->events as $event) {
-//                    dd() ;
-//                    dd(strtotime($event->start),strtotime(date("Y")));
                     if (strtotime($event->start) >= strtotime('first day of january this year')) {
                         $date = explode(' ', $event->start);
                         $hours = number_format($event->pivot->sum / 3600, '2', '.', '.');

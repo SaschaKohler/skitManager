@@ -65,12 +65,11 @@ class ListUsers extends ListRecords
 
                         $name1 = $importData[4]; //Get user names
                         $name2 = $importData[5];
-
                         $street = $importData[6];
                         $title1 = $importData[3];
 //                        $zip = utf8_encode($importData[8]);
 //                        $city = utf8_encode($importData[9]);
-                        $email = utf8_encode($importData[55]) ? $importData[55] : null;
+                        $email = $importData[55] ? $importData[55] : null;
                         $uuid = $importData[0];
                         $phone1 = $importData[10] ? $importData[10] : null;
 

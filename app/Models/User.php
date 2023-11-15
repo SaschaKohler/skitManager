@@ -6,6 +6,8 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -55,7 +57,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     ];
 
 
-    public function info()
+    public function info(): HasOne
     {
         return $this->hasOne(Info::class);//->withDefault();
     }
@@ -73,7 +75,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     }
 
 
-    public function tasks()
+    public function tasks(): HasMany
     {
         return $this->hasMany(Todo::class);
     }
@@ -97,4 +99,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 
         return true;
     }
+    /**
+     * @param mixed $argument0
+     */
 }

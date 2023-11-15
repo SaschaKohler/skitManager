@@ -7,7 +7,7 @@ use App\Models\Calendar;
 use App\Models\Event;
 use App\Models\User;
 use Carbon\Carbon;
-use DateInterval;
+use DatInterval;
 use DateTime;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
@@ -17,6 +17,7 @@ use Filament\Forms;
 
 use PHPUnit\Exception;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+
 use function PHPUnit\Framework\isInstanceOf;
 
 class CalendarWidget extends FullCalendarWidget
@@ -38,13 +39,17 @@ class CalendarWidget extends FullCalendarWidget
             // You can use $fetchInfo to filter events by date.
 
             $employeeEvents = Event::query()
-                ->where([
+                ->where(
+                    [
                     ['start', '>=', $fetchInfo['start']],
                     ['end', '<=', $fetchInfo['end']],
-                ])
-                ->whereHas('employees', function (Builder $query) {
-                    $query->where('user_id', auth()->id());
-                })
+                    ]
+                )
+                ->whereHas(
+                    'employees', function (Builder $query) {
+                        $query->where('user_id', auth()->id());
+                    }
+                )
                 ->get()->toArray();
 
             return $employeeEvents;
@@ -52,21 +57,24 @@ class CalendarWidget extends FullCalendarWidget
 
 
         $myEvents = Event::query()
-            ->where([
+            ->where(
+                [
                 ['start', '>=', $fetchInfo['start']],
                 ['end', '<=', $fetchInfo['end']],
-            ])
+                ]
+            )
             ->get()->flatten()->toArray();
 
 
         if ($gcal = \Spatie\GoogleCalendar\Event::get(startDateTime: Carbon::now()->subDays(14))) {
 
 
-            $google_events = $gcal->map(function ($events) {
-                $color_id = $events->colorId ? $events->colorId : 'undefined';
-                $calendar = Calendar::select('id', 'color')
-                    ->where('color_id', '=', $color_id)->get();
-                return [
+            $google_events = $gcal->map(
+                function ($events) {
+                    $color_id = $events->colorId ? $events->colorId : 'undefined';
+                    $calendar = Calendar::select('id', 'color')
+                        ->where('color_id', '=', $color_id)->get();
+                    return [
                     'id' => $events->id,
                     'title' => $events->summary . ' **GOOGLE-CALENDAR**',
                     'start' => Carbon::parse($events->startDateTime)->toDateTimeString(),
@@ -74,8 +82,9 @@ class CalendarWidget extends FullCalendarWidget
                     'backgroundColor' => $calendar[0]->color,
                     'borderColor' => $calendar[0]->color,
                     'calendar_id' => $calendar[0]->id,
-                ];
-            })->toArray();
+                    ];
+                }
+            )->toArray();
 
             $google_events_coll = collect($google_events);
 
@@ -117,10 +126,11 @@ class CalendarWidget extends FullCalendarWidget
             $new->author_id = auth()->id();
             $new->calendar_id = $param['extendedProps']['calendar_id'];
 
-            if ($user)
+            if ($user) {
                 $new->user_id = $user['id'];
-            else
+            } else {
                 $new->user_id = User::where('name1', '=', 'KUNDE')->first()['id'];
+            }
 
             $new->save();
 
@@ -243,20 +253,22 @@ class CalendarWidget extends FullCalendarWidget
         $this->event = Event::create($data);
 
 
-//        $this->event->backgroundColor = $this->event->calendar()->pluck('backgroundColor')[0];
-//        $this->event->borderColor = $this->event->calendar()->pluck('borderColor')[0];
-//        $this->event->textColor = $this->event->calendar()->pluck('textColor')[0];
-//        $this->event->update();
+        //        $this->event->backgroundColor = $this->event->calendar()->pluck('backgroundColor')[0];
+        //        $this->event->borderColor = $this->event->calendar()->pluck('borderColor')[0];
+        //        $this->event->textColor = $this->event->calendar()->pluck('textColor')[0];
+        //        $this->event->update();
         $this->refreshEvents();
 
         Notification::make()
             ->title('Neuer Eintrag')
             //->icon('heroicon-s-calender')
             ->body("**{$this->event->title} am {$this->event->start}**")
-            ->actions([
+            ->actions(
+                [
                 Action::make('View')
                     ->url(EventResource::getUrl('edit', ['record' => $this->event])),
-            ])
+                ]
+            )
             ->sendToDatabase(auth()->user());
 
     }
@@ -274,11 +286,11 @@ class CalendarWidget extends FullCalendarWidget
          * 2. $this->event
          */
 
-        # $this->event_id
+        // $this->event_id
         // the value is retrieved from event's id key
         // eg: Appointment::find($this->event);
 
-        # $this->event
+        // $this->event
         // model instance is resolved by user defined resolveEventRecord() funtion. See example below
         $dat = $data;
         $dat['allDay'] = $data['extendedProps']['allDay'];
@@ -306,39 +318,52 @@ class CalendarWidget extends FullCalendarWidget
     {
         return [
             Forms\Components\Grid::make()
-                ->schema([
+                ->schema(
+                    [
                     Forms\Components\Toggle::make('extendedProps.allDay')
                         ->label(__('filament::widgets/calendar-widget.allday'))
                         ->columnSpan(2),
                     Forms\Components\Select::make('extendedProps.calendar_id')
                         ->disableLabel()
-                        ->options(function () {
-                            $calendars = Calendar::all();
-                            return $calendars->mapWithKeys(function ($calendars) {
-                                return [$calendars->getKey() => static::getCleanOptionString($calendars)];
-                            })->toArray();
-                        })
+                        ->options(
+                            function () {
+                                $calendars = Calendar::all();
+                                return $calendars->mapWithKeys(
+                                    function ($calendars) {
+                                        return [$calendars->getKey() => static::getCleanOptionString($calendars)];
+                                    }
+                                )->toArray();
+                            }
+                        )
                         ->required()
                         ->allowHtml()
                         ->searchable()
-                        ->getSearchResultsUsing(function (string $query) {
-                            $calendar = Calendar::where('type', 'like', "%{$query}%")
-                                ->limit(50)
-                                ->get();
-                            return $calendar->mapWithKeys(function ($calendar) {
-                                return [$calendar->getKey() => static::getCleanOptionString($calendar)];
-                            })->toArray();
-                        })
-                        ->getOptionLabelUsing(function ($value): string {
-                            $calendar = Calendar::find($value);
-                            return static::getCleanOptionString($calendar);
-                        })
+                        ->getSearchResultsUsing(
+                            function (string $query) {
+                                $calendar = Calendar::where('type', 'like', "%{$query}%")
+                                    ->limit(50)
+                                    ->get();
+                                return $calendar->mapWithKeys(
+                                    function ($calendar) {
+                                        return [$calendar->getKey() => static::getCleanOptionString($calendar)];
+                                    }
+                                )->toArray();
+                            }
+                        )
+                        ->getOptionLabelUsing(
+                            function ($value): string {
+                                $calendar = Calendar::find($value);
+                                return static::getCleanOptionString($calendar);
+                            }
+                        )
                         ->columnSpan(2),
 
-                ])->columns(4),
+                    ]
+                )->columns(4),
 
             Forms\Components\Card::make()
-                ->schema([
+                ->schema(
+                    [
                     Forms\Components\TextInput::make('title')
                         ->label(__('filament::widgets/calendar-widget.title'))
                         ->required()
@@ -354,13 +379,16 @@ class CalendarWidget extends FullCalendarWidget
                         ->required()
                         ->columnSpan(2),
 
-                ])->columns('4'),
+                    ]
+                )->columns('4'),
 
             Forms\Components\Card::make()
-                ->schema([
+                ->schema(
+                    [
                     Forms\Components\Select::make('extendedProps.recurrence')
                         ->label(__('filament::widgets/calendar-widget.recurrence.header'))
-                        ->options([
+                        ->options(
+                            [
                             '10' => __('filament::widgets/calendar-widget.recurrence.none'),
                             '1' => __('filament::widgets/calendar-widget.recurrence.daily'),
                             '2' => __('filament::widgets/calendar-widget.recurrence.weekly'),
@@ -370,7 +398,8 @@ class CalendarWidget extends FullCalendarWidget
                             '6' => __('filament::widgets/calendar-widget.recurrence.3month'),
                             '7' => __('filament::widgets/calendar-widget.recurrence.halfyear'),
                             '8' => __('filament::widgets/calendar-widget.recurrence.yearly'),
-                        ])
+                            ]
+                        )
                         ->required()
                         ->allowHtml(),
 
@@ -379,28 +408,33 @@ class CalendarWidget extends FullCalendarWidget
                         ->required()
                         ->searchable()
                         ->preload()
-                        ->options(function () {
-                            return User::where('role_id', 3)->pluck('name1', 'id');
-                        })
-                        ->getSearchResultsUsing(function ($query) {
-                            return User::where('name1', 'like', "%{$query}%")->
-                            where('role_id', 3)->pluck('name1', 'id');
-                        })
+                        ->options(
+                            function () {
+                                return User::where('role_id', 3)->pluck('name1', 'id');
+                            }
+                        )
+                        ->getSearchResultsUsing(
+                            function ($query) {
+                                return User::where('name1', 'like', "%{$query}%")->
+                                where('role_id', 3)->pluck('name1', 'id');
+                            }
+                        )
 
-                ])
+                    ]
+                )
 
         ];
 
     }
 
-    protected
-    static function getEditEventFormSchema(): array
+    protected static function getEditEventFormSchema(): array
     {
 
         return [
 
             Forms\Components\Grid::make()
-                ->schema([
+                ->schema(
+                    [
                     Forms\Components\Toggle::make('extendedProps.allDay')
                         ->label(__('filament::widgets/calendar-widget.allday'))
                         ->columnSpan(2),
@@ -409,30 +443,42 @@ class CalendarWidget extends FullCalendarWidget
                         ->required()
                         ->allowHtml()
                         ->searchable()
-                        ->options(function () {
-                            $calendars = Calendar::all();
-                            return $calendars->mapWithKeys(function ($calendars) {
-                                return [$calendars->getKey() => static::getCleanOptionString($calendars)];
-                            })->toArray();
-                        })
-                        ->getSearchResultsUsing(function (string $query) {
-                            $calendar = Calendar::where('type', 'like', "%{$query}%")
-                                ->limit(50)
-                                ->get();
-                            return $calendar->mapWithKeys(function ($calendar) {
-                                return [$calendar->getKey() => static::getCleanOptionString($calendar)];
-                            })->toArray();
-                        })
-                        ->getOptionLabelUsing(function ($value): string {
-                            $calendar = Calendar::find($value);
-                            return static::getCleanOptionString($calendar);
-                        })
+                        ->options(
+                            function () {
+                                $calendars = Calendar::all();
+                                return $calendars->mapWithKeys(
+                                    function ($calendars) {
+                                        return [$calendars->getKey() => static::getCleanOptionString($calendars)];
+                                    }
+                                )->toArray();
+                            }
+                        )
+                        ->getSearchResultsUsing(
+                            function (string $query) {
+                                $calendar = Calendar::where('type', 'like', "%{$query}%")
+                                    ->limit(50)
+                                    ->get();
+                                return $calendar->mapWithKeys(
+                                    function ($calendar) {
+                                        return [$calendar->getKey() => static::getCleanOptionString($calendar)];
+                                    }
+                                )->toArray();
+                            }
+                        )
+                        ->getOptionLabelUsing(
+                            function ($value): string {
+                                $calendar = Calendar::find($value);
+                                return static::getCleanOptionString($calendar);
+                            }
+                        )
                         ->columnSpan(2),
 
-                ])->columns(4),
+                    ]
+                )->columns(4),
 
             Forms\Components\Card::make()
-                ->schema([
+                ->schema(
+                    [
 
                     Forms\Components\TextInput::make('title')
                         ->label(__('filament::widgets/calendar-widget.title'))
@@ -449,13 +495,16 @@ class CalendarWidget extends FullCalendarWidget
                         ->required()
                         ->columnSpan(2),
 
-                ])->columns('4'),
+                    ]
+                )->columns('4'),
 
             Forms\Components\Card::make()
-                ->schema([
+                ->schema(
+                    [
                     Forms\Components\Select::make('extendedProps.recurrence')
                         ->label(__('filament::widgets/calendar-widget.recurrence.header'))
-                        ->options([
+                        ->options(
+                            [
                             '10' => __('filament::widgets/calendar-widget.recurrence.none'),
                             '1' => __('filament::widgets/calendar-widget.recurrence.daily'),
                             '2' => __('filament::widgets/calendar-widget.recurrence.weekly'),
@@ -465,7 +514,8 @@ class CalendarWidget extends FullCalendarWidget
                             '6' => __('filament::widgets/calendar-widget.recurrence.3month'),
                             '7' => __('filament::widgets/calendar-widget.recurrence.halfyear'),
                             '8' => __('filament::widgets/calendar-widget.recurrence.yearly'),
-                        ])
+                            ]
+                        )
                         ->required()
                         ->allowHtml(),
 
@@ -474,40 +524,42 @@ class CalendarWidget extends FullCalendarWidget
                         ->required()
                         ->searchable()
                         ->preload()
-                        ->options(function () {
-                            return User::where('role_id', 3)->pluck('name1', 'id');
-                        })
-                        ->getSearchResultsUsing(function ($query) {
-                            return User::where('name1', 'like', "%{$query}%")->
-                            where('role_id', 3)->pluck('name1', 'id');
-                        })
+                        ->options(
+                            function () {
+                                return User::where('role_id', 3)->pluck('name1', 'id');
+                            }
+                        )
+                        ->getSearchResultsUsing(
+                            function ($query) {
+                                return User::where('name1', 'like', "%{$query}%")->
+                                where('role_id', 3)->pluck('name1', 'id');
+                            }
+                        )
 
-                ])
+                    ]
+                )
 
         ];
     }
 
-    public
-    static function canCreate(): bool
+    public static function canCreate(): bool
     {
         return true;
     }
 
-    public
-    static function canEdit(?array $event = null): bool
+    public static function canEdit(?array $event = null): bool
     {
         return true;
     }
 
-    public
-    static function getCleanOptionString(Model $model): string
+    public static function getCleanOptionString(Model $model): string
     {
         return //Purify::clean(
             view('filament.components.select-calendar-result')
-                ->with('type', $model?->type)
-                ->with('description', $model?->description)
-                ->with('color', $model?->color)
-                ->render();
+            ->with('type', $model?->type)
+            ->with('description', $model?->description)
+            ->with('color', $model?->color)
+            ->render();
 
     }
 
@@ -530,12 +582,16 @@ class CalendarWidget extends FullCalendarWidget
                 ->title('Eintrag geändert')
                 ->icon('heroicon-o-shield-exclamation')
                 ->iconColor('success')
-                ->body("**{$this->event->title}** / **{$this->event->calendar->type}**\\
-            Kunde: *{$this->event->client->name1}* am *{$this->event->start}*")
-                ->actions([
+                ->body(
+                    "**{$this->event->title}** / **{$this->event->calendar->type}**\\
+            Kunde: *{$this->event->client->name1}* am *{$this->event->start}*"
+                )
+                ->actions(
+                    [
                     Action::make('View')
                         ->url(EventResource::getUrl('edit', ['record' => $this->event])),
-                ])
+                    ]
+                )
                 ->sendToDatabase($employee);
         }
 

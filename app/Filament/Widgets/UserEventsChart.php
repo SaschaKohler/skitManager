@@ -2,14 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Event;
 use App\Models\User;
-use Barryvdh\Debugbar\Controllers\AssetController;
-use Carbon\Carbon;
 use Filament\Widgets\BarChartWidget;
-use Filament\Widgets\LineChartWidget;
-use Flowframe\Trend\Trend;
-use Flowframe\Trend\TrendValue;
 
 class UserEventsChart extends BarChartWidget
 {
@@ -37,7 +31,7 @@ class UserEventsChart extends BarChartWidget
 
         $user = User::find(auth()->user()->id);
 
-
+        User::
             $project = array();
 
                 $data = array();

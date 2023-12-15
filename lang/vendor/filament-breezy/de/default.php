@@ -75,6 +75,10 @@ return [
             "city" => "Stadt/Ort",
             "phone" => "Mobil",
             "dob" => "Geburtstag",
+<<<<<<< HEAD
+=======
+            'color' => 'Farbe',
+>>>>>>> origin/master
 
             "submit" => [
                 "label" => "Erneuern",

@@ -24,7 +24,7 @@ class UserFactory extends Factory
             'color' => 'rgb('.$this->faker->rgbColor().')',
             'email' => Str::lower(Str::remove(' ', $name)) . '' . $this->faker->randomDigit(). '@'. $this->faker->domainName(),
             'phone1' => $this->faker->phoneNumber(),
-            'role_id' => $this->faker->randomElement([1,2,3]),
+            'role_id' => $this->faker->randomElement([2,3]),
          //   'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),

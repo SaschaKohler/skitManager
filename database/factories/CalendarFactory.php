@@ -16,8 +16,10 @@ class CalendarFactory extends Factory
      */
     public function definition()
     {
+        $color = $this->faker->hexColor();
         return [
             //
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -27,6 +29,10 @@ class CalendarFactory extends Factory
             'description' => $this->faker->text(20),
             'color' => $this->faker->hexColor()
 >>>>>>> 5849466 (updated a lot)
+=======
+            'description' => $this->faker->text(20),
+            'color' => $color,
+>>>>>>> origin/master
         ];
     }
 }

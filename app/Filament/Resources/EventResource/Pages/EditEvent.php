@@ -27,9 +27,15 @@ class EditEvent extends EditRecord
 //        return $this->getResource()::getUrl('index');
 //    }
 
+
     protected function afterSave(): void
     {
         $event = $this->record;
+
+        $event->backgroundColor = $event->calendar()->pluck('color')[0];
+        $event->borderColor = $event->calendar()->pluck('color')[0];
+
+        $event->update();
 
         if ($event->employees->count()) {
 
@@ -49,6 +55,14 @@ class EditEvent extends EditRecord
 
         }
 
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+
+     $data['editor_id'] = auth()->id();
+
+     return $data;
     }
 
 }

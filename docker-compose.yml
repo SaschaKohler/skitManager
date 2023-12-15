@@ -1,3 +1,5 @@
+
+
 version: '3.7'
 
 services:
@@ -52,7 +54,11 @@ services:
             - ./docker/nginx/prod:/etc/nginx/conf.d/
             - ./certbot/www:/var/www/certbot/:ro
             - ./certbot/conf/:/etc/nginx/ssl/:ro
+<<<<<<< HEAD
         #    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+=======
+            #command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+>>>>>>> origin/master
         networks:
             - code-network
 
@@ -60,15 +66,17 @@ services:
 
     #  ### CERT_BOT #######################################################
     certbot:
-        image: certbot/certbot:latest
-        volumes:
-            - ./certbot/www:/var/www/certbot/:rw
-            - ./certbot/conf/:/etc/letsencrypt/:rw
-        entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h; done;'"
-
-    #    command: certonly --webroot --webroot-path=/var/www/certbot/ --email sascha.cloud01@gmail.com  --agree-tos --no-eff-email --staging -d skit-software.at  -d www.skit-software.at
-
-
+      image: certbot/certbot:latest
+    
+      volumes:
+        - ./certbot/www:/var/www/certbot/:rw
+        - ./certbot/conf/:/etc/letsencrypt/:rw
+      entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h; done;'"
+    
+          #command: certonly --webroot --webroot-path=/var/www/certbot/ --email sascha.cloud01@gmail.com  --break-my-certs --agree-tos --no-eff-email --staging -d skit-software.at  -d www.skit-software.at
+      networks:
+        - code-network
+    
     #### PG_SQL ################################################
     pgsql:
         image: "postgres" # use latest official postgres version
@@ -84,16 +92,16 @@ services:
             - code-network
 
 #  ### PG_ADMIN #########################################################
-#  pgadmin:
-#    image: dpage/pgadmin4
-#    restart: always
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: "${PGADMIN_EMAIL}"
-#      PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_PASSWORD}"
-#    ports:
-#      - "5050:80"
-#    networks:
-#      - code-network
+    pgadmin:
+        image: dpage/pgadmin4
+        restart: always
+        environment:
+            PGADMIN_DEFAULT_EMAIL: "${PGADMIN_EMAIL}"
+            PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_PASSWORD}"
+        ports:
+            - 5050:80
+        networks:
+            - code-network
 
 ### Volumes & Network #########################################################
 volumes:

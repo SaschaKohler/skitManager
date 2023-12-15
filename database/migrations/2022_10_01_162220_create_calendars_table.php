@@ -15,7 +15,12 @@ return new class extends Migration
     {
         Schema::create('calendars', function (Blueprint $table) {
             $table->id();
+<<<<<<< HEAD
             $table->text('type')->nullable()->unique();
+=======
+            $table->text('type')->nullable();
+            $table->text('color_id')->unique();
+>>>>>>> origin/master
             $table->text('description')->nullable();
             $table->text('color')->nullable();
             $table->softDeletes();

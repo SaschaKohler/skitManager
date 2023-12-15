@@ -18,12 +18,20 @@ class VehicleResource extends Resource
 {
     protected static ?string $model = Vehicle::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-truck';
+//    protected static bool $shouldRegisterNavigation = false;
+
+    protected static ?string $navigationGroup = 'Stammdaten';
+
+    protected static ?string $label = 'Fahrzeug';
+    protected static ?string $pluralLabel = 'Fahrzeuge';
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+<<<<<<< HEAD
                 Forms\Components\FileUpload::make('image')
                     ->avatar()
                     ->disk('public')
@@ -42,24 +50,71 @@ class VehicleResource extends Resource
                         6 => 'Pickup'
                     ])
                     ->required(),
+=======
+                Forms\Components\Card::make()
+                    ->schema([
+                        Forms\Components\FileUpload::make('image')
+                            ->label(__('filament::resources/vehicle-resource.image'))
+                            ->avatar()
+                            ->disk('public')
+                            ->columnSpan(4),
+                        Forms\Components\TextInput::make('branding')
+                            ->label(__('filament::resources/vehicle-resource.branding'))
+                            ->required()
+                            ->columnSpan(3),
+                        Forms\Components\TextInput::make('license_plate')
+                            ->label(__('filament::resources/vehicle-resource.license_plate'))
+                            ->required()
+                            ->columns(1),
 
-                Forms\Components\TextInput::make('branding')
-                    ->required(),
-                Forms\Components\DatePicker::make('permit')
-                    ->required(),
-                Forms\Components\TextInput::make('license_plate')
-                    ->required(),
-                Forms\Components\Select::make('insurance_type')
-                    ->options([
-                        1 => 'keine',
-                        2 => 'Teilkasko',
-                        3 => 'Vollkasko',
+
+                        Forms\Components\Fieldset::make('details')
+                            ->label(__('filament::resources/vehicle-resource.details'))
+                            ->schema([
+                                Forms\Components\Select::make('type')
+                                    ->label(__('filament::resources/vehicle-resource.type'))
+                                    ->options([
+                                        1 => __('filament::resources/vehicle-resource.type_options.pkw'),
+                                        2 => __('filament::resources/vehicle-resource.type_options.traktor'),
+                                        3 => __('filament::resources/vehicle-resource.type_options.drescher'),
+                                        4 => __('filament::resources/vehicle-resource.type_options.pritsche'),
+                                        5 => __('filament::resources/vehicle-resource.type_options.anhaenger'),
+                                        6 => __('filament::resources/vehicle-resource.type_options.pickup'),
+                                    ])
+                                    ->required()
+                                    ->columns(3),
+                                Forms\Components\TextInput::make('owner')
+                                    ->label(__('filament::resources/vehicle-resource.owner'))
+                                    ->required()
+                                    ->string()
+                                    ->maxLength(25)
+                                    ->columns(2),
+
+
+                                Forms\Components\DatePicker::make('permit')
+                                    ->label(__('filament::resources/vehicle-resource.permit'))
+                                    ->required(),
+                                Forms\Components\Select::make('insurance_type')
+                                    ->label(__('filament::resources/vehicle-resource.insurance_type'))
+                                    ->options([
+                                        1 => 'keine',
+                                        2 => 'Teilkasko',
+                                        3 => 'Vollkasko',
+                                    ])
+                                    ->required(),
+                                Forms\Components\DatePicker::make('inspection')
+                                    ->label(__('filament::resources/vehicle-resource.inspection')),
+                                Forms\Components\TextInput::make('insurance_company')
+                                    ->label(__('filament::resources/vehicle-resource.insurance_company')),
+                                Forms\Components\TextInput::make('insurance_manager')
+                                    ->label(__('filament::resources/vehicle-resource.insurance_manager')),
+
+                            ])->columnSpan(4)
+
+>>>>>>> origin/master
+
                     ])
-                    ->required(),
-                Forms\Components\DatePicker::make('inspection'),
-                Forms\Components\TextInput::make('insurance_company'),
-                Forms\Components\TextInput::make('insurance_manager')
-            ]);
+            ])->columns(4);
     }
 
     public static function table(Table $table): Table
@@ -67,13 +122,26 @@ class VehicleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
+<<<<<<< HEAD
                 ->disk('public')
                 ->rounded(),
                 Tables\Columns\TextColumn::make('branding'),
+=======
+                    ->label(__('filament::resources/vehicle-resource.image'))
+                    ->disk('public')
+                    ->rounded(),
+                Tables\Columns\TextColumn::make('branding')
+                    ->label(__('filament::resources/vehicle-resource.branding'))
+            ->wrap(),
+>>>>>>> origin/master
                 Tables\Columns\TextColumn::make('permit')
-                    ->date(),
-                Tables\Columns\TextColumn::make('license_plate'),
+                    ->label(__('filament::resources/vehicle-resource.permit'))
+                    ->date()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('license_plate')
+                    ->label(__('filament::resources/vehicle-resource.license_plate')),
                 Tables\Columns\TextColumn::make('inspection')
+                    ->label(__('filament::resources/vehicle-resource.inspection'))
                     ->date()
                     ->sortable()
 

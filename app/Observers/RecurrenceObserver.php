@@ -105,6 +105,8 @@ class RecurrenceObserver
                         'title' => $event->title,
                         'start' => $start,
                         'user_id' => $event->user_id,
+                        'author_id' => $event->author->id,
+                        'editor_id' => $event->editor->id,
                         'end' => $end,
                         'allDay' => $allDay,
                         'calendar_id' => $event->calendar_id,

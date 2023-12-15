@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->string('search')->nullable();
             $table->string('short_text')->nullable();
             $table->string('unit');
+<<<<<<< HEAD
             $table->decimal('lpr',10,2)->nullable();
             $table->decimal('ek',10,2)->nullable();
             $table->decimal('vk1',10,2)->nullable();
@@ -30,6 +31,18 @@ return new class extends Migration {
             $table->decimal('vk3',10,2)->nullable();
             $table->decimal('vk3_perc',10,2)->nullable();
 
+=======
+            $table->decimal('lpr', 10, 2)->nullable();
+            $table->decimal('ek', 10, 2)->nullable();
+            $table->decimal('vk1', 10, 2)->nullable();
+            $table->decimal('vk2', 10, 2)->nullable();
+            $table->decimal('vk3', 10, 2)->nullable();
+//            $table->integer('ek')->nullable();
+//            $table->integer('vk1')->nullable();
+//            $table->integer('vk2')->nullable();
+//            $table->integer('vk3')->nullable();
+            $table->index('search');
+>>>>>>> origin/master
             $table->timestamps();
         });
     }

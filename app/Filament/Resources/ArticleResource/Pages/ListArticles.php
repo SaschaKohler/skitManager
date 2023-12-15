@@ -37,7 +37,11 @@ class ListArticles extends ListRecords
                     $importData_arr = array(); // Read through the file and store the contents as an array
                     $i = 0;
 //Read the contents of the uploaded file
+<<<<<<< HEAD
                     while (($filedata = fgetcsv($file, 1000, ";")) !== FALSE) {
+=======
+                    while (($filedata = fgetcsv($file, 0, ";")) !== FALSE) {
+>>>>>>> origin/master
                         $num = count($filedata);
 
 // Skip first row (Remove below comment if you want to skip the first row)
@@ -57,14 +61,28 @@ class ListArticles extends ListRecords
                         //    dd($importData);
                         $uuid = $importData[0] ?? null;
                         $search = utf8_encode($importData[4]) ?? null;
+<<<<<<< HEAD
                         $short_text = $importData[5] ?? null;
                         $unit = utf8_encode($importData[6]) ?? null;
+=======
+                        $short_text = utf8_encode($importData[5]) ?? null;
+                        $unit = utf8_encode($importData[6])?? null;
+>>>>>>> origin/master
                         $lpr = floatval(str_replace(',', '.', $importData[7])) ?? null;
                         $ek = floatval(str_replace(',', '.', $importData[8])) ?? null;
                         $vk1 = floatval(str_replace(',', '.', $importData[9])) ?? null;
                         $vk2 = floatval(str_replace(',', '.', $importData[10])) ?? null;
                         $vk3 = floatval(str_replace(',', '.', $importData[11])) ?? null;
 
+<<<<<<< HEAD
+=======
+//                        $lpr = intval(trim($importData[7],',')) ?? null;
+//                        $ek =  intval(trim($importData[8],',')) ?? null;
+//                        $vk1 = intval(trim($importData[9],',')) ?? null;
+//                        $vk2 = intval(trim($importData[10],',')) ?? null;
+//                        $vk3 = intval(trim($importData[11],',')) ?? null;
+
+>>>>>>> origin/master
 
 //                        $vk1_perc = floatval(100 - (($ek*10 / $vk1*10) * 100)) ?? null;
 //                        $vk2_perc = floatval(100 - (($ek*10 / $vk2*10) * 100)) ?? null;
@@ -82,7 +100,11 @@ class ListArticles extends ListRecords
 //                            $vk1_perc,
 //                            $vk2_perc,
 //                            $vk3_perc,
+<<<<<<< HEAD
 //                        );
+=======
+                 //       );
+>>>>>>> origin/master
                         try {
                             $article_exist = Article::query()
                                 ->where('uuid', '=', $uuid)
@@ -110,7 +132,11 @@ class ListArticles extends ListRecords
                             }
 
                         } catch (\Exception $e) {
+<<<<<<< HEAD
                             // dd($e);
+=======
+                             dd($e);
+>>>>>>> origin/master
                             DB::rollBack();
                         }
                     }
@@ -123,4 +149,13 @@ class ListArticles extends ListRecords
                 )
         ];
     }
+<<<<<<< HEAD
+=======
+
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return true;
+    }
+
+>>>>>>> origin/master
 }

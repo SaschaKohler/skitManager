@@ -19,7 +19,11 @@ class OrderPolicy
     public function viewAny(User $user)
     {
         //
+<<<<<<< HEAD
         return true;
+=======
+        return auth()->user()->name1 == 'Sascha Kohler';
+>>>>>>> origin/master
     }
 
     /**
@@ -32,7 +36,11 @@ class OrderPolicy
     public function view(User $user, Order $order)
     {
         //
+<<<<<<< HEAD
         return true;
+=======
+        return auth()->user()->name1 == 'Sascha Kohler';
+>>>>>>> origin/master
 
     }
 
@@ -45,7 +53,11 @@ class OrderPolicy
     public function create(User $user)
     {
         //
+<<<<<<< HEAD
         return true;
+=======
+        return auth()->user()->name1 == 'Sascha Kohler';
+>>>>>>> origin/master
     }
 
     /**
@@ -58,7 +70,11 @@ class OrderPolicy
     public function update(User $user, Order $order)
     {
         //
+<<<<<<< HEAD
         return true;
+=======
+        return auth()->user()->name1 == 'Sascha Kohler';
+>>>>>>> origin/master
     }
 
     /**
@@ -71,7 +87,11 @@ class OrderPolicy
     public function delete(User $user, Order $order)
     {
         //
+<<<<<<< HEAD
         return true;
+=======
+        return auth()->user()->name1 == 'Sascha Kohler';
+>>>>>>> origin/master
     }
 
     /**
@@ -83,6 +103,10 @@ class OrderPolicy
      */
     public function restore(User $user, Order $order)
     {
+<<<<<<< HEAD
+=======
+        return auth()->user()->name1 == 'Sascha Kohler';
+>>>>>>> origin/master
         //
     }
 
@@ -95,6 +119,10 @@ class OrderPolicy
      */
     public function forceDelete(User $user, Order $order)
     {
+<<<<<<< HEAD
+=======
+        return auth()->user()->name1 == 'Sascha Kohler';
+>>>>>>> origin/master
         //
     }
 }

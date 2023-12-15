@@ -11,6 +11,7 @@ Homestead.json
 Homestead.yaml
 auth.json
 npm-debug.log
+dump.sql
 yarn-error.log
 /.idea
 /.vscode

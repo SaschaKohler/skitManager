@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /srv/api || exit
+cd /var/www || exit
 
 composer install
 php artisan key:generate

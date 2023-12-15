@@ -39,6 +39,10 @@ class NextEvents extends BaseWidget
 
         ];
     }
+    protected function getTableRecordUrlUsing(): Closure
+    {
+        return fn (Event $record): string => route('filament.resources.events.edit', ['record' => $record]);
+    }
 
     protected function isTablePaginationEnabled(): bool
     {

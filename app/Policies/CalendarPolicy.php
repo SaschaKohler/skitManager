@@ -18,7 +18,11 @@ class CalendarPolicy
      */
     public function viewAny(User $user)
     {
+<<<<<<< HEAD
         return ($user->role_id == 1 || $user->role_id == 2) ;
+=======
+        return ($user->role_id == 1) ;
+>>>>>>> origin/master
 
     }
 
@@ -32,7 +36,11 @@ class CalendarPolicy
     public function view(User $user, Calendar $calendar)
     {
         //
+<<<<<<< HEAD
         return ($user->role_id == 1 || $user->role_id == 2) ;
+=======
+        return ($user->role_id == 1 ) ;
+>>>>>>> origin/master
 
     }
 
@@ -45,7 +53,11 @@ class CalendarPolicy
     public function create(User $user)
     {
         //
+<<<<<<< HEAD
         return ($user->role_id == 1 || $user->role_id == 2) ;
+=======
+        return ($user->role_id == 1 ) ;
+>>>>>>> origin/master
 
     }
 
@@ -59,7 +71,11 @@ class CalendarPolicy
     public function update(User $user, Calendar $calendar)
     {
         //
+<<<<<<< HEAD
         return ($user->role_id == 1 || $user->role_id == 2) ;
+=======
+        return ($user->role_id == 1 ) ;
+>>>>>>> origin/master
 
     }
 

@@ -21,6 +21,8 @@ class VehiclesRelationManager extends RelationManager
 
     protected static ?string $inverseRelationship = 'events'; // Since the inverse related model is `Category`, this is normally `category`, not `section`.
 
+    protected static ?string $pluralLabel = 'Fahrzeuge';
+
 
     public static function form(Form $form): Form
     {

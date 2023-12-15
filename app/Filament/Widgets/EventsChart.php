@@ -27,7 +27,16 @@ class EventsChart extends BarChartWidget
 
     {
         return
+<<<<<<< HEAD
             User::query()->whereHas('events')->whereIn('role_id', [1,2])->get()
+=======
+//            User::whereHas('events')->whereIn('role_id', [1,2])->get()
+//                ->pluck('name1', 'id')->toArray();
+            User::whereHas('events', function ($query) {
+                $query->where('start', '>=', Carbon::now()->startOfYear()->toDateString())
+                ->whereIn('role_id', [1,2]);
+            })->get()
+>>>>>>> origin/master
                 ->pluck('name1', 'id')->toArray();
     }
 
@@ -38,12 +47,21 @@ class EventsChart extends BarChartWidget
         $users = User::whereHas('events', function ($query) {
             $query->where('start', '>=', Carbon::now()->startOfYear()->toDateString());
         })->get();
+<<<<<<< HEAD
 
         if ($users->isEmpty() == 'none') {
             return [];
         } elseif (!$users->isEmpty()) {
             if ($this->filter == 'none')
                 $activeFilter = User::whereHas('events')->first()->id;
+=======
+    //    dd($users);
+        if ($users->isEmpty()) {
+            return [];
+        } elseif (!$users->isEmpty()) {
+            if ($this->filter == 'none')
+                $activeFilter = $users->first()->id;
+>>>>>>> origin/master
             else
                 $activeFilter = $this->filter;
 
@@ -52,8 +70,11 @@ class EventsChart extends BarChartWidget
             foreach ($users as $user) {
                 $data = array();
                 foreach ($user->events as $event) {
+<<<<<<< HEAD
 //                    dd() ;
 //                    dd(strtotime($event->start),strtotime(date("Y")));
+=======
+>>>>>>> origin/master
                     if (strtotime($event->start) >= strtotime('first day of january this year')) {
                         $date = explode(' ', $event->start);
                         $hours = number_format($event->pivot->sum / 3600, '2', '.', '.');
@@ -72,11 +93,19 @@ class EventsChart extends BarChartWidget
             $backgroundColor = array();
             $borderColor = array();
 
+<<<<<<< HEAD
+=======
+         //  dd($project,$user->id);
+>>>>>>> origin/master
             foreach ($project[$user->id] as $item) {
                 foreach ($item as $dat) {
 
                     $values = explode('::', $dat);
+<<<<<<< HEAD
                     array_push($labels, $values[0]);
+=======
+                    array_push($labels, Carbon::parse($values[0])->toFormattedDateString());
+>>>>>>> origin/master
                     array_push($data, $values[2]);
                     array_push($borderColor, $user->color);
                     $int_value = preg_split('/[(|)]/', $user->color);    // rgb(a,b,c)  -> rgba(a,b,c,o)

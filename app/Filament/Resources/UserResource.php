@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use App\Models\ZipCode;
+use Closure;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -17,26 +19,41 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-    protected static bool $shouldRegisterNavigation = false;
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    //    protected static bool $shouldRegisterNavigation = false;
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Admin';
+
+    protected static ?string $navigationGroup = 'Stammdaten';
+
+    protected static ?string $label = 'Person';
+    protected static ?string $pluralLabel = 'Personen';
 
 
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(
+                [
 
                 Forms\Components\Tabs::make('required')
+<<<<<<< HEAD
                     ->tabs([
                         Forms\Components\Tabs\Tab::make('required')
                             ->label(__('filament::resources/user-resource.required'))
                             ->schema([
+=======
+                    ->tabs(
+                        [
+                        Forms\Components\Tabs\Tab::make('required')
+                            ->label(__('filament::resources/user-resource.required'))
+                            ->schema(
+                                [
+>>>>>>> origin/master
                                 Forms\Components\TextInput::make('name1')
                                     ->label(__('filament::resources/user-resource.name1'))
                                     ->required()
                                     ->lazy(),
+<<<<<<< HEAD
 //                                    ->afterStateUpdated(fn(string $context, $state, callable $set) => $set('search', Str::upper($state)) ),
                                 //->afterStateUpdated(fn(string $context, $state, callable $set) => $context === 'create' ? $set('search', Str::upper($state)) : null),
 
@@ -65,6 +82,64 @@ class UserResource extends Resource
                                     ->label(__('filament::common.zip')),
                                 Forms\Components\TextInput::make('city')
                                     ->label(__('filament::common.city')),
+=======
+                                //                                    ->afterStateUpdated(fn(string $context, $state, callable $set) => $set('search', Str::upper($state)) ),
+                                //->afterStateUpdated(fn(string $context, $state, callable $set) => $context === 'create' ? $set('search', Str::upper($state)) : null),
+
+                                Forms\Components\TextInput::make('email')
+                                    //  ->required()
+                                    ->email(),
+                                //     ->unique(table: User::class, column: 'email' ,ignoreRecord: true),
+                                Forms\Components\TextInput::make('phone1')
+                                    ->label(__('filament::resources/user-resource.phone1'))
+                                    ->required(),
+                                //                                Forms\Components\TextInput::make('password')
+                                //                                    ->password()
+                                //                                    ->minLength(8)
+                                //                                    ->dehydrateStateUsing(static fn(null|string $state): null|string => filled($state) ? Hash::make($state) : null)
+                                //                                    ->required(static fn(Page $livewire): bool => $livewire instanceof CreateUser)
+                                //                                    ->dehydrated(static fn(null|string $state): bool => filled($state))
+                                //                                    ->label(static fn(Page $livewire): string => $livewire instanceof EditUser ? 'New Password' : 'Password')
+                                ]
+                            ),
+                        Forms\Components\Tabs\Tab::make('extended')
+                            ->label(__('filament::resources/user-resource.extended'))
+                            ->schema(
+                                [
+                                Forms\Components\TextInput::make('street')
+                                    ->label(__('filament::common.street'))
+                                    ->columnSpan(2),
+
+                                Forms\Components\Select::make('zip')
+                                    ->label(__('filament::common.zip'))
+                                    ->reactive()
+                                    ->searchable()
+                                    ->getSearchResultsUsing(fn(string $query) => ZipCode::where('zip', 'like', "%{$query}%")->pluck('zip', 'id'))
+                                    ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('zip'))
+                                    ->afterStateUpdated(
+                                        function (Closure $set, $state) {
+                                            if (filled($state)) {
+                                                $set('city', ZipCode::find($state)->getAttribute('id'));
+                                            }
+                                        }
+                                    )
+                                    ->columnSpan(1),
+
+                                Forms\Components\Select::make('city')
+                                    ->label(__('filament::common.city'))
+                                    ->reactive()
+                                    ->searchable()
+                                    ->getSearchResultsUsing(fn(string $query) => ZipCode::where('location', 'like', "%{$query}%")->pluck('location', 'id'))
+                                    ->getOptionLabelUsing(fn($value): ?string => ZipCode::find($value)?->getAttribute('location'))
+                                    ->afterStateUpdated(
+                                        function (Closure $set, $state) {
+                                            if (filled($state)) {
+                                                $set('zip', ZipCode::find($state)->getAttribute('id'));
+                                            }
+                                        }
+                                    ),
+
+>>>>>>> origin/master
                                 Forms\Components\TextInput::make('phone2')
                                     ->label(__('filament::common.phone2'))
                                     ->tel(),
@@ -81,27 +156,45 @@ class UserResource extends Resource
                                     ->rgb(),
 
 
-                            ]),
+                                ]
+                            )->columns(2),
                         Forms\Components\Tabs\Tab::make('bank account')
                             ->label(__('filament::resources/user-resource.bank_account'))
+<<<<<<< HEAD
                             ->schema([
+=======
+                            ->schema(
+                                [
+>>>>>>> origin/master
                                 Forms\Components\TextInput::make('iban'),
                                 Forms\Components\TextInput::make('bic'),
 
 
-                            ]),
+                                ]
+                            ),
 
                         Forms\Components\Tabs\Tab::make('manager')
                             ->label(__('filament::resources/user-resource.manager'))
+<<<<<<< HEAD
                             ->schema([
                                 Forms\Components\Select::make('title2')
                                     ->label(__('filament::resources/user-resource.title2'))
                                     ->options([
+=======
+                            ->schema(
+                                [
+                                Forms\Components\Select::make('title2')
+                                    ->label(__('filament::resources/user-resource.title2'))
+                                    ->options(
+                                        [
+>>>>>>> origin/master
                                         'Herr' => 'Herr',
                                         'Frau' => 'Frau'
-                                    ]),
+                                        ]
+                                    ),
                                 Forms\Components\TextInput::make('manager')
                                     ->label(__('filament::resources/user-resource.manager_name'))
+<<<<<<< HEAD
                             ]),
                     ])->columnSpan(['lg' => 2]),
 
@@ -112,25 +205,51 @@ class UserResource extends Resource
                         Forms\Components\Select::make('role_id')
                             ->label(__('filament::common.role_id'))
                             ->options([
+=======
+                                ]
+                            ),
+                        ]
+                    )->columnSpan(['lg' => 2]),
+
+                //
+                Forms\Components\Card::make()
+                    ->schema(
+                        [
+                        //   Forms\Components\TextInput::make('search')->columnSpan(['lg' => 1]),
+                        Forms\Components\Select::make('role_id')
+                            ->label(__('filament::common.role_id'))
+                            ->options(
+                                [
+>>>>>>> origin/master
                                 '1' => __('filament::common.role.admin'),
                                 '2' => __('filament::common.role.employee'),
                                 '3' => __('filament::common.role.client'),
                                 '4' => __('filament::common.role.supplier'),
                                 '5' => __('filament::common.role.dealer'),
                                 '6' => __('filament::common.role.guest'),
+<<<<<<< HEAD
                             ])
                             ->default(3)
                     ])->columnSpan(['lg' => 1]),
+=======
+                                ]
+                            )
+                            ->default(3)
+                        ]
+                    )->columnSpan(['lg' => 1]),
+>>>>>>> origin/master
 
 
-            ])->columns(3);
+                ]
+            )->columns(3);
 
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
+                [
                 //
                 Tables\Columns\TextColumn::make('name1')
                     ->label(__('filament::resources/user-resource.name1'))
@@ -142,6 +261,7 @@ class UserResource extends Resource
                     ->toggleable(),
                 Tables\Columns\BadgeColumn::make('role_id')
                     ->label(__('filament::common.role_id'))
+<<<<<<< HEAD
                     ->colors([
                         'primary',
                         'success' => '1',
@@ -164,12 +284,40 @@ class UserResource extends Resource
                         Forms\Components\Select::make('role_id')
                             ->label(__('filament::common.role_id'))
                             ->options([
+=======
+                    ->colors(
+                        [
+                        'primary',
+                        'success' => '1',
+                        'danger' => '2'
+                        ]
+                    )
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('events.title')
+                    ->label(__('filament::resources/user-resource.table.events'))
+                    ->wrap(),
+                Tables\Columns\ColorColumn::make('color')
+                    ->label(__('filament::common.color')),
+                ]
+            )
+            ->filters(
+                [
+                //
+                Tables\Filters\Filter::make('role_id')
+                    ->form(
+                        [
+                        Forms\Components\Select::make('role_id')
+                            ->label(__('filament::common.role_id'))
+                            ->options(
+                                [
+>>>>>>> origin/master
                                 '1' => __('filament::common.role.admin'),
                                 '2' => __('filament::common.role.employee'),
                                 '3' => __('filament::common.role.client'),
                                 '4' => __('filament::common.role.supplier'),
                                 '5' => __('filament::common.role.dealer'),
                                 '6' => __('filament::common.role.guest'),
+<<<<<<< HEAD
                             ])
                     ])->query(function ($query, array $data) {
                         return $query->when($data['role_id'],
@@ -187,6 +335,39 @@ class UserResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make()
             ]);
+=======
+                                ]
+                            )
+                        ]
+                    )->query(
+                        function ($query, array $data) {
+                            return $query->when(
+                                $data['role_id'],
+                                fn($query) => $query->where('role_id', '=', $data['role_id'])
+                            );
+                        }
+                    ),
+                Tables\Filters\TrashedFilter::make(),
+
+                ]
+            )
+            ->actions(
+                [
+                Tables\Actions\ActionGroup::make(
+                    [
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make()
+                    ]
+                )
+                ]
+            )
+            ->bulkActions(
+                [
+                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\RestoreBulkAction::make()
+                ]
+            );
+>>>>>>> origin/master
     }
 
     public static function getRelations(): array
@@ -212,15 +393,16 @@ class UserResource extends Resource
     }
 
 
-//    public static function canDeleteAny(): bool
-//    {
-//     //   return false;
-//    }
-//
-//    public static function canCreate(): bool
-//    {
-//   //     return true;
-//    }
+    //    public static function canDeleteAny(): bool
+    //    {
+    //     //   return false;
+    //    }
+    //
+    //    public static function canCreate(): bool
+    //    {
+    //   //     return true;
+    //    }
+
 
 
     public static function getPages(): array

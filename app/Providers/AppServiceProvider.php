@@ -24,10 +24,10 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
-//        Filament::registerRenderHook(
-//            'head.end',
-//            fn (): string => Blade::render('@vite([\'resources/css/filament.css\',\'resources/js/app.js\'])'),
-//        );
+        //        Filament::registerRenderHook(
+        //            'head.end',
+        //            fn (): string => Blade::render('@vite([\'resources/css/filament.css\',\'resources/js/app.js\'])'),
+        //        );
 
     }
 
@@ -38,45 +38,49 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Filament::serving(function () {
-            // Using Vite
-            Filament::registerTheme(
-                app(Vite::class)('resources/css/filament.css'),
-            );
-            if(auth()->user()){
-                if(auth()->user()->isAdmin()){
+        Filament::serving(
+            function () {
+                // Using Vite
+                Filament::registerTheme(
+                    app(Vite::class)('resources/css/filament.css'),
+                );
+                if(auth()->user()) {
+                    if(auth()->user()->isAdmin()) {
 
-                    Filament::registerUserMenuItems([
-                        UserMenuItem::make()
-                            ->label(__('filament::layout.buttons.manage_users.label'))
-                            ->url(UserResource::getUrl())
-                            ->icon('heroicon-s-users'),
+                        Filament::registerUserMenuItems(
+                            [
+                            UserMenuItem::make()
+                                ->label(__('filament::layout.buttons.manage_users.label'))
+                                ->url(UserResource::getUrl())
+                                ->icon('heroicon-s-users'),
 
-                        UserMenuItem::make()
-                            ->label(__('filament::layout.buttons.manage_calendars.label'))
-                            ->url(CalendarResource::getUrl())
-                            ->icon('heroicon-s-calendar'),
+                            UserMenuItem::make()
+                                ->label(__('filament::layout.buttons.manage_calendars.label'))
+                                ->url(CalendarResource::getUrl())
+                                ->icon('heroicon-s-calendar'),
 
-                        UserMenuItem::make()
-                            ->label(__('filament::layout.buttons.manage_vehicles.label'))
-                            ->url(VehicleResource::getUrl())
-                            ->icon('heroicon-s-truck')
+                            UserMenuItem::make()
+                                ->label(__('filament::layout.buttons.manage_vehicles.label'))
+                                ->url(VehicleResource::getUrl())
+                                ->icon('heroicon-s-truck')
 
-                    ]);
+                            ]
+                        );
 
+
+                    }
 
                 }
 
             }
+        );
 
-        });
 
-
-//        Page::$reportValidationErrorUsing = function (ValidationException $exception) {
-//            Notification::make()
-//                ->title($exception->getMessage())
-//                ->danger()
-//                ->send();
-//        };
+        //        Page::$reportValidationErrorUsing = function (ValidationException $exception) {
+        //            Notification::make()
+        //                ->title($exception->getMessage())
+        //                ->danger()
+        //                ->send();
+        //        };
     }
 }

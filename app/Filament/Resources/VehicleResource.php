@@ -19,7 +19,7 @@ class VehicleResource extends Resource
     protected static ?string $model = Vehicle::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-truck';
-//    protected static bool $shouldRegisterNavigation = false;
+    //    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationGroup = 'Stammdaten';
 
@@ -30,8 +30,8 @@ class VehicleResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-<<<<<<< HEAD
+            ->schema(
+                [
                 Forms\Components\FileUpload::make('image')
                     ->avatar()
                     ->disk('public')
@@ -41,18 +41,20 @@ class VehicleResource extends Resource
                     ->string()
                     ->maxLength(25),
                 Forms\Components\Select::make('type')
-                    ->options([
+                    ->options(
+                        [
                         1 => 'PKW',
                         2 => 'Traktor',
                         3 => 'Drescher',
                         4 => 'Pritsche',
                         5 => 'Anhänger',
                         6 => 'Pickup'
-                    ])
+                        ]
+                    )
                     ->required(),
-=======
                 Forms\Components\Card::make()
-                    ->schema([
+                    ->schema(
+                        [
                         Forms\Components\FileUpload::make('image')
                             ->label(__('filament::resources/vehicle-resource.image'))
                             ->avatar()
@@ -70,17 +72,20 @@ class VehicleResource extends Resource
 
                         Forms\Components\Fieldset::make('details')
                             ->label(__('filament::resources/vehicle-resource.details'))
-                            ->schema([
+                            ->schema(
+                                [
                                 Forms\Components\Select::make('type')
                                     ->label(__('filament::resources/vehicle-resource.type'))
-                                    ->options([
+                                    ->options(
+                                        [
                                         1 => __('filament::resources/vehicle-resource.type_options.pkw'),
                                         2 => __('filament::resources/vehicle-resource.type_options.traktor'),
                                         3 => __('filament::resources/vehicle-resource.type_options.drescher'),
                                         4 => __('filament::resources/vehicle-resource.type_options.pritsche'),
                                         5 => __('filament::resources/vehicle-resource.type_options.anhaenger'),
                                         6 => __('filament::resources/vehicle-resource.type_options.pickup'),
-                                    ])
+                                        ]
+                                    )
                                     ->required()
                                     ->columns(3),
                                 Forms\Components\TextInput::make('owner')
@@ -96,11 +101,13 @@ class VehicleResource extends Resource
                                     ->required(),
                                 Forms\Components\Select::make('insurance_type')
                                     ->label(__('filament::resources/vehicle-resource.insurance_type'))
-                                    ->options([
+                                    ->options(
+                                        [
                                         1 => 'keine',
                                         2 => 'Teilkasko',
                                         3 => 'Vollkasko',
-                                    ])
+                                        ]
+                                    )
                                     ->required(),
                                 Forms\Components\DatePicker::make('inspection')
                                     ->label(__('filament::resources/vehicle-resource.inspection')),
@@ -109,31 +116,31 @@ class VehicleResource extends Resource
                                 Forms\Components\TextInput::make('insurance_manager')
                                     ->label(__('filament::resources/vehicle-resource.insurance_manager')),
 
-                            ])->columnSpan(4)
+                                ]
+                            )->columnSpan(4)
 
->>>>>>> origin/master
 
-                    ])
-            ])->columns(4);
+                        ]
+                    )
+                ]
+            )->columns(4);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns(
+                [
                 Tables\Columns\ImageColumn::make('image')
-<<<<<<< HEAD
-                ->disk('public')
-                ->rounded(),
-                Tables\Columns\TextColumn::make('branding'),
-=======
+                    ->disk('public')
+                    ->rounded(),
+                Tables\Columns\TextColumn::make('branding')
                     ->label(__('filament::resources/vehicle-resource.image'))
                     ->disk('public')
                     ->rounded(),
                 Tables\Columns\TextColumn::make('branding')
                     ->label(__('filament::resources/vehicle-resource.branding'))
-            ->wrap(),
->>>>>>> origin/master
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('permit')
                     ->label(__('filament::resources/vehicle-resource.permit'))
                     ->date()
@@ -145,18 +152,25 @@ class VehicleResource extends Resource
                     ->date()
                     ->sortable()
 
-            ])
-            ->filters([
+                ]
+            )
+            ->filters(
+                [
                 Tables\Filters\TrashedFilter::make(),
-            ])
-            ->actions([
+                ]
+            )
+            ->actions(
+                [
                 Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
+                ]
+            )
+            ->bulkActions(
+                [
                 Tables\Actions\DeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
                 Tables\Actions\ForceDeleteBulkAction::make(),
-            ]);
+                ]
+            );
     }
 
     public static function getRelations(): array
@@ -178,9 +192,11 @@ class VehicleResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
+            ->withoutGlobalScopes(
+                [
                 SoftDeletingScope::class,
-            ]);
+                ]
+            );
     }
 
     public static function canView(Model $record): bool

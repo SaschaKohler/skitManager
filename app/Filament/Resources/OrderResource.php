@@ -3,14 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
-<<<<<<< HEAD
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Forms\Components\AddressForm;
 use App\Models\Article;
 use App\Models\Order;
 use App\Models\Shop\Product;
 use Filament\Forms;
-=======
 use App\Models\Article;
 use App\Models\Order;
 use App\Models\User;
@@ -21,47 +19,35 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TextInput\Mask;
->>>>>>> origin/master
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-=======
 use Illuminate\Database\Eloquent\Model;
->>>>>>> origin/master
 
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-<<<<<<< HEAD
-=======
     protected static ?string $navigationGroup = 'Buchführung';
 
     protected static ?string $pluralLabel = 'Rechnungen';
 
 
->>>>>>> origin/master
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
                 Forms\Components\Group::make()
                     ->schema([
                         Forms\Components\Card::make()
                             ->schema(static::getFormSchema())
                             ->columns(2),
 
-<<<<<<< HEAD
                         Forms\Components\Section::make('Order items')
                             ->schema(static::getFormSchema('items')),
                     ])
@@ -81,7 +67,6 @@ class OrderResource extends Resource
                     ->hidden(fn(?Order $record) => $record === null),
             ]);
 
-=======
                         Forms\Components\Card::make()
                             ->schema([
                                 Forms\Components\Placeholder::make('total')
@@ -115,7 +100,6 @@ class OrderResource extends Resource
 
             ])
             ->columns(3);
->>>>>>> origin/master
     }
 
     public static function table(Table $table): Table
@@ -124,25 +108,19 @@ class OrderResource extends Resource
             ->columns([
                 //
                 Tables\Columns\TextColumn::make('number')
-<<<<<<< HEAD
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('event.client.name')
-=======
                     ->label(__('filament::resources/order-resource.table.number'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('client.name1')
                     ->label(__('filament::resources/order-resource.table.client_name'))
->>>>>>> origin/master
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\BadgeColumn::make('status')
-<<<<<<< HEAD
-=======
                     ->label(__('filament::resources/order-resource.table.status'))
->>>>>>> origin/master
                     ->colors([
                         'danger' => 'cancelled',
                         'warning' => 'processing',
@@ -150,20 +128,17 @@ class OrderResource extends Resource
                     ]),
 
                 Tables\Columns\TextColumn::make('total_price')
-<<<<<<< HEAD
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Order Date')
-=======
                     ->label(__('filament::resources/order-resource.table.total_price'))
                     ->money('eur')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('filament::resources/order-resource.table.order_created_at'))
->>>>>>> origin/master
                     ->date()
                     ->toggleable(),
             ])
@@ -198,7 +173,6 @@ class OrderResource extends Resource
     {
         if ($section === 'items') {
             return [
-<<<<<<< HEAD
                 Forms\Components\Repeater::make('items')
                     ->relationship()
                     ->schema([
@@ -228,7 +202,6 @@ class OrderResource extends Resource
                             ->columnSpan([
                                 'md' => 3,
                             ]),
-=======
                 Forms\Components\TextInput::make('discount')
                     ->label(__('filament::resources/order-resource.form.total_discount'))
                     ->reactive()
@@ -319,7 +292,6 @@ class OrderResource extends Resource
                             ->reactive()
                             ->numeric()
                             ->columnSpan(['md' => 3])
->>>>>>> origin/master
                     ])
                     ->orderable()
                     ->defaultItems(1)
@@ -333,7 +305,6 @@ class OrderResource extends Resource
 
         return [
             Forms\Components\TextInput::make('number')
-<<<<<<< HEAD
                 ->default('OR-' . random_int(100000, 999999))
                 ->disabled()
                 ->required(),
@@ -344,7 +315,6 @@ class OrderResource extends Resource
                 ->required(),
 //                ->createOptionForm([
 //                    Forms\Components\TextInput::make('name')
-=======
                 ->label(__('filament::resources/order-resource.form.number'))
                 ->default('OR-' . random_int(100000, 999999))
                 ->disabled()
@@ -372,22 +342,18 @@ Forms\Components\Card::make()
 //                    }),
 //                  ->createOptionForm([
 //                    Forms\Components\TextInput::make('name1')
->>>>>>> origin/master
 //                        ->required(),
 //
 //                    Forms\Components\TextInput::make('email')
 //                        ->required()
-<<<<<<< HEAD
 //                        ->email()
 //                        ->unique(),
 //
 //                    Forms\Components\TextInput::make('phone'),
-=======
 //                        ->email(),
 ////                        ->unique(),
 //
 //                    Forms\Components\TextInput::make('phone1'),
->>>>>>> origin/master
 //                ])
 //                ->createOptionAction(function (Forms\Components\Actions\Action $action) {
 //                    return $action
@@ -395,7 +361,6 @@ Forms\Components\Card::make()
 //                        ->modalButton('Create customer')
 //                        ->modalWidth('lg');
 //                }),
-<<<<<<< HEAD
 
             Forms\Components\Select::make('status')
                 ->options([
@@ -412,7 +377,6 @@ Forms\Components\Card::make()
 //                ->getSearchResultsUsing(fn (string $query) => Currency::where('name', 'like', "%{$query}%")->pluck('name', 'id'))
 //                ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->getAttribute('name'))
 //                ->required(),
-=======
 //                Forms\Components\TextInput::make('street')
 //                    ->disabled(),
 //                Forms\Components\TextInput::make('zip')
@@ -422,7 +386,6 @@ Forms\Components\Card::make()
 
             ])
 
->>>>>>> origin/master
 //
 //            AddressForm::make('address')
 //                ->columnSpan('full'),
@@ -431,8 +394,6 @@ Forms\Components\Card::make()
 //                ->columnSpan('full'),
         ];
     }
-<<<<<<< HEAD
-=======
 
 //    public static function calculateTransactionDetails($component)
 //    {
@@ -451,5 +412,4 @@ Forms\Components\Card::make()
     {
         return static::getModel()::count();
     }
->>>>>>> origin/master
 }
